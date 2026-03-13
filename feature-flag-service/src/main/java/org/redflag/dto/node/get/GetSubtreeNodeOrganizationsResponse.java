@@ -6,14 +6,15 @@ import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @Introspected
 @Serdeable
-public class GetOrganizationNodeByIdResponse {
+public class GetSubtreeNodeOrganizationsResponse {
     @JsonProperty("id")
-    @Schema(description = "Идентификатор записи в БД", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+    @Schema(description = "Идентификатор записи в БД", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
     private final Long id;
     @JsonProperty("organizationId")
     @Schema(description = "Идентификатор организации, к которой принадлежит звено, в БД", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
@@ -22,7 +23,7 @@ public class GetOrganizationNodeByIdResponse {
     @Schema(description = "Не технический идентификатор звена организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1")
     private final UUID uuid;
     @JsonProperty("path")
-    @Schema(description = "Путь из идентификаторов от корня организации до текущего звена", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.1")
+    @Schema(description = "Путь из идентификаторов от корня организации до текущего звена", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.130.155")
     private final String path;
     @JsonProperty("name")
     @Schema(description = "Название звена организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "Кредитование")
@@ -33,4 +34,7 @@ public class GetOrganizationNodeByIdResponse {
     @JsonProperty("version")
     @Schema(description = "Версия данных для оптимистичной блокировки", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private final Long version;
+    @JsonProperty("children")
+    @Schema(description = "Поддеревья детей звена организации", requiredMode = Schema.RequiredMode.REQUIRED)
+    private final List<GetSubtreeNodeOrganizationsResponse>  children;
 }

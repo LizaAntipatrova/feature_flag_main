@@ -28,7 +28,7 @@ public class CreateOrganizationNodeResponse {
     @Schema(description = "Название звена организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "Кредитование")
     private final String name;
     @JsonProperty("isService")
-    @Schema(description = "Является ли данное подразделение сервисом", requiredMode = Schema.RequiredMode.REQUIRED, example = "false")
+    @Schema(description = "Является ли данное звено организации сервисом", requiredMode = Schema.RequiredMode.REQUIRED, example = "false")
     private final Boolean isService;
     @JsonProperty("version")
     @Schema(description = "Версия данных для оптимистичной блокировки", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")

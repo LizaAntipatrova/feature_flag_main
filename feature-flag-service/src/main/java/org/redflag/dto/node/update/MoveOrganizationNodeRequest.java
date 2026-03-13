@@ -9,15 +9,11 @@ import lombok.Data;
 @Data
 @Introspected
 @Serdeable
-public class UpdateOrganizationNodeRequest {
-    @JsonProperty("name")
-    @Schema(description = "Название звена организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "Кредитование")
-    private final String name;
-    @JsonProperty("isService")
-    @Schema(description = "Является ли данное звено организации сервисом", requiredMode = Schema.RequiredMode.REQUIRED, example = "false")
-    private final Boolean isService;
+public class MoveOrganizationNodeRequest {
+    @JsonProperty("new_parent_id")
+    @Schema(description = "идентификатор, родителя к которому перемещаем звено организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "3")
+    private final Long new_parent_id;
     @JsonProperty("version")
     @Schema(description = "Версия данных для оптимистичной блокировки", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private final Long version;
-
 }

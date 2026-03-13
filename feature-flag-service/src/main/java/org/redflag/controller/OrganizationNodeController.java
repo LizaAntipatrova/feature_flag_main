@@ -12,16 +12,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.redflag.dto.ErrorDTO;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.dto.node.create.CreateOrganizationNodeResponse;
-import org.redflag.dto.node.get.GetOrganizationNodeByIdResponse;
-import org.redflag.dto.node.get.GetOrganizationNodesResponse;
+import org.redflag.dto.node.get.*;
+import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
+import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
-import org.redflag.dto.organization.create.CreateOrganizationRequest;
-import org.redflag.dto.organization.create.CreateOrganizationResponse;
-import org.redflag.dto.organization.get.GetOrganizationsResponse;
-import org.redflag.dto.organization.update.UpdateOrganizationRequest;
-import org.redflag.dto.organization.update.UpdateOrganizationResponse;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,7 +77,7 @@ public class OrganizationNodeController {
     public CreateOrganizationNodeResponse createOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
-            @Body CreateOrganizationNodeRequest request ) {
+            @Body CreateOrganizationNodeRequest request) {
         return new CreateOrganizationNodeResponse(1L,
                 organizationId,
                 UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
@@ -135,6 +133,7 @@ public class OrganizationNodeController {
                 false,
                 1L);
     }
+
     @Get()
     @Operation(
             summary = "Получить список звеньев организации",
@@ -182,7 +181,7 @@ public class OrganizationNodeController {
             @QueryValue("limit") Integer limit,
             @Parameter(description = "Начальный номер записи от начала для получения блока записей", required = true, example = "0")
             @QueryValue("offset") Integer offset
-            ) {
+    ) {
         return new GetOrganizationNodesResponse(List.of(new GetOrganizationNodesResponse.OrganizationNodeDTO(1L,
                 organizationId,
                 UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
@@ -244,15 +243,16 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
             @Body UpdateOrganizationNodeRequest updateOrganizationNodeRequest
-            ) {
+    ) {
         return new UpdateOrganizationNodeResponse(nodeId,
                 organizationId,
                 UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
                 "100.1",
                 updateOrganizationNodeRequest.getName(),
                 updateOrganizationNodeRequest.getIsService(),
-                updateOrganizationNodeRequest.getVersion()+1);
+                updateOrganizationNodeRequest.getVersion() + 1);
     }
+
     @Delete("/{nodeId}")
     @Operation(
             summary = "Удалить звено организации",
@@ -299,7 +299,280 @@ public class OrganizationNodeController {
         return HttpResponse.noContent();
     }
 
+    @Get("/{nodeId}/children")
+    @Operation(
+            summary = "Получить список дочерних звеньев организации",
+            description = "Получает непосредственных детей звена организации "
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешный ответ",
+                    content = @Content(schema = @Schema(implementation = GetChildrenOrganizationNodesResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Запрос без авторизации",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Недостаточно прав для выполнения этого действия",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Не найдено",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Неизвестная ошибка сервера",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            )
 
+    })
+    public GetChildrenOrganizationNodesResponse getChildrenOrganizationNodes(
+            @Parameter(description = "Идентификатор организации", required = true, example = "1")
+            @PathVariable Long organizationId,
+            @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
+            @PathVariable Long nodeId
+    ) {
+        return new GetChildrenOrganizationNodesResponse(nodeId,
+                List.of(new GetChildrenOrganizationNodesResponse.OrganizationNodeDTO(2L,
+                        organizationId,
+                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
+                        "100.1",
+                        "Кредитование",
+                        false,
+                        1L)));
+    }
 
+    @Get("/{nodeId}/ancestors")
+    @Operation(
+            summary = "Получить список родительских звеньев организации",
+            description = "Получает всех предков конкретного звена организации"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешный ответ",
+                    content = @Content(schema = @Schema(implementation = GetAncestorsOrganizationNodesResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Запрос без авторизации",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Недостаточно прав для выполнения этого действия",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Не найдено",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Неизвестная ошибка сервера",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            )
+
+    })
+    public GetAncestorsOrganizationNodesResponse getAncestorsOrganizationNodes(
+            @Parameter(description = "Идентификатор организации", required = true, example = "1")
+            @PathVariable Long organizationId,
+            @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
+            @PathVariable Long nodeId
+    ) {
+        return new GetAncestorsOrganizationNodesResponse(nodeId,
+                List.of(new GetAncestorsOrganizationNodesResponse.OrganizationNodeDTO(
+                        2L,
+                        organizationId,
+                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
+                        "100.1",
+                        "Кредитование",
+                        false,
+                        1L)));
+    }
+
+    @Get("/{nodeId}/descendants")
+    @Operation(
+            summary = "Получить потомков звена организации",
+            description = "Получает всех потомков звена организации, с учетом максимально заданного уровня потомков"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешный ответ",
+                    content = @Content(schema = @Schema(implementation = GetDescendantsOrganizationNodesResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Некорректные данные запроса",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Запрос без авторизации",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Недостаточно прав для выполнения этого действия",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Не найдено",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Неизвестная ошибка сервера",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            )
+
+    })
+    public GetDescendantsOrganizationNodesResponse getDescendantsOrganizationNodes(
+            @Parameter(description = "Идентификатор организации", required = true, example = "1")
+            @PathVariable Long organizationId,
+            @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
+            @PathVariable Long nodeId,
+            @Parameter(description = "Максимальный уровень потомка, от текущего звена (по умолчанию возвращает всех потомков)", required = false, example = "1")
+            @QueryValue("depth") Integer depth
+    ) {
+        return new GetDescendantsOrganizationNodesResponse(
+                nodeId,
+                depth,
+                List.of(new GetAncestorsOrganizationNodesResponse.OrganizationNodeDTO(
+                        2L,
+                        organizationId,
+                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
+                        "100.1",
+                        "Кредитование",
+                        false,
+                        1L)));
+    }
+
+    @Get("/{nodeId}/subtree")
+    @Operation(
+            summary = "Получить поддерево иерархии звеньев организации",
+            description = "Получает поддерево иерархии звеньев организации"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешный ответ",
+                    content = @Content(schema = @Schema(implementation = GetSubtreeNodeOrganizationsResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Запрос без авторизации",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Недостаточно прав для выполнения этого действия",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Не найдено",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Неизвестная ошибка сервера",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            )
+
+    })
+    public GetSubtreeNodeOrganizationsResponse getSubtreeOrganizationNodes(
+            @Parameter(description = "Идентификатор организации", required = true, example = "1")
+            @PathVariable Long organizationId,
+            @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
+            @PathVariable Long nodeId
+    ) {
+        return new GetSubtreeNodeOrganizationsResponse(
+                1L,
+                organizationId,
+                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
+                "1",
+                "Кредитование",
+                false,
+                1L,
+                List.of(new GetSubtreeNodeOrganizationsResponse(
+                        100L,
+                        organizationId,
+                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
+                        "1.100",
+                        "Кредитование",
+                        true,
+                        1L,
+                        Collections.emptyList())));
+    }
+
+    @Post("/{nodeId}/move")
+    @Operation(
+            summary = "Переместить звено организации в иерархии",
+            description = "Перемещает поддерево звена организации к другому родителю в иерархии звеньев организации"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешный ответ",
+                    content = @Content(schema = @Schema(implementation = MoveOrganizationNodeResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Некорректные данные запроса",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Запрос без авторизации",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Недостаточно прав для выполнения этого действия",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Не найдено",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Неизвестная ошибка сервера",
+                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+            )
+
+    })
+    public MoveOrganizationNodeResponse moveOrganizationNode(
+            @Parameter(description = "Идентификатор организации", required = true, example = "1")
+            @PathVariable Long organizationId,
+            @Parameter(description = "Идентификатор звена организации", required = true, example = "100")
+            @PathVariable Long nodeId,
+            @Body MoveOrganizationNodeRequest moveOrganizationNodeRequest
+    ) {
+        return new MoveOrganizationNodeResponse(
+                nodeId,
+                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
+                "1.100",
+                "1.3.100",
+                moveOrganizationNodeRequest.getVersion()+1,
+                List.of(new MoveOrganizationNodeResponse(
+                        103L,
+                        UUID.fromString("c3b7aef2-30d5-4dfe-9e8b-8f3c6b16a4fb"),
+                        "1.100.103",
+                        "1.3.100.103",
+                        3L,
+                        Collections.emptyList())));
+    }
 
 }
