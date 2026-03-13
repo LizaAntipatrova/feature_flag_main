@@ -182,7 +182,8 @@ public class OrganizationNodeController {
             @Parameter(description = "Начальный номер записи от начала для получения блока записей", required = true, example = "0")
             @QueryValue("offset") Integer offset
     ) {
-        return new GetOrganizationNodesResponse(List.of(new GetOrganizationNodesResponse.OrganizationNodeDTO(1L,
+        return new GetOrganizationNodesResponse(List.of(new GetOrganizationNodesResponse.OrganizationNodeDTO(
+                1L,
                 organizationId,
                 UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
                 "100.1",
