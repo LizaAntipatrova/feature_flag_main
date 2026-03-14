@@ -61,8 +61,8 @@ public class OrganizationController {
             )
 
     })
-    public CreateOrganizationResponse createOrganization(@Body CreateOrganizationRequest request) {
-        return new CreateOrganizationResponse(1L, "Хехе");
+    public HttpResponse<CreateOrganizationResponse> createOrganization(@Body CreateOrganizationRequest request) {
+        return HttpResponse.created(new CreateOrganizationResponse(1L, "Хехе"));
     }
 
     @Get

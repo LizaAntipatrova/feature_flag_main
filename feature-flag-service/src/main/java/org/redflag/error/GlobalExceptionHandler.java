@@ -3,7 +3,6 @@ package org.redflag.error;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.redflag.dto.ErrorResponse;
@@ -18,19 +17,6 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
         ErrorCatalog error = getError(exception);
 
         exception.printStackTrace();
-        if (error == ErrorCatalog.UNEXPECTED_ERROR) {
-            log.error("Unexpected error. path = {}, method = {}, message = {}",
-                    request.getPath(),
-                    request.getMethod(),
-                    exception.getMessage());
-        } else {
-            log.warn("{}. code={}, message={}, path={}, method={}",
-                    error.getErrorType().getValue(),
-                    error.getCode(),
-                    exception.getMessage(),
-                    request.getPath(),
-                    request.getMethod());
-        }
 
         ErrorResponse responseBody = new ErrorResponse(
                 error.getCode(),
@@ -45,7 +31,7 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
     }
 
     private ErrorCatalog getError(Throwable exception) {
-        if (exception instanceof FeatureFlagAppException appException){
+        if (exception instanceof FeatureFlagAppException appException) {
             return appException.getError();
         }
         return ErrorCatalog.UNEXPECTED_ERROR;

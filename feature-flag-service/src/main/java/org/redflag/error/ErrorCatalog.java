@@ -11,7 +11,6 @@ public enum ErrorCatalog {
     NOT_EMPTY("01-0001", "Поле %s не может быть пустым", ErrorType.CLIENT_ERROR, HttpStatus.BAD_REQUEST);
 
 
-
     private final String code;
     private final String message;
     private final ErrorType errorType;

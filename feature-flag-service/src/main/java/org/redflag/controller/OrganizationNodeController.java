@@ -73,17 +73,17 @@ public class OrganizationNodeController {
             )
 
     })
-    public CreateOrganizationNodeResponse createOrganizationNode(
+    public HttpResponse<CreateOrganizationNodeResponse> createOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Body CreateOrganizationNodeRequest request) {
-        return new CreateOrganizationNodeResponse(1L,
+        return HttpResponse.created(new CreateOrganizationNodeResponse(1L,
                 organizationId,
                 UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
                 "100.1",
                 "Кредитование",
                 false,
-                1L);
+                1L));
     }
 
     @Get("/{nodeId}")

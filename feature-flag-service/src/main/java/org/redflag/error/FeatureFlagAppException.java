@@ -1,10 +1,9 @@
 package org.redflag.error;
 
-import io.micronaut.http.HttpStatus;
 import lombok.Getter;
 
 @Getter
-public class FeatureFlagAppException extends RuntimeException{
+public class FeatureFlagAppException extends RuntimeException {
 
     private final ErrorCatalog error;
 

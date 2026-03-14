@@ -17,5 +17,5 @@ public class Organization {
     private String name;
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
-    private List<OrganizationNode>  organizationNodes;
+    private List<OrganizationNode> organizationNodes;
 }
