@@ -6,5 +6,6 @@ import org.redflag.model.OrganizationNode;
 
 @Repository
 public interface OrganizationNodeRepository extends JpaRepository<OrganizationNode, Long> {
+    OrganizationNode findByName(String name);
 
 }

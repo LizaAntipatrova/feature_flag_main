@@ -6,5 +6,6 @@ import org.redflag.model.Organization;
 
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
+    Boolean existsByName(String name);
 
 }

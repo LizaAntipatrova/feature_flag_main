@@ -2,11 +2,13 @@ package org.redflag.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
 @Entity
+@Accessors(chain = true)
 @Table(name = "organization")
 public class Organization {
     @Id

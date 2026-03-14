@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.organization.create.CreateOrganizationRequest;
 import org.redflag.dto.organization.create.CreateOrganizationResponse;
@@ -16,12 +17,16 @@ import org.redflag.dto.organization.get.GetOrganizationByIdResponse;
 import org.redflag.dto.organization.get.GetOrganizationsResponse;
 import org.redflag.dto.organization.update.UpdateOrganizationRequest;
 import org.redflag.dto.organization.update.UpdateOrganizationResponse;
+import org.redflag.repository.OrganizationRepository;
+import org.redflag.service.impl.CreateOrganizationService;
 
 import java.util.List;
 
 @Controller("api/v1/organizations")
+@RequiredArgsConstructor
 @Tag(name = "Организация")
 public class OrganizationController {
+    private final CreateOrganizationService createOrganizationService;
 
     @Post
     @Operation(
@@ -62,7 +67,7 @@ public class OrganizationController {
 
     })
     public HttpResponse<CreateOrganizationResponse> createOrganization(@Body CreateOrganizationRequest request) {
-        return HttpResponse.created(new CreateOrganizationResponse(1L, "Хехе"));
+        return HttpResponse.created(createOrganizationService.service(request));
     }
 
     @Get

@@ -32,7 +32,7 @@ create table organization_node(
     name varchar(1024) not null,
     uuid uuid not null,
     organization_id bigint not null references organization(id),
-    path ltree not null,
+    path ltree,
     is_service boolean not null,
     version bigint not null,
     created_at timestamp default now(),

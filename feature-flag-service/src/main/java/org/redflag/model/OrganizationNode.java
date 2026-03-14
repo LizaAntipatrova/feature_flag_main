@@ -2,12 +2,15 @@ package org.redflag.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.Accessors;
+import org.hibernate.annotations.ColumnTransformer;
 
 import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
+@Accessors(chain = true)
 @Table(name = "organization_node")
 public class OrganizationNode {
     @Id
@@ -20,7 +23,11 @@ public class OrganizationNode {
     @Column(name = "uuid", nullable = false)
     private UUID uuid;
 
-    @Column(name = "path", nullable = false, columnDefinition = "ltree")
+    @ColumnTransformer(
+            read = "path::text",
+            write = "?::ltree"
+    )
+    @Column(name = "path", columnDefinition = "ltree", insertable = false)
     private String path;
 
     @Column(name = "is_service", nullable = false)

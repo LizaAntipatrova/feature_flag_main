@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeRequest;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeResponse;
@@ -17,6 +18,7 @@ import org.redflag.dto.complex.CreateOrganizationWithRootNodeResponse;
 import java.util.UUID;
 
 @Controller("/api/vi")
+@RequiredArgsConstructor
 @Tag(name = "Действия с несколькими сущностями")
 public class ComplexActionController {
 
