@@ -9,12 +9,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.redflag.dto.ErrorDTO;
+import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagRequest;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagResponse;
 import org.redflag.dto.featureflag.get.*;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagResponse;
+import org.redflag.error.ErrorCatalog;
+import org.redflag.error.FeatureFlagAppException;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +27,8 @@ public class FeatureFlagController {
 
     @Post
     @Operation(
-            summary = "Создать звено организации",
-            description = "Cоздает звено организации, если нет звена с таким же именем в этой организации"
+            summary = "Создать фича флаг",
+            description = "Cоздает фича флаг в звене организации, если нет фича флага с таким же именем в этой организации"
     )
     @ApiResponses({
             @ApiResponse(
@@ -37,32 +39,32 @@ public class FeatureFlagController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "409",
                     description = "Конфликт данных",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -72,6 +74,7 @@ public class FeatureFlagController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
             @Body CreateFeatureFlagRequest request) {
+
         return new CreateFeatureFlagResponse(1L,
                 nodeId,
                 request.getName(),
@@ -93,22 +96,22 @@ public class FeatureFlagController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -146,27 +149,27 @@ public class FeatureFlagController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -220,27 +223,27 @@ public class FeatureFlagController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -273,22 +276,22 @@ public class FeatureFlagController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -321,32 +324,32 @@ public class FeatureFlagController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "409",
                     description = "Конфликт данных",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -379,22 +382,22 @@ public class FeatureFlagController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })

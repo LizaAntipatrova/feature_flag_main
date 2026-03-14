@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.redflag.dto.ErrorDTO;
+import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.dto.node.create.CreateOrganizationNodeResponse;
 import org.redflag.dto.node.get.*;
@@ -39,37 +39,37 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "409",
                     description = "Конфликт данных",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "422",
                     description = "Ошибка обработки сущности",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -100,22 +100,22 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -147,27 +147,27 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -208,32 +208,32 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "409",
                     description = "Конфликт данных",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -266,27 +266,27 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "409",
                     description = "Конфликт данных",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -313,22 +313,22 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -362,22 +362,22 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -412,27 +412,27 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -471,22 +471,22 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
@@ -529,27 +529,27 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "403",
                     description = "Недостаточно прав для выполнения этого действия",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Не найдено",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
-                    content = @Content(schema = @Schema(implementation = ErrorDTO.class))
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
 
     })
