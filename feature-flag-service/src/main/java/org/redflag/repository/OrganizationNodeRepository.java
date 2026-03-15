@@ -44,4 +44,12 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
             """, nativeQuery = true)
     List<OrganizationNode> findAllByOrganizationIdAndParentId(Long organizationId, @Nullable Long parentId, Integer limit, Integer offset);
 
+    @Query(value = """
+            
+            select * from organization_node
+            where path @> (select path from organization_node o where o.organization_id = :organizationId and id = :nodeId)
+            order by nlevel(path), path
+            """, nativeQuery = true)
+    List<OrganizationNode> findAllAncestors(Long organizationId, Long nodeId);
+
 }

@@ -38,6 +38,9 @@ public class GetOrganizationNodesService extends AbstractService<GetOrganization
                 request.nodeId(),
                 request.limit(),
                 request.offset());
+        if (organizationNodes.isEmpty()) {
+            throw ErrorCatalog.NO_DATA.getException();
+        }
         return new GetOrganizationNodesResponse(
                 organizationNodes.stream()
                         .map(this::toOrganizationNodeDTO)

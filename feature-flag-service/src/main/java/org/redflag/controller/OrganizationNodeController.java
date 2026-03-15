@@ -34,6 +34,7 @@ public class OrganizationNodeController {
     private final UpdateOrganizationNodeService updateOrganizationNodeService;
     private final DeleteOrganizationNodeService deleteOrganizationNodeService;
     private final GetOrganizationNodesService getOrganizationNodesService;
+    private final GetAncestorsOrganizationNodesService getAncestorsOrganizationNodesService;
 
 
     @Post
@@ -337,7 +338,7 @@ public class OrganizationNodeController {
     @Get("/{nodeId}/ancestors")
     @Operation(
             summary = "Получить список родительских звеньев организации",
-            description = "Получает всех предков конкретного звена организации"
+            description = "Получает всех предков конкретного звена организации, включая само звено"
     )
     @ApiResponses({
             @ApiResponse(
@@ -373,15 +374,8 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId
     ) {
-        return new GetAncestorsOrganizationNodesResponse(nodeId,
-                List.of(new GetAncestorsOrganizationNodesResponse.OrganizationNodeDTO(
-                        2L,
-                        organizationId,
-                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                        "100.1",
-                        "Кредитование",
-                        false,
-                        1L)));
+        GetAncestorsOrganizationNodesRequest request = new GetAncestorsOrganizationNodesRequest(organizationId, nodeId);
+        return getAncestorsOrganizationNodesService.service(request);
     }
 
     @Get("/{nodeId}/descendants")
