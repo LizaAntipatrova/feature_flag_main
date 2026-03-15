@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
@@ -19,10 +20,7 @@ import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
-import org.redflag.service.impl.CreateOrganizationNodeService;
-import org.redflag.service.impl.DeleteOrganizationNodeService;
-import org.redflag.service.impl.GetOrganizationNodeByIdService;
-import org.redflag.service.impl.UpdateOrganizationNodeService;
+import org.redflag.service.impl.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +33,9 @@ public class OrganizationNodeController {
     private final GetOrganizationNodeByIdService getOrganizationNodeByIdService;
     private final UpdateOrganizationNodeService updateOrganizationNodeService;
     private final DeleteOrganizationNodeService deleteOrganizationNodeService;
+    private final GetOrganizationNodesService getOrganizationNodesService;
+
+
     @Post
     @Operation(
             summary = "Создать звено организации",
@@ -169,6 +170,7 @@ public class OrganizationNodeController {
     public GetOrganizationNodesResponse getOrganizationNodes(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
+            @Nullable
             @Parameter(description = "Идентификатор родительского звена организации", required = false, example = "100")
             @QueryValue Long parentId,
             @Parameter(description = "Верхний лимит количества записей для получения блока записей", required = true, example = "42")
@@ -176,17 +178,8 @@ public class OrganizationNodeController {
             @Parameter(description = "Начальный номер записи от начала для получения блока записей", required = true, example = "0")
             @QueryValue("offset") Integer offset
     ) {
-        return new GetOrganizationNodesResponse(List.of(new GetOrganizationNodesResponse.OrganizationNodeDTO(
-                1L,
-                organizationId,
-                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                "100.1",
-                "Кредитование",
-                false,
-                1L)),
-                limit,
-                offset,
-                1);
+        GetOrganizationNodesRequest getOrganizationNodesRequest = new GetOrganizationNodesRequest(organizationId, parentId, limit, offset);
+        return getOrganizationNodesService.service(getOrganizationNodesRequest);
     }
 
     @Patch("/{nodeId}")
