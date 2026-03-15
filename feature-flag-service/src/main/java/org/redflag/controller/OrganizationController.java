@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.organization.create.CreateOrganizationRequest;
 import org.redflag.dto.organization.create.CreateOrganizationResponse;
+import org.redflag.dto.organization.delete.DeleteOrganizationRequest;
 import org.redflag.dto.organization.get.GetOrganizationByIdRequest;
 import org.redflag.dto.organization.get.GetOrganizationByIdResponse;
 import org.redflag.dto.organization.get.GetOrganizationsRequest;
@@ -20,9 +21,7 @@ import org.redflag.dto.organization.get.GetOrganizationsResponse;
 import org.redflag.dto.organization.update.UpdateOrganizationRequest;
 import org.redflag.dto.organization.update.UpdateOrganizationResponse;
 import org.redflag.repository.OrganizationRepository;
-import org.redflag.service.impl.CreateOrganizationService;
-import org.redflag.service.impl.GetOrganizationByIdService;
-import org.redflag.service.impl.GetOrganizationsService;
+import org.redflag.service.impl.*;
 
 import java.util.List;
 
@@ -33,6 +32,8 @@ public class OrganizationController {
     private final CreateOrganizationService createOrganizationService;
     private final GetOrganizationsService getOrganizationsService;
     private final GetOrganizationByIdService getOrganizationByIdService;
+    private final UpdateOrganizationService updateOrganizationService;
+    private final DeleteOrganizationService deleteOrganizationService;
 
     @Post
     @Operation(
@@ -209,11 +210,12 @@ public class OrganizationController {
 
     })
     public UpdateOrganizationResponse updateOrganization(
-            @Parameter(description = "Идентификатор организации", required = true, example = "42")
+            @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Body UpdateOrganizationRequest updateOrganizationRequest
     ) {
-        return new UpdateOrganizationResponse(organizationId, "ООО Пупупу");
+        updateOrganizationRequest.setId(organizationId);
+        return updateOrganizationService.service(updateOrganizationRequest);
     }
 
     @Delete("/{organizationId}")
@@ -249,9 +251,11 @@ public class OrganizationController {
 
     })
     public HttpResponse<Void> deleteOrganization(
-            @Parameter(description = "Идентификатор организации", required = true, example = "42")
+            @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId
     ) {
+        DeleteOrganizationRequest request = new DeleteOrganizationRequest(organizationId);
+        deleteOrganizationService.service(request);
         return HttpResponse.noContent();
     }
 
