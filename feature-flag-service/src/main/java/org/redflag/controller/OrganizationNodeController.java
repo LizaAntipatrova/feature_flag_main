@@ -13,12 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.dto.node.create.CreateOrganizationNodeResponse;
+import org.redflag.dto.node.delete.DeleteOrganizationNodeRequest;
 import org.redflag.dto.node.get.*;
 import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
 import org.redflag.service.impl.CreateOrganizationNodeService;
+import org.redflag.service.impl.DeleteOrganizationNodeService;
 import org.redflag.service.impl.GetOrganizationNodeByIdService;
 import org.redflag.service.impl.UpdateOrganizationNodeService;
 
@@ -32,6 +34,7 @@ public class OrganizationNodeController {
     private final CreateOrganizationNodeService createOrganizationNodeService;
     private final GetOrganizationNodeByIdService getOrganizationNodeByIdService;
     private final UpdateOrganizationNodeService updateOrganizationNodeService;
+    private final DeleteOrganizationNodeService deleteOrganizationNodeService;
     @Post
     @Operation(
             summary = "Создать звено организации",
@@ -284,6 +287,8 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId
     ) {
+        DeleteOrganizationNodeRequest request = new DeleteOrganizationNodeRequest(organizationId, nodeId);
+        deleteOrganizationNodeService.service(request);
         return HttpResponse.noContent();
     }
 
