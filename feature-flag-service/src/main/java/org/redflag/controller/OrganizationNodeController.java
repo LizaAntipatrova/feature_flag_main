@@ -20,6 +20,7 @@ import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
 import org.redflag.service.impl.CreateOrganizationNodeService;
 import org.redflag.service.impl.GetOrganizationNodeByIdService;
+import org.redflag.service.impl.UpdateOrganizationNodeService;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.UUID;
 public class OrganizationNodeController {
     private final CreateOrganizationNodeService createOrganizationNodeService;
     private final GetOrganizationNodeByIdService getOrganizationNodeByIdService;
+    private final UpdateOrganizationNodeService updateOrganizationNodeService;
     @Post
     @Operation(
             summary = "Создать звено организации",
@@ -234,13 +236,9 @@ public class OrganizationNodeController {
             @PathVariable Long nodeId,
             @Body UpdateOrganizationNodeRequest updateOrganizationNodeRequest
     ) {
-        return new UpdateOrganizationNodeResponse(nodeId,
-                organizationId,
-                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                "100.1",
-                updateOrganizationNodeRequest.getName(),
-                updateOrganizationNodeRequest.getIsService(),
-                updateOrganizationNodeRequest.getVersion() + 1);
+        updateOrganizationNodeRequest.setOrganizationId(organizationId);
+        updateOrganizationNodeRequest.setNodeId(nodeId);
+        return updateOrganizationNodeService.service(updateOrganizationNodeRequest);
     }
 
     @Delete("/{nodeId}")
