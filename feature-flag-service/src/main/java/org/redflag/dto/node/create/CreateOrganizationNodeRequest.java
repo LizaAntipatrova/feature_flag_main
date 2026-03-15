@@ -1,5 +1,6 @@
 package org.redflag.dto.node.create;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
@@ -10,6 +11,8 @@ import lombok.Data;
 @Introspected
 @Serdeable
 public class CreateOrganizationNodeRequest {
+    @JsonIgnore
+    private Long organizationId;
 
     @JsonProperty("name")
     @Schema(description = "Название звена организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "Кредитование")

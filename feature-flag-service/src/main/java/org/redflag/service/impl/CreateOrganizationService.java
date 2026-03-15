@@ -20,7 +20,7 @@ public class CreateOrganizationService extends AbstractService<CreateOrganizatio
     protected void validateRequest(CreateOrganizationRequest createOrganizationRequest) {
         String name = createOrganizationRequest.getName();
         if (Objects.isNull(name) || name.isBlank()) {
-            throw ErrorCatalog.NOT_EMPTY.withMessageArgs("name");
+            throw ErrorCatalog.EMPTY_FIELD.withMessageArgs("name");
         }
     }
 

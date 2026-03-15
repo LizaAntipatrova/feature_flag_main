@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.dto.node.create.CreateOrganizationNodeResponse;
@@ -17,14 +18,16 @@ import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
+import org.redflag.service.impl.CreateOrganizationNodeService;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
+@RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes")
 @Tag(name = "Звено организации")
 public class OrganizationNodeController {
+    private final CreateOrganizationNodeService createOrganizationNodeService;
     @Post
     @Operation(
             summary = "Создать звено организации",
@@ -62,11 +65,6 @@ public class OrganizationNodeController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
-                    responseCode = "422",
-                    description = "Ошибка обработки сущности",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "Неизвестная ошибка сервера",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -77,13 +75,8 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Body CreateOrganizationNodeRequest request) {
-        return HttpResponse.created(new CreateOrganizationNodeResponse(1L,
-                organizationId,
-                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                "100.1",
-                "Кредитование",
-                false,
-                1L));
+        request.setOrganizationId(organizationId);
+        return HttpResponse.created(createOrganizationNodeService.service(request));
     }
 
     @Get("/{nodeId}")

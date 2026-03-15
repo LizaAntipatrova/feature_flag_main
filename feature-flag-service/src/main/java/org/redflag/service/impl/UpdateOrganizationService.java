@@ -2,7 +2,6 @@ package org.redflag.service.impl;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.organization.create.CreateOrganizationResponse;
 import org.redflag.dto.organization.update.UpdateOrganizationRequest;
 import org.redflag.dto.organization.update.UpdateOrganizationResponse;
 import org.redflag.error.ErrorCatalog;
@@ -11,7 +10,6 @@ import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.AbstractService;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Singleton
 @RequiredArgsConstructor
@@ -22,7 +20,7 @@ public class UpdateOrganizationService extends AbstractService<UpdateOrganizatio
     protected void validateRequest(UpdateOrganizationRequest request) {
         String name = request.getName();
         if (Objects.isNull(name) || name.isBlank()) {
-            throw ErrorCatalog.NOT_EMPTY.withMessageArgs("name");
+            throw ErrorCatalog.EMPTY_FIELD.withMessageArgs("name");
         }
     }
 
