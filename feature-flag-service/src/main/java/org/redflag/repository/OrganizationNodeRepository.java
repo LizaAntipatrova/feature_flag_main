@@ -5,9 +5,12 @@ import io.micronaut.data.jpa.repository.JpaRepository;
 import org.redflag.model.Organization;
 import org.redflag.model.OrganizationNode;
 
+import java.util.Optional;
+
 @Repository
 public interface OrganizationNodeRepository extends JpaRepository<OrganizationNode, Long> {
     Boolean existsByOrganization_IdAndName(Long organizationId, String name);
+    Optional<OrganizationNode> findByOrganization_IdAndId(Long organizationId, Long id);
     OrganizationNode findByName(String name);
 
 }

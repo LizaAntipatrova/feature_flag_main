@@ -73,7 +73,7 @@ public class CreateOrganizationNodeService extends AbstractService<CreateOrganiz
         organizationNodeRepository.update(organizationNode);
 
         return new CreateOrganizationNodeResponse(organizationNode.getId(),
-                request.getOrganizationId(),
+                organizationNode.getOrganization().getId(),
                 organizationNode.getUuid(),
                 organizationNode.getPath(),
                 organizationNode.getName(),
