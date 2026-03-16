@@ -36,6 +36,7 @@ public class OrganizationNodeController {
     private final GetOrganizationNodesService getOrganizationNodesService;
     private final GetAncestorsOrganizationNodesService getAncestorsOrganizationNodesService;
     private final GetChildrenOrganizationNodesService getChildrenOrganizationNodesService;
+    private final GetDescendantsOrganizationNodesService getDescendantsOrganizationNodesService;
 
 
     @Post
@@ -385,11 +386,6 @@ public class OrganizationNodeController {
                     content = @Content(schema = @Schema(implementation = GetDescendantsOrganizationNodesResponse.class))
             ),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Некорректные данные запроса",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            ),
-            @ApiResponse(
                     responseCode = "401",
                     description = "Запрос без авторизации",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
@@ -416,20 +412,12 @@ public class OrganizationNodeController {
             @PathVariable Long organizationId,
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
+            @Nullable
             @Parameter(description = "Максимальный уровень потомка, от текущего звена (по умолчанию возвращает всех потомков)", required = false, example = "1")
             @QueryValue("depth") Integer depth
     ) {
-        return new GetDescendantsOrganizationNodesResponse(
-                nodeId,
-                depth,
-                List.of(new GetAncestorsOrganizationNodesResponse.OrganizationNodeDTO(
-                        2L,
-                        organizationId,
-                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                        "100.1",
-                        "Кредитование",
-                        false,
-                        1L)));
+        GetDescendantsOrganizationNodesRequest request = new GetDescendantsOrganizationNodesRequest(organizationId, nodeId, depth);
+        return getDescendantsOrganizationNodesService.service(request);
     }
 
     @Get("/{nodeId}/subtree")

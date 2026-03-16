@@ -26,7 +26,7 @@ public class GetDescendantsOrganizationNodesResponse {
 
     @JsonProperty("items")
     @Schema(description = "Массив звеньев-предков", requiredMode = Schema.RequiredMode.REQUIRED)
-    private final List<GetAncestorsOrganizationNodesResponse.OrganizationNodeDTO> items;
+    private final List<OrganizationNodeDTO> items;
 
 
     @Data

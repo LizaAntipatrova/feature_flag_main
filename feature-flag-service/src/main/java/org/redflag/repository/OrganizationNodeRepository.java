@@ -47,21 +47,43 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
     List<OrganizationNode> findAllByOrganizationIdAndParentId(Long organizationId, @Nullable Long parentId, Integer limit, Integer offset);
 
     @Query(value = """
+              with child as (
+                select path, id
+                from organization_node
+                where organization_id = :organizationId and id = :nodeId
+              )
             select ancestors.*
-            from organization_node ancestors
-            join organization_node child on (child.organization_id = :organizationId and child.id = :nodeId)
+            from organization_node ancestors, child
             where ancestors.path @> child.path
             order by nlevel(ancestors.path), ancestors.path
             """, nativeQuery = true)
     List<OrganizationNode> findAllAncestorsById(Long organizationId, Long nodeId);
 
     @Query(value = """
-            SELECT child.*
-            FROM organization_node child
-            JOIN organization_node root ON (root.organization_id = :organizationId and root.id = :nodeId)
-            WHERE child.path <@ root.path
-              AND nlevel(child.path) = nlevel(root.path) + 1
-            ORDER BY child.path
+            with root as (
+                select path, id
+                from organization_node
+                where organization_id = :organizationId and id = :nodeId
+              )
+            select child.*
+            from organization_node child, root
+            where child.path <@ root.path
+              and nlevel(child.path) = nlevel(root.path) + 1
+            order by child.path
             """, nativeQuery = true)
     List<OrganizationNode> findAllChildrenById(Long organizationId, Long nodeId);
+
+    @Query(value = """
+              with root as (
+                select path, id
+                from organization_node
+                where organization_id = :organizationId and id = :nodeId
+              )
+            select descedants.*
+            from organization_node descedants, root
+            where descedants.path <@ root.path
+                and(cast(:depth as bigint)is null or nlevel(descedants.path) <= nlevel(root.path) + :depth)
+            order by nlevel(descedants.path), descedants.path
+            """, nativeQuery = true)
+    List<OrganizationNode> findAllDescendantsByIdAndDepth(Long organizationId, Long nodeId, @Nullable Integer depth);
 }

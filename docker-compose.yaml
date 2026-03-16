@@ -10,8 +10,10 @@ services:
       TZ: UTC+3
     ports:
       - "5432:5432"
-    tmpfs:
-      - /var/lib/postgresql/data:rw,noexec,nosuid,size=256m
+#    tmpfs:
+#      - /var/lib/postgresql/data:rw,noexec,nosuid,size=256m
+    volumes:
+      - ff_service_pgdata:/var/lib/postgresql/data
     shm_size: "256m"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -h 127.0.0.1 -p 5432"]
@@ -20,3 +22,6 @@ services:
       retries: 15
       start_period: 5s
     restart: unless-stopped
+
+volumes:
+  ff_service_pgdata:
