@@ -47,6 +47,17 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
     List<OrganizationNode> findAllByOrganizationIdAndParentId(Long organizationId, @Nullable Long parentId, Integer limit, Integer offset);
 
     @Query(value = """
+            select descendants.*
+            from organization_node descendants
+            where descendants.organization_id = :organizationId
+                        and (descendants.path <@ (
+                                    select path from  organization_node 
+                                    where id = :rootId and organization_id = :organizationId))
+            order by descendants.path
+            """, nativeQuery = true)
+    List<OrganizationNode> findSubtreeByOrganizationIdAndParentId(Long organizationId, Long rootId);
+
+    @Query(value = """
               with child as (
                 select path, id
                 from organization_node

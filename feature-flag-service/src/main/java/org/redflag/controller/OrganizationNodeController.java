@@ -37,6 +37,7 @@ public class OrganizationNodeController {
     private final GetAncestorsOrganizationNodesService getAncestorsOrganizationNodesService;
     private final GetChildrenOrganizationNodesService getChildrenOrganizationNodesService;
     private final GetDescendantsOrganizationNodesService getDescendantsOrganizationNodesService;
+    private final GetSubtreeNodeOrganizationsService getSubtreeNodeOrganizationsService;
 
 
     @Post
@@ -459,23 +460,8 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId
     ) {
-        return new GetSubtreeNodeOrganizationsResponse(
-                1L,
-                organizationId,
-                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                "1",
-                "Кредитование",
-                false,
-                1L,
-                List.of(new GetSubtreeNodeOrganizationsResponse(
-                        100L,
-                        organizationId,
-                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                        "1.100",
-                        "Кредитование",
-                        true,
-                        1L,
-                        Collections.emptyList())));
+        GetSubtreeNodeOrganizationsRequest request = new GetSubtreeNodeOrganizationsRequest(organizationId, nodeId);
+        return getSubtreeNodeOrganizationsService.service(request);
     }
 
     @Post("/{nodeId}/move")
