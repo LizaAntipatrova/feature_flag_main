@@ -17,7 +17,9 @@ public enum ErrorCatalog {
     NOT_UNIQUE_ORGANIZATION_NAME("02-0001", "Организация с таким именем уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION("02-0002", "Звено организации с таким именем в этой организации уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     SERVICE_CANNOT_HAVE_DESCENDANTS("02-0003", "Сервис не может иметь потомков", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    OPTIMISTIC_LOCK("02-0004", "Устаревшая версия данных", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
+    OPTIMISTIC_LOCK("02-0004", "Устаревшая версия данных", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+    CYCLE_MOVE("02-0005", "Нельзя переместить узел в дочерний ему или в него самого", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+    MOVE_ROOT_NODE("02-0006", "Нельзя переместить корневой узел организации", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
 
 
     private final String code;

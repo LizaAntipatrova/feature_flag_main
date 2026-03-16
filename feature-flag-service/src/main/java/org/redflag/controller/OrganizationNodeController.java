@@ -38,6 +38,7 @@ public class OrganizationNodeController {
     private final GetChildrenOrganizationNodesService getChildrenOrganizationNodesService;
     private final GetDescendantsOrganizationNodesService getDescendantsOrganizationNodesService;
     private final GetSubtreeNodeOrganizationsService getSubtreeNodeOrganizationsService;
+    private final MoveOrganizationNodeService moveOrganizationNodeService;
 
 
     @Post
@@ -509,19 +510,9 @@ public class OrganizationNodeController {
             @PathVariable Long nodeId,
             @Body MoveOrganizationNodeRequest moveOrganizationNodeRequest
     ) {
-        return new MoveOrganizationNodeResponse(
-                nodeId,
-                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                "1.100",
-                "1.3.100",
-                moveOrganizationNodeRequest.getVersion() + 1,
-                List.of(new MoveOrganizationNodeResponse(
-                        103L,
-                        UUID.fromString("c3b7aef2-30d5-4dfe-9e8b-8f3c6b16a4fb"),
-                        "1.100.103",
-                        "1.3.100.103",
-                        3L,
-                        Collections.emptyList())));
+        moveOrganizationNodeRequest.setOrganizationId(organizationId);
+        moveOrganizationNodeRequest.setNodeId(nodeId);
+        return moveOrganizationNodeService.service(moveOrganizationNodeRequest);
     }
 
 }

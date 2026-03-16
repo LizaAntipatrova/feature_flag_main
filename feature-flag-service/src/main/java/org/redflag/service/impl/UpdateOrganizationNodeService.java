@@ -35,19 +35,15 @@ public class UpdateOrganizationNodeService extends AbstractService<UpdateOrganiz
 
     @Override
     protected void validateState(UpdateOrganizationNodeRequest request) {
-
-        if (!organizationNodeRepository.existsByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())) {
-            throw ErrorCatalog.NO_DATA.getException();
-        }
         OrganizationNode organizationNode = organizationNodeRepository
-                .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId()).get();
+                .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
+                .orElseThrow(ErrorCatalog.NO_DATA::getException);
         if (!organizationNode.getVersion().equals(request.getVersion())) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
         if (organizationNodeRepository.existsByOrganization_IdAndName(request.getOrganizationId(), request.getName())) {
             throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION.getException();
         }
-
         if (request.getIsService() && organizationNodeRepository.existsDescendants(request.getNodeId())) {
             throw ErrorCatalog.SERVICE_CANNOT_HAVE_DESCENDANTS.getException();
         }
