@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeRequest;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeResponse;
+import org.redflag.service.impl.CreateOrganizationWithRootNodesService;
 
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Действия с несколькими сущностями")
 public class ComplexActionController {
+
+    private final CreateOrganizationWithRootNodesService createOrganizationWithRootNodesService;
 
     @Post("/organizations/with-root-node")
     @Operation(
@@ -60,14 +63,7 @@ public class ComplexActionController {
             )
 
     })
-    public HttpResponse<CreateOrganizationWithRootNodeResponse> createOrganization(@Body CreateOrganizationWithRootNodeRequest request) {
-        return HttpResponse.created(new CreateOrganizationWithRootNodeResponse(1L, "Хехе",
-                new CreateOrganizationWithRootNodeResponse.OrganizationNodeDTO(1L,
-                        1L,
-                        UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                        "1",
-                        "Хехе}",
-                        false,
-                        1L)));
+    public HttpResponse<CreateOrganizationWithRootNodeResponse> createOrganizationWithRootNode(@Body CreateOrganizationWithRootNodeRequest request) {
+        return HttpResponse.created(createOrganizationWithRootNodesService.service(request));
     }
 }
