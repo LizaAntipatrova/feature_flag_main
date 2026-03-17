@@ -9,19 +9,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagRequest;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagResponse;
 import org.redflag.dto.featureflag.get.*;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagResponse;
+import org.redflag.repository.FeatureFlagRepository;
+import org.redflag.service.impl.CreateFeatureFlagService;
 
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes/{nodeId}/feature-flags")
 @Tag(name = "Фича флаг")
 public class FeatureFlagController {
+    private final CreateFeatureFlagService createFeatureFlagService;
 
     @Post
     @Operation(
@@ -72,12 +77,9 @@ public class FeatureFlagController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
             @Body CreateFeatureFlagRequest request) {
-
-        return HttpResponse.created(new CreateFeatureFlagResponse(1L,
-                nodeId,
-                request.getName(),
-                request.getValue(),
-                1L));
+        request.setOrganizationId(organizationId);
+        request.setNodeId(nodeId);
+        return HttpResponse.created(createFeatureFlagService.service(request));
     }
 
     @Get

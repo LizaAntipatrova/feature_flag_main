@@ -1,5 +1,6 @@
 package org.redflag.dto.featureflag.create;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
@@ -10,6 +11,10 @@ import lombok.Data;
 @Introspected
 @Serdeable
 public class CreateFeatureFlagRequest {
+    @JsonIgnore
+    private Long organizationId;
+    @JsonIgnore
+    private Long nodeId;
 
     @JsonProperty("name")
     @Schema(description = "Название фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "friday_release_mode")
