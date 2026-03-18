@@ -13,6 +13,7 @@ public enum ErrorCatalog {
     BAD_LIMIT("01-0002", "Некорректный формат limit", ErrorType.CLIENT_ERROR, HttpStatus.BAD_REQUEST),
     BAD_OFFSET("01-0003", "Некорректный формат offset", ErrorType.CLIENT_ERROR, HttpStatus.BAD_REQUEST),
     NO_DATA("01-0004", "Нет данных по переданным параметрам", ErrorType.CLIENT_ERROR, HttpStatus.NOT_FOUND),
+    INVALID_JSON("01-0005", "Некорректный JSON", ErrorType.CLIENT_ERROR, HttpStatus.BAD_REQUEST),
 
     NOT_UNIQUE_ORGANIZATION_NAME("02-0001", "Организация с таким именем уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION("02-0002", "Звено организации с таким именем в этой организации уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),

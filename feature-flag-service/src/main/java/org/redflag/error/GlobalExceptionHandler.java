@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.redflag.dto.ErrorResponse;
 
 @Singleton
-@Slf4j
 public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpResponse<ErrorResponse>> {
 
 
