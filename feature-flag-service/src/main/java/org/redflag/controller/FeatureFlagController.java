@@ -32,6 +32,7 @@ public class FeatureFlagController {
     private final UpdateFeatureFlagService updateFeatureFlagService;
     private final DeleteFeatureFlagService deleteFeatureFlagService;
     private final GetFeatureFlagByNameService getFeatureFlagByNameService;
+    private final GetFeatureFlagsService getFeatureFlagsService;
 
     @Post
     @Operation(
@@ -129,15 +130,8 @@ public class FeatureFlagController {
             @QueryValue("limit") Integer limit,
             @Parameter(description = "Начальный номер записи от начала для получения блока записей", required = true, example = "0")
             @QueryValue("offset") Integer offset) {
-        return new GetFeatureFlagsResponse(1L,
-                List.of(new GetFeatureFlagsResponse.FeatureFlag(1L,
-                        nodeId,
-                        "meow_mode",
-                        true,
-                        1L)),
-                limit,
-                offset,
-                1);
+        GetFeatureFlagsRequest request = new GetFeatureFlagsRequest(organizationId, nodeId, limit, offset);
+        return getFeatureFlagsService.service(request);
     }
 
     @Get("/closure")

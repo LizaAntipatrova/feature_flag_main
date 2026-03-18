@@ -13,7 +13,10 @@ import java.util.List;
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
     Boolean existsByName(String name);
 
-    @Query(value = "select * from organization o limit :limit offset :offset",  nativeQuery = true)
+    @Query(value = """ 
+            select * from organization o
+            limit :limit offset :offset
+            """,  nativeQuery = true)
     List<Organization>  findAll(Integer limit, Integer offset);
 
 }
