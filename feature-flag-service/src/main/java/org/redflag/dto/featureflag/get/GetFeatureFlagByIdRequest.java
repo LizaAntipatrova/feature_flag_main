@@ -1,4 +1,4 @@
-package org.redflag.dto.node.get;
+package org.redflag.dto.featureflag.get;
 
 public record GetFeatureFlagByIdRequest(Long organizationId, Long nodeId, Long flagId) {
 }

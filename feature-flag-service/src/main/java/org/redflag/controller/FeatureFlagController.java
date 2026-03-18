@@ -13,12 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagRequest;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagResponse;
+import org.redflag.dto.featureflag.delete.DeleteFeatureFlagRequest;
 import org.redflag.dto.featureflag.get.*;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagResponse;
-import org.redflag.dto.node.get.GetFeatureFlagByIdRequest;
-import org.redflag.repository.FeatureFlagRepository;
+import org.redflag.dto.featureflag.get.GetFeatureFlagByIdRequest;
 import org.redflag.service.impl.CreateFeatureFlagService;
+import org.redflag.service.impl.DeleteFeatureFlagService;
 import org.redflag.service.impl.GetFeatureFlagByIdService;
 import org.redflag.service.impl.UpdateFeatureFlagService;
 
@@ -32,6 +33,7 @@ public class FeatureFlagController {
     private final CreateFeatureFlagService createFeatureFlagService;
     private final GetFeatureFlagByIdService getFeatureFlagByIdService;
     private final UpdateFeatureFlagService updateFeatureFlagService;
+    private final DeleteFeatureFlagService deleteFeatureFlagService;
 
     @Post
     @Operation(
@@ -410,6 +412,8 @@ public class FeatureFlagController {
             @Parameter(description = "Идентификатор фича флага", required = true, example = "1")
             @PathVariable Long flagId
     ) {
+        DeleteFeatureFlagRequest request = new DeleteFeatureFlagRequest(organizationId, nodeId, flagId);
+        deleteFeatureFlagService.service(request);
         return HttpResponse.noContent();
     }
 

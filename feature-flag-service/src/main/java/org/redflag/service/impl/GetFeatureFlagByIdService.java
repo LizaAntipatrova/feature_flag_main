@@ -3,7 +3,7 @@ package org.redflag.service.impl;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.featureflag.get.GetFeatureFlagByIdResponse;
-import org.redflag.dto.node.get.GetFeatureFlagByIdRequest;
+import org.redflag.dto.featureflag.get.GetFeatureFlagByIdRequest;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;

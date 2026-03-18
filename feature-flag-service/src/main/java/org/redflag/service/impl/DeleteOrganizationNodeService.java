@@ -14,13 +14,6 @@ public class DeleteOrganizationNodeService extends AbstractService<DeleteOrganiz
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
-    protected void validateState(DeleteOrganizationNodeRequest request) {
-        if(!organizationNodeRepository.existsByOrganization_IdAndId(request.organizationId(), request.nodeId())){
-
-        }
-    }
-
-    @Override
     protected Void logic(DeleteOrganizationNodeRequest request) {
         organizationNodeRepository.deleteSubtree(request.nodeId());
         return null;
