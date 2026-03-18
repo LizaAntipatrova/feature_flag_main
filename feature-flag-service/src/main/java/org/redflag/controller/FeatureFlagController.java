@@ -18,10 +18,7 @@ import org.redflag.dto.featureflag.get.*;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagResponse;
 import org.redflag.dto.featureflag.get.GetFeatureFlagByIdRequest;
-import org.redflag.service.impl.CreateFeatureFlagService;
-import org.redflag.service.impl.DeleteFeatureFlagService;
-import org.redflag.service.impl.GetFeatureFlagByIdService;
-import org.redflag.service.impl.UpdateFeatureFlagService;
+import org.redflag.service.impl.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +31,7 @@ public class FeatureFlagController {
     private final GetFeatureFlagByIdService getFeatureFlagByIdService;
     private final UpdateFeatureFlagService updateFeatureFlagService;
     private final DeleteFeatureFlagService deleteFeatureFlagService;
+    private final GetFeatureFlagByNameService getFeatureFlagByNameService;
 
     @Post
     @Operation(
@@ -262,11 +260,8 @@ public class FeatureFlagController {
             @Parameter(description = "Название фича флага", required = true, example = "meow_mode")
             @QueryValue String flagName
     ) {
-        return new GetFeatureFlagByNameResponse(1L,
-                nodeId,
-                flagName,
-                true,
-                1L);
+        GetFeatureFlagByNameRequest request = new GetFeatureFlagByNameRequest(organizationId, nodeId, flagName);
+        return getFeatureFlagByNameService.service(request);
     }
 
     @Get("/{flagId}")

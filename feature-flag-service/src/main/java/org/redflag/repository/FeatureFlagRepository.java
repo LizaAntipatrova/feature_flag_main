@@ -5,6 +5,8 @@ import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
 import org.redflag.model.FeatureFlag;
 
+import java.util.Optional;
+
 @Repository
 public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> {
     @Query("""
@@ -15,6 +17,6 @@ public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> 
       and ff.name = :name)
     """)
     boolean existsByOrganizationNode_Organization_IdAndName(Long organizationId, String name);
-
+    Optional<FeatureFlag> findByName(String name);
 
 }
