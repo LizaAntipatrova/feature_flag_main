@@ -20,9 +20,6 @@ import org.redflag.dto.featureflag.update.UpdateFeatureFlagResponse;
 import org.redflag.dto.featureflag.get.GetFeatureFlagByIdRequest;
 import org.redflag.service.impl.*;
 
-import java.util.List;
-import java.util.UUID;
-
 @RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes/{nodeId}/feature-flags")
 @Tag(name = "Фича флаг")
@@ -33,6 +30,7 @@ public class FeatureFlagController {
     private final DeleteFeatureFlagService deleteFeatureFlagService;
     private final GetFeatureFlagByNameService getFeatureFlagByNameService;
     private final GetFeatureFlagsService getFeatureFlagsService;
+    private final GetLinkedFeatureFlagsService getLinkedFeatureFlagsService;
 
     @Post
     @Operation(
@@ -134,7 +132,7 @@ public class FeatureFlagController {
         return getFeatureFlagsService.service(request);
     }
 
-    @Get("/closure")
+    @Get("/linked")
     @Operation(
             summary = "Получить фича флаги связанных звеньев организации",
             description = "Получает с пагинацией фича флаги звеньев организации связанные с конкретным звеном отношениями: само звено, предок, потомок "
@@ -177,35 +175,16 @@ public class FeatureFlagController {
             @PathVariable Long organizationId,
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
-            @Parameter(description = "Перечисление типов отношений", required = true, example = "self,ancestor,descendant")
-            @QueryValue("include") String include,
+            @Parameter(description = "Тип отношения", required = true, example = "self")
+            @QueryValue("relation") RelationType relation,
             @Parameter(description = "Верхний лимит количества записей для получения блока записей", required = true, example = "42")
             @QueryValue("limit") Integer limit,
             @Parameter(description = "Начальный номер записи от начала для получения блока записей", required = true, example = "0")
             @QueryValue("offset") Integer offset) {
 
-        List<LinkType> linkTypes = LinkType.parseIncludeQuery(include);
-        return new GetLinkedFeatureFlagsResponse(1L,
-                linkTypes,
-                List.of(new GetLinkedFeatureFlagsResponse.Item(
-                        new GetLinkedFeatureFlagsResponse.Item.FeatureFlag(1L,
-                                nodeId,
-                                "meow_mode",
-                                true,
-                                1L),
-                        new GetLinkedFeatureFlagsResponse.Item.BelongsToNode(
-                                nodeId,
-                                organizationId,
-                                UUID.fromString("9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1"),
-                                "100.1",
-                                "Кредитование",
-                                false,
-                                1L
-                        ),
-                        LinkType.SELF)),
-                limit,
-                offset,
-                1);
+
+        GetLinkedFeatureFlagsRequest request = new GetLinkedFeatureFlagsRequest(organizationId, nodeId, relation, limit, offset);
+        return getLinkedFeatureFlagsService.service(request);
     }
 
     @Get("/find")

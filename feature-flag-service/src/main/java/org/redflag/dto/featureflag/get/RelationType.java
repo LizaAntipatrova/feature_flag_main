@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Serdeable
 @RequiredArgsConstructor
-public enum LinkType {
+public enum RelationType {
     SELF("self"),
     ANCESTOR("ancestor"),
     DESCENDANT("descendant");
@@ -19,7 +19,7 @@ public enum LinkType {
     private final String value;
 
     @JsonCreator
-    public static List<LinkType> parseIncludeQuery(String includeQuery) {
+    public static List<RelationType> parseIncludeQuery(String includeQuery) {
         Objects.requireNonNull(includeQuery);
         return Arrays.stream(includeQuery.split(",")).map((linkType) -> switch (linkType) {
             case "self" -> SELF;

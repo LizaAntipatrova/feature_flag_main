@@ -18,9 +18,9 @@ public class GetLinkedFeatureFlagsResponse {
     @Schema(description = "Идентификатор звена организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private final Long nodeId;
 
-    @JsonProperty("include")
+    @JsonProperty("relation")
     @Schema(description = "Массив типов отношений с помощью которых связаны звенья организации", requiredMode = Schema.RequiredMode.REQUIRED, examples = {"self"})
-    private final List<LinkType> include;
+    private final RelationType relation;
 
     @JsonProperty("items")
     @Schema(description = "Массив фича флагов", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -50,10 +50,6 @@ public class GetLinkedFeatureFlagsResponse {
         @JsonProperty("belongsToNode")
         @Schema(description = "Информация о звене организации, к которой принадлежит фича флаг", requiredMode = Schema.RequiredMode.REQUIRED)
         private final BelongsToNode belongsToNode;
-
-        @JsonProperty("linkType")
-        @Schema(description = "Тип связи данного звена с исходным", requiredMode = Schema.RequiredMode.REQUIRED, example = "self")
-        private final LinkType linkType;
 
         @Data
         @Introspected

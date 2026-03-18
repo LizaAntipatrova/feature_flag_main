@@ -28,4 +28,26 @@ public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> 
             """, nativeQuery = true)
     List<FeatureFlag> findByOrganizationNode_Id(Long nodeId, Integer limit, Integer offset);
 
+    @Query(value = """
+            select ff.id, ff.name, ff.value, ff.organization_node_id, ff.version
+            from organization_node on2
+            join feature_flag ff on on2.id = ff.organization_node_id
+            where on2.path @> (select o.path
+                                from organization_node o
+                                where o.id = :nodeId)
+            limit :limit offset :offset
+            """, nativeQuery = true)
+    List<FeatureFlag> findAllByAncestorsOrganizationNodes(Long nodeId, Integer limit, Integer offset);
+
+    @Query(value = """
+            select ff.id, ff.name, ff.value, ff.organization_node_id, ff.version
+            from organization_node on2
+            join feature_flag ff on on2.id = ff.organization_node_id
+            where on2.path <@ (select o.path
+                                from organization_node o
+                                where o.id = :nodeId)
+            limit :limit offset :offset
+            """, nativeQuery = true)
+    List<FeatureFlag> findAllByDescendantsOrganizationNodes(Long nodeId, Integer limit, Integer offset);
+
 }
