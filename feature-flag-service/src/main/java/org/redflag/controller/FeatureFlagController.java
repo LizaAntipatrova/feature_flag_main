@@ -20,6 +20,7 @@ import org.redflag.dto.node.get.GetFeatureFlagByIdRequest;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.impl.CreateFeatureFlagService;
 import org.redflag.service.impl.GetFeatureFlagByIdService;
+import org.redflag.service.impl.UpdateFeatureFlagService;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import java.util.UUID;
 public class FeatureFlagController {
     private final CreateFeatureFlagService createFeatureFlagService;
     private final GetFeatureFlagByIdService getFeatureFlagByIdService;
+    private final UpdateFeatureFlagService updateFeatureFlagService;
 
     @Post
     @Operation(
@@ -362,11 +364,10 @@ public class FeatureFlagController {
             @PathVariable Long flagId,
             @Body UpdateFeatureFlagRequest updateFeatureFlagRequest
     ) {
-        return new UpdateFeatureFlagResponse(flagId,
-                nodeId,
-                "meow_mode",
-                updateFeatureFlagRequest.getValue(),
-                updateFeatureFlagRequest.getVersion());
+        updateFeatureFlagRequest.setOrganizationId(organizationId);
+        updateFeatureFlagRequest.setNodeId(nodeId);
+        updateFeatureFlagRequest.setFeatureFlagId(flagId);
+        return updateFeatureFlagService.service(updateFeatureFlagRequest) ;
     }
 
     @Delete("/{flagId}")

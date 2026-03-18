@@ -22,9 +22,6 @@ import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
 import org.redflag.service.impl.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 @RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes")
 @Tag(name = "Звено организации")

@@ -1,5 +1,6 @@
 package org.redflag.dto.featureflag.update;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
@@ -10,6 +11,12 @@ import lombok.Data;
 @Introspected
 @Serdeable
 public class UpdateFeatureFlagRequest {
+    @JsonIgnore
+    private Long organizationId;
+    @JsonIgnore
+    private Long nodeId;
+    @JsonIgnore
+    private Long featureFlagId;
 
     @JsonProperty("value")
     @Schema(description = "Значение фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
