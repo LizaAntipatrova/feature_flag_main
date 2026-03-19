@@ -18,7 +18,7 @@ import org.redflag.service.impl.CreateOrganizationWithRootNodesService;
 
 import java.util.UUID;
 
-@Controller("/api/vi")
+@Controller("/api/v1")
 @RequiredArgsConstructor
 @Tag(name = "Действия с несколькими сущностями")
 public class ComplexActionController {
