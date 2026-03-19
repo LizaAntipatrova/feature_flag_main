@@ -13,7 +13,7 @@ import io.micronaut.security.authentication.Authenticator;
 import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.rules.SecurityRule;
 import lombok.RequiredArgsConstructor;
-import org.redflag.exception.BadCredentialsException;
+import org.redflag.exception.BadCredentialsCustomException;
 import org.redflag.services.sessionServices.SessionService;
 import reactor.core.publisher.Mono;
 
@@ -31,7 +31,7 @@ public class LoginController {
     public Mono<HttpResponse<?>> login(@Body UsernamePasswordCredentials credentials, HttpRequest<?> request) {
         return Mono.from(authenticator.authenticate(request, credentials))
                 .filter(AuthenticationResponse::isAuthenticated)
-                .switchIfEmpty(Mono.error(new BadCredentialsException("Неверный логин или пароль")))
+                .switchIfEmpty(Mono.error(new BadCredentialsCustomException("Invalid login or password")))
                 .flatMap(authResponse -> sessionService.createSession(credentials.getUsername()))
                 .map(sessionService::buildSuccessResponse);
     }
@@ -42,7 +42,7 @@ public class LoginController {
         request.getCookies().get("SESSION", String.class)
                 .ifPresent(sessionService::invalidateSession);
 
-        return HttpResponse.ok(Map.of("message", "Вы успешно вышли"))
+        return HttpResponse.ok()
                 .cookie(sessionService.createSessionCookie("", 0));
     }
 
@@ -52,7 +52,7 @@ public class LoginController {
         Long userId = (Long) authentication.getAttributes().get("id");
         sessionService.invalidateAllUserSessions(userId);
 
-        return HttpResponse.ok(Map.of("message", "Все сеансы завершены"))
+        return HttpResponse.ok()
                 .cookie(sessionService.createSessionCookie("", 0));
     }
 

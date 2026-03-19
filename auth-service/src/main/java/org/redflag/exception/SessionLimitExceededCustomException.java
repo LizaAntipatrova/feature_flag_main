@@ -3,8 +3,8 @@ package org.redflag.exception;
 import io.micronaut.http.HttpStatus;
 
 // 403
-public class SessionLimitExceededException extends RuntimeException implements HttpStatusAware {
-    public SessionLimitExceededException(String message) {
+public class SessionLimitExceededCustomException extends RuntimeException implements HttpStatusAware {
+    public SessionLimitExceededCustomException(String message) {
         super(message);
     }
 

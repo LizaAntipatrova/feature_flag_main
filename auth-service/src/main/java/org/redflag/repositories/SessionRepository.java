@@ -7,7 +7,6 @@ import io.micronaut.data.jpa.repository.JpaRepository;
 import org.redflag.entities.Session;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Repository

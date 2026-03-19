@@ -42,7 +42,8 @@ micronaut:
 
     # Настройки для сессий
     session:
-      enabled: true
+#      enabled: true
+      enabled: false
       # Micronaut будет искать сессию, если нет JWT
       login-handler:
 #        enabled: true
@@ -76,13 +77,6 @@ micronaut:
         access: isAnonymous()
       - pattern: /v3/api-docs/**
         access: isAnonymous()
-
-#      - pattern: /api/v1/auth/login
-#        access: isAnonymous()
-#      - pattern: /api/v1/auth/register
-#        access: isAnonymous()
-#      - pattern: /**
-#        access: isAuthenticated()
 
     server:
       cors:

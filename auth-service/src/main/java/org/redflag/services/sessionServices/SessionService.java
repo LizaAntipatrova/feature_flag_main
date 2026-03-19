@@ -8,7 +8,7 @@ import org.redflag.configs.properties.SessionProperties;
 import org.redflag.entities.Session;
 import org.redflag.entities.UiClient;
 import org.redflag.exception.ResourceNotFoundCustomException;
-import org.redflag.exception.SessionLimitExceededException;
+import org.redflag.exception.SessionLimitExceededCustomException;
 import org.redflag.repositories.SessionRepository;
 import org.redflag.repositories.UiClientRepository;
 import reactor.core.publisher.Mono;
@@ -37,23 +37,6 @@ public class SessionService {
         return session.getTtl().isAfter(LocalDateTime.now());
     }
 
-//    public Mono<Session> createSession(String login) {
-//        return Mono.fromCallable(() -> {
-//            UiClient user = uiClientRepository.findByLogin(login)
-//                    .orElseThrow(() -> new ResourceNotFoundCustomException("User not found" + login));
-//
-//            long activeSessions = sessionRepository.countByUserIdAndTtlAfter(user.getId(), LocalDateTime.now());
-//            if (activeSessions >= MAX_SESSIONS) {
-//                throw new SessionLimitExceededException("The active sessions limit has been reached (max. " + MAX_SESSIONS + ")");
-//            }
-//
-//            Session session = new Session();
-//            session.setUser(user);
-//            session.setTtl(LocalDateTime.now().plusHours(sessionProperties.getTtlHours()));
-//
-//            return sessionRepository.save(session);
-//        }).subscribeOn(Schedulers.boundedElastic());
-//    }
     public Mono<Session> createSession(String login) {
         return Mono.fromCallable(() -> {
             UiClient user = findUserOrThrow(login);
@@ -70,7 +53,8 @@ public class SessionService {
     private void validateSessionLimit(Long userId) {
         long activeSessions = sessionRepository.countByUserIdAndTtlAfter(userId, LocalDateTime.now());
         if (activeSessions >= MAX_SESSIONS) {
-            throw new SessionLimitExceededException("The active sessions limit has been reached (max. " + MAX_SESSIONS + ")");
+            throw new SessionLimitExceededCustomException("The active sessions limit has been reached (max. "
+                    + MAX_SESSIONS + ")");
         }
     }
 

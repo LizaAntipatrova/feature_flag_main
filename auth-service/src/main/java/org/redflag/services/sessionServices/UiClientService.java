@@ -4,7 +4,7 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.UserSecurityDto;
 import org.redflag.entities.UiClient;
-import org.redflag.exception.BadCredentialsException;
+import org.redflag.exception.BadCredentialsCustomException;
 import org.redflag.repositories.UiClientRepository;
 import org.redflag.services.mappers.MapUiClientToUserSecurityDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +21,7 @@ public class UiClientService {
     public Mono<UserSecurityDto> authenticate(String login, String password) {
         return findUser(login)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .switchIfEmpty(Mono.error(new BadCredentialsException("Неверный логин или пароль")))
+                .switchIfEmpty(Mono.error(new BadCredentialsCustomException("Invalid login or password")))
                 .map(mapper::mapToDto);
     }
 

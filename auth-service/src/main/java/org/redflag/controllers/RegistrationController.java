@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.dto.RegisterOrganizationRequest;
 import org.redflag.services.RegistrationService;
 
+// доделать, переделать
 @Controller("/api/v1/auth")
 @Tag(name = "Регистрация ui пользователей, организаций и подчиненных")
 @RequiredArgsConstructor
