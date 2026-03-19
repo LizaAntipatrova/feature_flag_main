@@ -12,6 +12,28 @@ micronaut:
         mapping: /swagger-ui/**
         paths: classpath:META-INF/swagger/views/swagger-ui
 
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedOrigins:
+            - http://localhost:3000
+          allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - OPTIONS
+          allowedHeaders:
+            - Content-Type
+            - Authorization
+          exposedHeaders:
+            - Location
+          allowCredentials: true
+          maxAge: 3600
+
 datasources:
   default:
     url: jdbc:postgresql://localhost:5432/ff-service
