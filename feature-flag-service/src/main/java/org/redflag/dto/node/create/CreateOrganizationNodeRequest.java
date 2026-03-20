@@ -11,18 +11,15 @@ import lombok.Data;
 @Introspected
 @Serdeable
 public class CreateOrganizationNodeRequest {
-    @JsonIgnore
-    private Long organizationId;
-
     @JsonProperty("name")
     @Schema(description = "Название звена организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "Кредитование")
     private final String name;
-
     @JsonProperty("isService")
     @Schema(description = "Является ли данное звено организации сервисом", requiredMode = Schema.RequiredMode.REQUIRED, example = "false")
     private final Boolean isService;
-
     @JsonProperty("parentId")
     @Schema(description = "Идентификатор родительского звена организации", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "100")
     private final Long parentId;
+    @JsonIgnore
+    private Long organizationId;
 }

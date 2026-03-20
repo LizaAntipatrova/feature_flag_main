@@ -16,8 +16,6 @@ import org.redflag.dto.complex.CreateOrganizationWithRootNodeRequest;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeResponse;
 import org.redflag.service.impl.CreateOrganizationWithRootNodesService;
 
-import java.util.UUID;
-
 @Controller("/api/v1")
 @RequiredArgsConstructor
 @Tag(name = "Действия с несколькими сущностями")

@@ -7,13 +7,13 @@ import org.redflag.dto.organization.create.CreateOrganizationResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Objects;
 
 @RequiredArgsConstructor
 @Singleton
-public class CreateOrganizationService extends AbstractService<CreateOrganizationRequest, CreateOrganizationResponse> {
+public class CreateOrganizationService extends BaseService<CreateOrganizationRequest, CreateOrganizationResponse> {
     private final OrganizationRepository organizationRepository;
 
     @Override
@@ -26,13 +26,13 @@ public class CreateOrganizationService extends AbstractService<CreateOrganizatio
 
     @Override
     protected void validateState(CreateOrganizationRequest createOrganizationRequest) {
-        if (organizationRepository.existsByName(createOrganizationRequest.getName())){
+        if (organizationRepository.existsByName(createOrganizationRequest.getName())) {
             throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NAME.getException();
         }
     }
 
     @Override
-    protected CreateOrganizationResponse logic(CreateOrganizationRequest createOrganizationRequest) {
+    protected CreateOrganizationResponse execute(CreateOrganizationRequest createOrganizationRequest) {
         Organization organization = new Organization()
                 .setName(createOrganizationRequest.getName());
 

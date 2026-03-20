@@ -131,7 +131,7 @@ public class OrganizationNodeController {
         return getOrganizationNodeByIdService.service(getOrganizationNodeByIdRequest);
     }
 
-    @Get()
+    @Get
     @Operation(
             summary = "Получить список звеньев организации",
             description = "Получает звенья организации с пагинацией и возможностью фильтровать по родительскому звену "

@@ -7,35 +7,32 @@ import org.redflag.dto.organization.get.GetOrganizationsResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
+import org.redflag.validator.PaginationParameterValidator;
 
 import java.util.List;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Singleton
-public class GetOrganizationsService extends AbstractService<GetOrganizationsRequest, GetOrganizationsResponse> {
+public class GetOrganizationsService extends BaseService<GetOrganizationsRequest, GetOrganizationsResponse> {
     private final OrganizationRepository organizationRepository;
+
     @Override
-    protected void validateRequest(GetOrganizationsRequest getOrganizationsRequest) {
-        Integer limit = getOrganizationsRequest.limit();
-        Integer offset = getOrganizationsRequest.offset();
-        //TODO: вынести максимальный лимит и прописать в api
-        if (Objects.isNull(limit) || limit <= 0 || limit > 100) {
+    protected void validateRequest(GetOrganizationsRequest request) {
+        if (!PaginationParameterValidator.validateLimit(request.limit())) {
             throw ErrorCatalog.BAD_LIMIT.getException();
         }
-
-        if (Objects.isNull(offset) || offset < 0) {
+        if (!PaginationParameterValidator.validateOffset(request.offset())) {
             throw ErrorCatalog.BAD_OFFSET.getException();
         }
     }
 
     @Override
-    protected GetOrganizationsResponse logic(GetOrganizationsRequest getOrganizationsRequest) {
-        List<Organization> organizations= organizationRepository
+    protected GetOrganizationsResponse execute(GetOrganizationsRequest getOrganizationsRequest) {
+        List<Organization> organizations = organizationRepository
                 .findAll(getOrganizationsRequest.limit(), getOrganizationsRequest.offset());
 
-        List<GetOrganizationsResponse.OrganizationDTO> organizationDTOS =  organizations.stream()
+        List<GetOrganizationsResponse.OrganizationDTO> organizationDTOS = organizations.stream()
                 .map(this::toOrganizationDTO).toList();
 
         if (organizationDTOS.isEmpty()) {

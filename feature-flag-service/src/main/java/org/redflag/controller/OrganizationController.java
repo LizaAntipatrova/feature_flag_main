@@ -20,10 +20,7 @@ import org.redflag.dto.organization.get.GetOrganizationsRequest;
 import org.redflag.dto.organization.get.GetOrganizationsResponse;
 import org.redflag.dto.organization.update.UpdateOrganizationRequest;
 import org.redflag.dto.organization.update.UpdateOrganizationResponse;
-import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.impl.*;
-
-import java.util.List;
 
 @Controller("api/v1/organizations")
 @RequiredArgsConstructor

@@ -26,7 +26,6 @@ public enum ErrorCatalog {
     ORGANIZATION_CAN_HAVE_ONE_ROOT_NODE("02-0008", "Организация может иметь только один корневой узел", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
 
 
-
     private final String code;
     private final String message;
     private final ErrorType errorType;
@@ -35,6 +34,7 @@ public enum ErrorCatalog {
     public FeatureFlagAppException withMessageArgs(Object... messageArgs) {
         return new FeatureFlagAppException(this, this.message.formatted(messageArgs));
     }
+
     public FeatureFlagAppException getException() {
         return new FeatureFlagAppException(this, this.message);
     }

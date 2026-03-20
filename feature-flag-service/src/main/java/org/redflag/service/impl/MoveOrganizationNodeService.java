@@ -7,15 +7,14 @@ import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
-public class MoveOrganizationNodeService extends AbstractService<MoveOrganizationNodeRequest, MoveOrganizationNodeResponse> {
+public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNodeRequest, MoveOrganizationNodeResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
@@ -37,7 +36,7 @@ public class MoveOrganizationNodeService extends AbstractService<MoveOrganizatio
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
         if (movedNode.getPath().equals(movedNode.getId().toString())) {
-            throw  ErrorCatalog.MOVE_ROOT_NODE.getException();
+            throw ErrorCatalog.MOVE_ROOT_NODE.getException();
         }
         OrganizationNode parentNode = organizationNodeRepository
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNewParentId())
@@ -51,7 +50,7 @@ public class MoveOrganizationNodeService extends AbstractService<MoveOrganizatio
     }
 
     @Override
-    protected MoveOrganizationNodeResponse logic(MoveOrganizationNodeRequest request) {
+    protected MoveOrganizationNodeResponse execute(MoveOrganizationNodeRequest request) {
         List<OrganizationNode> subtree = organizationNodeRepository
                 .findSubtreeByOrganizationIdAndParentId(request.getOrganizationId(), request.getNodeId());
         OrganizationNode parentNode = organizationNodeRepository.findByOrganization_IdAndId(request.getOrganizationId(),
@@ -65,7 +64,7 @@ public class MoveOrganizationNodeService extends AbstractService<MoveOrganizatio
         return null;
     }
 
-    private void rewritePath(List<OrganizationNode> nodes,String oldRootNodePath, String parentPath) {
+    private void rewritePath(List<OrganizationNode> nodes, String oldRootNodePath, String parentPath) {
         //TODO: вынести работу с path
         int index = oldRootNodePath.lastIndexOf('.');
         String oldParentPath = oldRootNodePath.substring(0, index);

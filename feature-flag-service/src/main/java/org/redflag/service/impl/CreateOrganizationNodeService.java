@@ -9,7 +9,7 @@ import org.redflag.model.Organization;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.repository.OrganizationRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Singleton
 @RequiredArgsConstructor
-public class CreateOrganizationNodeService extends AbstractService<CreateOrganizationNodeRequest, CreateOrganizationNodeResponse> {
+public class CreateOrganizationNodeService extends BaseService<CreateOrganizationNodeRequest, CreateOrganizationNodeResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationRepository organizationRepository;
 
@@ -55,7 +55,7 @@ public class CreateOrganizationNodeService extends AbstractService<CreateOrganiz
     }
 
     @Override
-    protected CreateOrganizationNodeResponse logic(CreateOrganizationNodeRequest request) {
+    protected CreateOrganizationNodeResponse execute(CreateOrganizationNodeRequest request) {
         Optional<Organization> organizationOpt = organizationRepository.findById(request.getOrganizationId());
         if (organizationOpt.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();

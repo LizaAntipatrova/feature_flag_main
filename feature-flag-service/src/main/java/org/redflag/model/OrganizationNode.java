@@ -1,10 +1,13 @@
 package org.redflag.model;
 
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.DateUpdated;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnTransformer;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,4 +46,12 @@ public class OrganizationNode {
 
     @OneToMany(mappedBy = "organizationNode", cascade = CascadeType.ALL)
     private List<FeatureFlag> featureFlags;
+
+    @DateCreated
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @DateUpdated
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 }

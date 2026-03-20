@@ -3,9 +3,9 @@ services:
     image: postgres:18-alpine
     container_name: ff-service-postgres
     environment:
-      POSTGRES_DB: ff-service
-      POSTGRES_USER: ff-service
-      POSTGRES_PASSWORD: ff-service
+      POSTGRES_DB: ${FF_SERVICE_DB}
+      POSTGRES_USER: ${FF_SERVICE_DB_USER}
+      POSTGRES_PASSWORD: ${FF_SERVICE_DB_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
       TZ: UTC+3
     ports:

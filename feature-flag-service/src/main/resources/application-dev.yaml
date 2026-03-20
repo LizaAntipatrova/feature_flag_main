@@ -1,0 +1,18 @@
+micronaut:
+  server:
+    cors:
+      configurations:
+        web:
+          allowedOrigins:
+            - http://localhost:3000
+
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/ff-service
+    username: ${FF_SERVICE_DB_USER}
+    password: ${FF_SERVICE_DB_PASSWORD}
+jpa:
+  default:
+    properties:
+      hibernate:
+        show_sql: true

@@ -9,13 +9,13 @@ import org.redflag.model.FeatureFlag;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
-public class CreateFeatureFlagService extends AbstractService<CreateFeatureFlagRequest, CreateFeatureFlagResponse> {
+public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagRequest, CreateFeatureFlagResponse> {
     private final FeatureFlagRepository featureFlagRepository;
     private final OrganizationNodeRepository organizationNodeRepository;
 
@@ -32,14 +32,14 @@ public class CreateFeatureFlagService extends AbstractService<CreateFeatureFlagR
 
     @Override
     protected void validateState(CreateFeatureFlagRequest request) {
-        if (featureFlagRepository.existsByOrganizationNode_Organization_IdAndName(request.getOrganizationId(), request.getName())) {
+        if (featureFlagRepository.existsByOrganizationIdAndName(request.getOrganizationId(), request.getName())) {
             throw ErrorCatalog.NOT_UNIQUE_FEATURE_FLAG_NAME_IN_ORGANIZATION.getException();
         }
 
     }
 
     @Override
-    protected CreateFeatureFlagResponse logic(CreateFeatureFlagRequest request) {
+    protected CreateFeatureFlagResponse execute(CreateFeatureFlagRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         FeatureFlag featureFlag = new FeatureFlag()

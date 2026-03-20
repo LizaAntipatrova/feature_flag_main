@@ -7,13 +7,13 @@ import org.redflag.dto.organization.update.UpdateOrganizationResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
-public class UpdateOrganizationService extends AbstractService<UpdateOrganizationRequest, UpdateOrganizationResponse> {
+public class UpdateOrganizationService extends BaseService<UpdateOrganizationRequest, UpdateOrganizationResponse> {
     private final OrganizationRepository organizationRepository;
 
     @Override
@@ -27,17 +27,17 @@ public class UpdateOrganizationService extends AbstractService<UpdateOrganizatio
     @Override
     protected void validateState(UpdateOrganizationRequest request) {
         Long id = request.getId();
-        if(!organizationRepository.existsById(id)){
+        if (!organizationRepository.existsById(id)) {
             throw ErrorCatalog.NO_DATA.getException();
         }
         String name = request.getName();
-        if (organizationRepository.existsByName(name)){
+        if (organizationRepository.existsByName(name)) {
             throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NAME.getException();
         }
     }
 
     @Override
-    protected UpdateOrganizationResponse logic(UpdateOrganizationRequest request) {
+    protected UpdateOrganizationResponse execute(UpdateOrganizationRequest request) {
         Organization organization = new Organization().setId(request.getId()).setName(request.getName());
         Organization newOrganization = organizationRepository.update(organization);
         return new UpdateOrganizationResponse(newOrganization.getId(), newOrganization.getName());

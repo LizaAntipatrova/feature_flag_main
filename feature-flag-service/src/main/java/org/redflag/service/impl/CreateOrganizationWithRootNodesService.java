@@ -8,15 +8,16 @@ import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.dto.node.create.CreateOrganizationNodeResponse;
 import org.redflag.dto.organization.create.CreateOrganizationRequest;
 import org.redflag.dto.organization.create.CreateOrganizationResponse;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 @RequiredArgsConstructor
 @Singleton
-public class CreateOrganizationWithRootNodesService extends AbstractService<CreateOrganizationWithRootNodeRequest, CreateOrganizationWithRootNodeResponse> {
+public class CreateOrganizationWithRootNodesService extends BaseService<CreateOrganizationWithRootNodeRequest, CreateOrganizationWithRootNodeResponse> {
     private final CreateOrganizationNodeService createOrganizationNodeService;
     private final CreateOrganizationService createOrganizationService;
+
     @Override
-    protected CreateOrganizationWithRootNodeResponse logic(CreateOrganizationWithRootNodeRequest request) {
+    protected CreateOrganizationWithRootNodeResponse execute(CreateOrganizationWithRootNodeRequest request) {
         CreateOrganizationResponse createOrganizationResponse = createOrganizationService
                 .service(new CreateOrganizationRequest(request.getName()));
         CreateOrganizationNodeRequest createOrganizationNodeRequest = new CreateOrganizationNodeRequest(request.getName(),

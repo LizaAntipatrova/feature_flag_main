@@ -7,7 +7,7 @@ import org.redflag.dto.node.get.GetSubtreeNodeOrganizationsResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 
 @Singleton
 @RequiredArgsConstructor
-public class GetSubtreeNodeOrganizationsService extends AbstractService<GetSubtreeNodeOrganizationsRequest, GetSubtreeNodeOrganizationsResponse> {
+public class GetSubtreeNodeOrganizationsService extends BaseService<GetSubtreeNodeOrganizationsRequest, GetSubtreeNodeOrganizationsResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
-    protected GetSubtreeNodeOrganizationsResponse logic(GetSubtreeNodeOrganizationsRequest request) {
+    protected GetSubtreeNodeOrganizationsResponse execute(GetSubtreeNodeOrganizationsRequest request) {
         List<OrganizationNode> organizationNodes = organizationNodeRepository.findSubtreeByOrganizationIdAndParentId(
                 request.organizationId(),
                 request.nodeId());

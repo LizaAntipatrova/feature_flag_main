@@ -7,13 +7,13 @@ import org.redflag.dto.featureflag.get.GetFeatureFlagByNameResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
-public class GetFeatureFlagByNameService extends AbstractService<GetFeatureFlagByNameRequest, GetFeatureFlagByNameResponse> {
+public class GetFeatureFlagByNameService extends BaseService<GetFeatureFlagByNameRequest, GetFeatureFlagByNameResponse> {
     private final FeatureFlagRepository featureFlagRepository;
 
     @Override
@@ -25,7 +25,7 @@ public class GetFeatureFlagByNameService extends AbstractService<GetFeatureFlagB
     }
 
     @Override
-    protected GetFeatureFlagByNameResponse logic(GetFeatureFlagByNameRequest request) {
+    protected GetFeatureFlagByNameResponse execute(GetFeatureFlagByNameRequest request) {
         FeatureFlag featureFlag = featureFlagRepository.findByName(request.flagName())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         return new GetFeatureFlagByNameResponse(featureFlag.getId(),

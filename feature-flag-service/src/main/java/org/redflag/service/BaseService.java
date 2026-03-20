@@ -1,9 +1,7 @@
 package org.redflag.service;
 
-import jakarta.inject.Singleton;
 
-
-public abstract class AbstractService<Request, Response> {
+public abstract class BaseService<Request, Response> {
     protected void validateRequest(Request request) {
 
     }
@@ -12,11 +10,11 @@ public abstract class AbstractService<Request, Response> {
 
     }
 
-    protected abstract Response logic(Request request);
+    protected abstract Response execute(Request request);
 
     public Response service(Request request) {
         validateRequest(request);
         validateState(request);
-        return logic(request);
+        return execute(request);
     }
 }

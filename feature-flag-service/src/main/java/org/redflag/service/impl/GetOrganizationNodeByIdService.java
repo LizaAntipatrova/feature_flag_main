@@ -7,20 +7,20 @@ import org.redflag.dto.node.get.GetOrganizationNodeByIdResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.repository.OrganizationRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Singleton
-public class GetOrganizationNodeByIdService extends AbstractService<GetOrganizationNodeByIdRequest, GetOrganizationNodeByIdResponse> {
+public class GetOrganizationNodeByIdService extends BaseService<GetOrganizationNodeByIdRequest, GetOrganizationNodeByIdResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
+
     @Override
-    protected GetOrganizationNodeByIdResponse logic(GetOrganizationNodeByIdRequest request) {
+    protected GetOrganizationNodeByIdResponse execute(GetOrganizationNodeByIdRequest request) {
         Optional<OrganizationNode> organizationNodeOpt =
                 organizationNodeRepository.findByOrganization_IdAndId(request.organizationId(), request.nodeId());
-        if(organizationNodeOpt.isEmpty()){
+        if (organizationNodeOpt.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();
         }
         OrganizationNode organizationNode = organizationNodeOpt.get();

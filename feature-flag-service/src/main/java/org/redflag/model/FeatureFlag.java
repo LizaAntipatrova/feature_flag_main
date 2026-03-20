@@ -1,8 +1,12 @@
 package org.redflag.model;
 
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.DateUpdated;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.time.Instant;
 
 @Data
 @Entity
@@ -26,4 +30,12 @@ public class FeatureFlag {
     @ManyToOne
     @JoinColumn(name = "organization_node_id")
     private OrganizationNode organizationNode;
+
+    @DateCreated
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @DateUpdated
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 }

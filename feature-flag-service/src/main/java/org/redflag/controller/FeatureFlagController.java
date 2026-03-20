@@ -17,7 +17,6 @@ import org.redflag.dto.featureflag.delete.DeleteFeatureFlagRequest;
 import org.redflag.dto.featureflag.get.*;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagResponse;
-import org.redflag.dto.featureflag.get.GetFeatureFlagByIdRequest;
 import org.redflag.service.impl.*;
 
 @RequiredArgsConstructor
@@ -279,7 +278,7 @@ public class FeatureFlagController {
             @PathVariable Long flagId
     ) {
         GetFeatureFlagByIdRequest request = new GetFeatureFlagByIdRequest(organizationId, nodeId, flagId);
-        return getFeatureFlagByIdService.service(request) ;
+        return getFeatureFlagByIdService.service(request);
     }
 
     @Patch("/{flagId}")
@@ -337,7 +336,7 @@ public class FeatureFlagController {
         updateFeatureFlagRequest.setOrganizationId(organizationId);
         updateFeatureFlagRequest.setNodeId(nodeId);
         updateFeatureFlagRequest.setFeatureFlagId(flagId);
-        return updateFeatureFlagService.service(updateFeatureFlagRequest) ;
+        return updateFeatureFlagService.service(updateFeatureFlagRequest);
     }
 
     @Delete("/{flagId}")

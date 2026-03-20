@@ -7,14 +7,14 @@ import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
-import org.redflag.model.OrganizationNode;
 import org.redflag.repository.FeatureFlagRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Objects;
+
 @Singleton
 @RequiredArgsConstructor
-public class UpdateFeatureFlagService extends AbstractService<UpdateFeatureFlagRequest, UpdateFeatureFlagResponse> {
+public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagRequest, UpdateFeatureFlagResponse> {
     private final FeatureFlagRepository featureFlagRepository;
 
     @Override
@@ -38,7 +38,7 @@ public class UpdateFeatureFlagService extends AbstractService<UpdateFeatureFlagR
     }
 
     @Override
-    protected UpdateFeatureFlagResponse logic(UpdateFeatureFlagRequest request) {
+    protected UpdateFeatureFlagResponse execute(UpdateFeatureFlagRequest request) {
         FeatureFlag featureFlag = featureFlagRepository.findById(request.getFeatureFlagId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         if (!featureFlag.getVersion().equals(request.getVersion())) {

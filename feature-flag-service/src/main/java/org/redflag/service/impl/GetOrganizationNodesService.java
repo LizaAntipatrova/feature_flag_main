@@ -7,32 +7,28 @@ import org.redflag.dto.node.get.GetOrganizationNodesResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
+import org.redflag.validator.PaginationParameterValidator;
 
 import java.util.List;
-import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
-public class GetOrganizationNodesService extends AbstractService<GetOrganizationNodesRequest, GetOrganizationNodesResponse> {
+public class GetOrganizationNodesService extends BaseService<GetOrganizationNodesRequest, GetOrganizationNodesResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
     protected void validateRequest(GetOrganizationNodesRequest request) {
-        Integer limit = request.limit();
-        Integer offset = request.offset();
-        //TODO: вынести максимальный лимит и прописать в api
-        if (Objects.isNull(limit) || limit <= 0 || limit > 100) {
+        if (!PaginationParameterValidator.validateLimit(request.limit())) {
             throw ErrorCatalog.BAD_LIMIT.getException();
         }
-
-        if (Objects.isNull(offset) || offset < 0) {
+        if (!PaginationParameterValidator.validateOffset(request.offset())) {
             throw ErrorCatalog.BAD_OFFSET.getException();
         }
     }
 
     @Override
-    protected GetOrganizationNodesResponse logic(GetOrganizationNodesRequest request) {
+    protected GetOrganizationNodesResponse execute(GetOrganizationNodesRequest request) {
         List<OrganizationNode> organizationNodes = organizationNodeRepository.findAllByOrganizationIdAndParentId(
                 request.organizationId(),
                 request.nodeId(),

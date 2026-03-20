@@ -17,7 +17,7 @@ public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> 
             where ff.organizationNode.organization.id = :organizationId
               and ff.name = :name)
             """)
-    boolean existsByOrganizationNode_Organization_IdAndName(Long organizationId, String name);
+    boolean existsByOrganizationIdAndName(Long organizationId, String name);
 
     Optional<FeatureFlag> findByName(String name);
 
@@ -26,7 +26,7 @@ public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> 
             where ff.organization_node_id = :nodeId
             limit :limit offset :offset
             """, nativeQuery = true)
-    List<FeatureFlag> findByOrganizationNode_Id(Long nodeId, Integer limit, Integer offset);
+    List<FeatureFlag> findByOrganizationNodeId(Long nodeId, Integer limit, Integer offset);
 
     @Query(value = """
             select ff.id, ff.name, ff.value, ff.organization_node_id, ff.version

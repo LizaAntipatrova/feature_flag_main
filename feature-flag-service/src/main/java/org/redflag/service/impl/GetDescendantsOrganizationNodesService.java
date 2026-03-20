@@ -7,17 +7,17 @@ import org.redflag.dto.node.get.GetDescendantsOrganizationNodesResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.List;
 
 @Singleton
 @RequiredArgsConstructor
-public class GetDescendantsOrganizationNodesService extends AbstractService<GetDescendantsOrganizationNodesRequest, GetDescendantsOrganizationNodesResponse> {
+public class GetDescendantsOrganizationNodesService extends BaseService<GetDescendantsOrganizationNodesRequest, GetDescendantsOrganizationNodesResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
-    protected GetDescendantsOrganizationNodesResponse logic(GetDescendantsOrganizationNodesRequest request) {
+    protected GetDescendantsOrganizationNodesResponse execute(GetDescendantsOrganizationNodesRequest request) {
         List<OrganizationNode> organizationNodes = organizationNodeRepository
                 .findAllDescendantsByIdAndDepth(request.organizationId(), request.nodeId(), request.depth());
         if (organizationNodes.isEmpty()) {

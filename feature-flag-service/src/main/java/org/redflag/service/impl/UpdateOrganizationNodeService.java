@@ -1,6 +1,5 @@
 package org.redflag.service.impl;
 
-import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
@@ -9,14 +8,13 @@ import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.service.AbstractService;
+import org.redflag.service.BaseService;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Singleton
 @RequiredArgsConstructor
-public class UpdateOrganizationNodeService extends AbstractService<UpdateOrganizationNodeRequest, UpdateOrganizationNodeResponse> {
+public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizationNodeRequest, UpdateOrganizationNodeResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
@@ -51,7 +49,7 @@ public class UpdateOrganizationNodeService extends AbstractService<UpdateOrganiz
     }
 
     @Override
-    protected UpdateOrganizationNodeResponse logic(UpdateOrganizationNodeRequest request) {
+    protected UpdateOrganizationNodeResponse execute(UpdateOrganizationNodeRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         if (!organizationNode.getVersion().equals(request.getVersion())) {

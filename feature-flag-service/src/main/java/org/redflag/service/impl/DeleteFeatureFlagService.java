@@ -5,19 +5,16 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.dto.featureflag.delete.DeleteFeatureFlagRequest;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
-import org.redflag.model.Organization;
 import org.redflag.repository.FeatureFlagRepository;
-import org.redflag.service.AbstractService;
-
-import java.util.Optional;
+import org.redflag.service.BaseService;
 
 @Singleton
 @RequiredArgsConstructor
-public class DeleteFeatureFlagService extends AbstractService<DeleteFeatureFlagRequest, Void> {
+public class DeleteFeatureFlagService extends BaseService<DeleteFeatureFlagRequest, Void> {
     private final FeatureFlagRepository featureFlagRepository;
 
     @Override
-    protected Void logic(DeleteFeatureFlagRequest request) {
+    protected Void execute(DeleteFeatureFlagRequest request) {
         FeatureFlag featureFlag = featureFlagRepository.findById(request.flagId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         featureFlagRepository.delete(featureFlag);

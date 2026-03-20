@@ -11,10 +11,9 @@ import lombok.Data;
 @Introspected
 @Serdeable
 public class UpdateOrganizationRequest {
-    @JsonIgnore
-    private Long id;
-
     @JsonProperty("name")
     @Schema(description = "Новое название организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "ООО Хихи-хаха")
     private final String name;
+    @JsonIgnore
+    private Long id;
 }

@@ -11,16 +11,14 @@ import lombok.Data;
 @Introspected
 @Serdeable
 public class CreateFeatureFlagRequest {
+    @JsonProperty("name")
+    @Schema(description = "Название фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "friday_release_mode")
+    private final String name;
+    @JsonProperty("value")
+    @Schema(description = "Значение фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+    private final Boolean value;
     @JsonIgnore
     private Long organizationId;
     @JsonIgnore
     private Long nodeId;
-
-    @JsonProperty("name")
-    @Schema(description = "Название фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "friday_release_mode")
-    private final String name;
-
-    @JsonProperty("value")
-    @Schema(description = "Значение фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-    private final Boolean value;
 }

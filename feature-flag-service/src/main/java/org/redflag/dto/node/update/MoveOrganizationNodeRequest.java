@@ -11,16 +11,14 @@ import lombok.Data;
 @Introspected
 @Serdeable
 public class MoveOrganizationNodeRequest {
+    @JsonProperty("newParentId")
+    @Schema(description = "идентификатор, родителя к которому перемещаем звено организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "3")
+    private final Long newParentId;
+    @JsonProperty("version")
+    @Schema(description = "Версия данных для оптимистичной блокировки", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+    private final Long version;
     @JsonIgnore
     private Long organizationId;
     @JsonIgnore
     private Long nodeId;
-
-    @JsonProperty("newParentId")
-    @Schema(description = "идентификатор, родителя к которому перемещаем звено организации", requiredMode = Schema.RequiredMode.REQUIRED, example = "3")
-    private final Long newParentId;
-
-    @JsonProperty("version")
-    @Schema(description = "Версия данных для оптимистичной блокировки", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    private final Long version;
 }
