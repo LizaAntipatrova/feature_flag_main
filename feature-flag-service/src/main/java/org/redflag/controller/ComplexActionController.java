@@ -12,8 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
-import org.redflag.dto.complex.CreateOrganizationWithRootNodeRequest;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeResponse;
+import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
+import org.redflag.dto.organization.create.CreateOrganizationRequest;
 import org.redflag.service.impl.CreateOrganizationWithRootNodesService;
 
 @Controller("/api/v1")
@@ -61,7 +62,7 @@ public class ComplexActionController {
             )
 
     })
-    public HttpResponse<CreateOrganizationWithRootNodeResponse> createOrganizationWithRootNode(@Body CreateOrganizationWithRootNodeRequest request) {
+    public HttpResponse<CreateOrganizationWithRootNodeResponse> createOrganizationWithRootNode(@Body CreateOrganizationRequest request) {
         return HttpResponse.created(createOrganizationWithRootNodesService.service(request));
     }
 }

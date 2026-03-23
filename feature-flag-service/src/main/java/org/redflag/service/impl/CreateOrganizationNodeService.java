@@ -2,8 +2,8 @@ package org.redflag.service.impl;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
-import org.redflag.dto.node.create.CreateOrganizationNodeResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.model.OrganizationNode;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Singleton
 @RequiredArgsConstructor
-public class CreateOrganizationNodeService extends BaseService<CreateOrganizationNodeRequest, CreateOrganizationNodeResponse> {
+public class CreateOrganizationNodeService extends BaseService<CreateOrganizationNodeRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationRepository organizationRepository;
 
@@ -55,7 +55,7 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
     }
 
     @Override
-    protected CreateOrganizationNodeResponse execute(CreateOrganizationNodeRequest request) {
+    protected OrganizationNodeDTO execute(CreateOrganizationNodeRequest request) {
         Organization organization = organizationRepository.findById(request.getOrganizationId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         OrganizationNode organizationNode = new OrganizationNode()
@@ -75,7 +75,7 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
         }
         organizationNodeRepository.update(organizationNode);
 
-        return new CreateOrganizationNodeResponse(organizationNode.getId(),
+        return new OrganizationNodeDTO(organizationNode.getId(),
                 organizationNode.getOrganization().getId(),
                 organizationNode.getUuid(),
                 organizationNode.getPath(),

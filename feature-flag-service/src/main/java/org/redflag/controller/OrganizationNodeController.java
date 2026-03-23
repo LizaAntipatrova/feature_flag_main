@@ -12,14 +12,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.ErrorResponse;
+import org.redflag.dto.node.OrganizationNodeDTO;
+import org.redflag.dto.node.OrganizationNodeIdDTO;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
-import org.redflag.dto.node.create.CreateOrganizationNodeResponse;
-import org.redflag.dto.node.delete.DeleteOrganizationNodeRequest;
 import org.redflag.dto.node.get.*;
 import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
-import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
 import org.redflag.service.impl.*;
 
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "201",
                     description = "Успешный ответ создания",
-                    content = @Content(schema = @Schema(implementation = CreateOrganizationNodeResponse.class))
+                    content = @Content(schema = @Schema(implementation = OrganizationNodeDTO.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -81,7 +80,7 @@ public class OrganizationNodeController {
             )
 
     })
-    public HttpResponse<CreateOrganizationNodeResponse> createOrganizationNode(
+    public HttpResponse<OrganizationNodeDTO> createOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Body CreateOrganizationNodeRequest request) {
@@ -98,7 +97,7 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Успешный ответ",
-                    content = @Content(schema = @Schema(implementation = GetOrganizationNodeByIdResponse.class))
+                    content = @Content(schema = @Schema(implementation = OrganizationNodeDTO.class))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -122,12 +121,12 @@ public class OrganizationNodeController {
             )
 
     })
-    public GetOrganizationNodeByIdResponse getOrganizationNodeById(
+    public OrganizationNodeDTO getOrganizationNodeById(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId) {
-        GetOrganizationNodeByIdRequest getOrganizationNodeByIdRequest = new GetOrganizationNodeByIdRequest(organizationId, nodeId);
+        OrganizationNodeIdDTO getOrganizationNodeByIdRequest = new OrganizationNodeIdDTO(organizationId, nodeId);
         return getOrganizationNodeByIdService.service(getOrganizationNodeByIdRequest);
     }
 
@@ -180,7 +179,12 @@ public class OrganizationNodeController {
             @Parameter(description = "Начальный номер записи от начала для получения блока записей", required = true, example = "0")
             @QueryValue("offset") Integer offset
     ) {
-        GetOrganizationNodesRequest getOrganizationNodesRequest = new GetOrganizationNodesRequest(organizationId, parentId, limit, offset);
+        GetOrganizationNodesRequest getOrganizationNodesRequest = GetOrganizationNodesRequest.builder()
+                .organizationId(organizationId)
+                .nodeId(parentId)
+                .offset(offset)
+                .limit(limit)
+                .build();
         return getOrganizationNodesService.service(getOrganizationNodesRequest);
     }
 
@@ -193,7 +197,7 @@ public class OrganizationNodeController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Успешный ответ",
-                    content = @Content(schema = @Schema(implementation = UpdateOrganizationNodeResponse.class))
+                    content = @Content(schema = @Schema(implementation = OrganizationNodeDTO.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -227,7 +231,7 @@ public class OrganizationNodeController {
             )
 
     })
-    public UpdateOrganizationNodeResponse updateOrganizationNode(
+    public OrganizationNodeDTO updateOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
@@ -282,7 +286,7 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId
     ) {
-        DeleteOrganizationNodeRequest request = new DeleteOrganizationNodeRequest(organizationId, nodeId);
+        OrganizationNodeIdDTO request = new OrganizationNodeIdDTO(organizationId, nodeId);
         deleteOrganizationNodeService.service(request);
         return HttpResponse.noContent();
     }
@@ -326,7 +330,7 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId
     ) {
-        GetChildrenOrganizationNodesRequest request = new GetChildrenOrganizationNodesRequest(organizationId, nodeId);
+        OrganizationNodeIdDTO request = new OrganizationNodeIdDTO(organizationId, nodeId);
         return getChildrenOrganizationNodesService.service(request);
     }
 
@@ -369,7 +373,7 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId
     ) {
-        GetAncestorsOrganizationNodesRequest request = new GetAncestorsOrganizationNodesRequest(organizationId, nodeId);
+        OrganizationNodeIdDTO request = new OrganizationNodeIdDTO(organizationId, nodeId);
         return getAncestorsOrganizationNodesService.service(request);
     }
 
@@ -415,7 +419,11 @@ public class OrganizationNodeController {
             @Parameter(description = "Максимальный уровень потомка, от текущего звена (по умолчанию возвращает всех потомков)", required = false, example = "1")
             @QueryValue("depth") Integer depth
     ) {
-        GetDescendantsOrganizationNodesRequest request = new GetDescendantsOrganizationNodesRequest(organizationId, nodeId, depth);
+        GetDescendantsOrganizationNodesRequest request = GetDescendantsOrganizationNodesRequest.builder()
+                .organizationId(organizationId)
+                .nodeId(nodeId)
+                .depth(depth)
+                .build();
         return getDescendantsOrganizationNodesService.service(request);
     }
 
@@ -458,7 +466,7 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId
     ) {
-        GetSubtreeNodeOrganizationsRequest request = new GetSubtreeNodeOrganizationsRequest(organizationId, nodeId);
+        OrganizationNodeIdDTO request = new OrganizationNodeIdDTO(organizationId, nodeId);
         return getSubtreeNodeOrganizationsService.service(request);
     }
 

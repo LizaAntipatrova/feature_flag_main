@@ -2,18 +2,18 @@ package org.redflag.service.impl;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.node.delete.DeleteOrganizationNodeRequest;
+import org.redflag.dto.node.OrganizationNodeIdDTO;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 
 @Singleton
 @RequiredArgsConstructor
-public class DeleteOrganizationNodeService extends BaseService<DeleteOrganizationNodeRequest, Void> {
+public class DeleteOrganizationNodeService extends BaseService<OrganizationNodeIdDTO, Void> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
-    protected Void execute(DeleteOrganizationNodeRequest request) {
-        organizationNodeRepository.deleteSubtree(request.nodeId());
+    protected Void execute(OrganizationNodeIdDTO request) {
+        organizationNodeRepository.deleteSubtree(request.getNodeId());
         return null;
     }
 }

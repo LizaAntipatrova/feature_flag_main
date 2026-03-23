@@ -2,7 +2,7 @@ package org.redflag.service.impl;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.node.get.GetSubtreeNodeOrganizationsRequest;
+import org.redflag.dto.node.OrganizationNodeIdDTO;
 import org.redflag.dto.node.get.GetSubtreeNodeOrganizationsResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 @Singleton
 @RequiredArgsConstructor
-public class GetSubtreeNodeOrganizationsService extends BaseService<GetSubtreeNodeOrganizationsRequest, GetSubtreeNodeOrganizationsResponse> {
+public class GetSubtreeNodeOrganizationsService extends BaseService<OrganizationNodeIdDTO, GetSubtreeNodeOrganizationsResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
-    protected GetSubtreeNodeOrganizationsResponse execute(GetSubtreeNodeOrganizationsRequest request) {
+    protected GetSubtreeNodeOrganizationsResponse execute(OrganizationNodeIdDTO request) {
         List<OrganizationNode> organizationNodes = organizationNodeRepository.findSubtreeByOrganizationIdAndParentId(
-                request.organizationId(),
-                request.nodeId());
+                request.getOrganizationId(),
+                request.getNodeId());
         if (organizationNodes.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();
         }
@@ -52,13 +52,13 @@ public class GetSubtreeNodeOrganizationsService extends BaseService<GetSubtreeNo
     }
 
     private GetSubtreeNodeOrganizationsResponse toGetSubtreeNodeOrganizationsResponse(OrganizationNode organizationNode) {
-        return new GetSubtreeNodeOrganizationsResponse(organizationNode.getId(),
-                organizationNode.getOrganization().getId(),
-                organizationNode.getUuid(),
-                organizationNode.getPath(),
-                organizationNode.getName(),
-                organizationNode.getIsService(),
-                organizationNode.getVersion(),
-                new ArrayList<>());
+        return GetSubtreeNodeOrganizationsResponse.builder()
+                .id(organizationNode.getId())
+                .name(organizationNode.getName())
+                .path(organizationNode.getPath())
+                .isService(organizationNode.getIsService())
+                .uuid(organizationNode.getUuid())
+                .version(organizationNode.getVersion())
+                .children(new ArrayList<>()).build();
     }
 }

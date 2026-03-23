@@ -2,6 +2,7 @@ package org.redflag.service.impl;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.get.GetOrganizationNodesRequest;
 import org.redflag.dto.node.get.GetOrganizationNodesResponse;
 import org.redflag.error.ErrorCatalog;
@@ -19,10 +20,10 @@ public class GetOrganizationNodesService extends BaseService<GetOrganizationNode
 
     @Override
     protected void validateRequest(GetOrganizationNodesRequest request) {
-        if (!PaginationParameterValidator.validateLimit(request.limit())) {
+        if (!PaginationParameterValidator.validateLimit(request.getLimit())) {
             throw ErrorCatalog.BAD_LIMIT.getException();
         }
-        if (!PaginationParameterValidator.validateOffset(request.offset())) {
+        if (!PaginationParameterValidator.validateOffset(request.getOffset())) {
             throw ErrorCatalog.BAD_OFFSET.getException();
         }
     }
@@ -30,29 +31,32 @@ public class GetOrganizationNodesService extends BaseService<GetOrganizationNode
     @Override
     protected GetOrganizationNodesResponse execute(GetOrganizationNodesRequest request) {
         List<OrganizationNode> organizationNodes = organizationNodeRepository.findAllByOrganizationIdAndParentId(
-                request.organizationId(),
-                request.nodeId(),
-                request.limit(),
-                request.offset());
+                request.getOrganizationId(),
+                request.getNodeId(),
+                request.getLimit(),
+                request.getOffset());
         if (organizationNodes.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();
         }
-        return new GetOrganizationNodesResponse(
-                organizationNodes.stream()
+        return GetOrganizationNodesResponse.builder()
+                .items(organizationNodes.stream()
                         .map(this::toOrganizationNodeDTO)
-                        .toList(),
-                request.limit(),
-                request.offset(),
-                organizationNodes.size());
+                        .toList())
+                .limit(request.getLimit())
+                .offset(request.getOffset())
+                .total(organizationNodes.size())
+                .build();
     }
 
-    private GetOrganizationNodesResponse.OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
-        return new GetOrganizationNodesResponse.OrganizationNodeDTO(organizationNode.getId(),
-                organizationNode.getOrganization().getId(),
-                organizationNode.getUuid(),
-                organizationNode.getPath(),
-                organizationNode.getName(),
-                organizationNode.getIsService(),
-                organizationNode.getVersion());
+    private OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
+        return OrganizationNodeDTO.builder()
+                .id(organizationNode.getId())
+                .organizationId(organizationNode.getOrganization().getId())
+                .uuid(organizationNode.getUuid())
+                .path(organizationNode.getPath())
+                .name(organizationNode.getName())
+                .isService(organizationNode.getIsService())
+                .version(organizationNode.getVersion())
+                .build();
     }
 }

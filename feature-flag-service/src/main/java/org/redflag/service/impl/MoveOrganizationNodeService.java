@@ -2,6 +2,7 @@ package org.redflag.service.impl;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.error.ErrorCatalog;
@@ -60,9 +61,19 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
                 .filter((node) -> node.getId().equals(request.getNodeId()))
                 .findAny()
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        rewritePath(subtree, rootNode.getPath(), parentNode.getPath());
+        String oldRootPath = rootNode.getPath();
+        rewritePath(subtree, oldRootPath, parentNode.getPath());
         organizationNodeRepository.updateAll(subtree);
-        return null;
+        return MoveOrganizationNodeResponse.builder()
+                .id(rootNode.getId())
+                .uuid(rootNode.getUuid())
+                .oldPath(oldRootPath)
+                .newPath(rootNode.getPath())
+                .movedDescendants(subtree.stream()
+                        .filter((node) -> !node.getId().equals(request.getNodeId()))
+                        .map(this::toOrganizationNodeDTO)
+                        .toList())
+                .build();
     }
 
     private void rewritePath(List<OrganizationNode> nodes, String oldRootNodePath, String parentPath) {
@@ -70,5 +81,17 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
         int index = oldRootNodePath.lastIndexOf('.');
         String oldParentPath = oldRootNodePath.substring(0, index);
         nodes.forEach(node -> node.setPath(node.getPath().replace(oldParentPath, parentPath)));
+    }
+
+    private OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
+        return OrganizationNodeDTO.builder()
+                .id(organizationNode.getId())
+                .organizationId(organizationNode.getOrganization().getId())
+                .uuid(organizationNode.getUuid())
+                .path(organizationNode.getPath())
+                .name(organizationNode.getName())
+                .isService(organizationNode.getIsService())
+                .version(organizationNode.getVersion())
+                .build();
     }
 }

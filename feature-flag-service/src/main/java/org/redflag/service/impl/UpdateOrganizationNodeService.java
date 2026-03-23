@@ -3,8 +3,8 @@ package org.redflag.service.impl;
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
-import org.redflag.dto.node.update.UpdateOrganizationNodeResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
-public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizationNodeRequest, UpdateOrganizationNodeResponse> {
+public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizationNodeRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
 
     @Override
@@ -39,7 +39,8 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
         if (!organizationNode.getVersion().equals(request.getVersion())) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
-        if (organizationNodeRepository.existsByOrganization_IdAndName(request.getOrganizationId(), request.getName())) {
+        if (!organizationNode.getName().equals(request.getName())
+        && organizationNodeRepository.existsByOrganization_IdAndName(request.getOrganizationId(), request.getName())) {
             throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION.getException();
         }
         if (request.getIsService() && organizationNodeRepository.existsDescendants(request.getNodeId())) {
@@ -49,7 +50,7 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
     }
 
     @Override
-    protected UpdateOrganizationNodeResponse execute(UpdateOrganizationNodeRequest request) {
+    protected OrganizationNodeDTO execute(UpdateOrganizationNodeRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         if (!organizationNode.getVersion().equals(request.getVersion())) {
@@ -64,12 +65,14 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
         } catch (OptimisticLockException e) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
-        return new UpdateOrganizationNodeResponse(newOrganizationNode.getId(),
-                newOrganizationNode.getOrganization().getId(),
-                newOrganizationNode.getUuid(),
-                newOrganizationNode.getPath(),
-                newOrganizationNode.getName(),
-                newOrganizationNode.getIsService(),
-                newOrganizationNode.getVersion());
+        return OrganizationNodeDTO.builder()
+                .id(newOrganizationNode.getId())
+                .organizationId(newOrganizationNode.getOrganization().getId())
+                .uuid(newOrganizationNode.getUuid())
+                .path(newOrganizationNode.getPath())
+                .name(newOrganizationNode.getName())
+                .isService(newOrganizationNode.getIsService())
+                .version(newOrganizationNode.getVersion())
+                .build();
     }
 }

@@ -25,7 +25,7 @@ public class Organization {
     private List<OrganizationNode> organizationNodes;
 
     @DateCreated
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @DateUpdated

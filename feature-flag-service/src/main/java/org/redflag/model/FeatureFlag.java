@@ -32,7 +32,7 @@ public class FeatureFlag {
     private OrganizationNode organizationNode;
 
     @DateCreated
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @DateUpdated
