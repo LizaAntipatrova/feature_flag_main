@@ -5,10 +5,12 @@ import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
+@Builder
+@Getter
 @Introspected
 @Serdeable
 public class ErrorResponse {

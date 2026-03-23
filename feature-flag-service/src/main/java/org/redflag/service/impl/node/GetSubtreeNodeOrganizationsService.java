@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +8,12 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.util.LtreePathUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -33,19 +35,19 @@ public class GetSubtreeNodeOrganizationsService extends BaseService<Organization
     private GetSubtreeNodeOrganizationsResponse assembleOrganizationNodeSubtree(List<OrganizationNode> organizationNodes) {
         Map<String, GetSubtreeNodeOrganizationsResponse> subtreeNodeDTOS = organizationNodes.stream()
                 .map(this::toGetSubtreeNodeOrganizationsResponse)
-                .collect(Collectors.toMap(GetSubtreeNodeOrganizationsResponse::getPath, (nodeDTO) -> nodeDTO));
+                .collect(Collectors.toMap(
+                        GetSubtreeNodeOrganizationsResponse::getPath,
+                        (nodeDTO) -> nodeDTO)
+                );
 
         GetSubtreeNodeOrganizationsResponse root = null;
         for (GetSubtreeNodeOrganizationsResponse node : subtreeNodeDTOS.values()) {
-            //TODO: вынести работу с path
-            int index = node.getPath().lastIndexOf('.');
-            String parentPath = (index < 0) ? null : node.getPath().substring(0, index);
+            String parentPath = LtreePathUtil.getParentPath(node.getPath());
 
-            GetSubtreeNodeOrganizationsResponse parentNode = subtreeNodeDTOS.get(parentPath);
-            if (parentNode == null) {
+            if (Objects.isNull(parentPath) || Objects.isNull(subtreeNodeDTOS.get(parentPath))) {
                 root = node;
             } else {
-                parentNode.getChildren().add(node);
+                subtreeNodeDTOS.get(parentPath).getChildren().add(node);
             }
         }
         return root;

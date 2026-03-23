@@ -6,13 +6,14 @@ import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import org.redflag.dto.node.OrganizationNodeDTO;
 
 import java.util.List;
 import java.util.UUID;
 
 @Builder
-@Data
+@Getter
 @Introspected
 @Serdeable
 public class MoveOrganizationNodeResponse {

@@ -1,23 +1,24 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.FeatureFlagIdDTO;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.FeatureFlagDTOMapper;
 
 @Singleton
 @RequiredArgsConstructor
-public class DeleteFeatureFlagService extends BaseService<FeatureFlagIdDTO, Void> {
+public class GetFeatureFlagByIdService extends BaseService<FeatureFlagIdDTO, FeatureFlagDTO> {
     private final FeatureFlagRepository featureFlagRepository;
 
     @Override
-    protected Void execute(FeatureFlagIdDTO request) {
+    protected FeatureFlagDTO execute(FeatureFlagIdDTO request) {
         FeatureFlag featureFlag = featureFlagRepository.findById(request.getFlagId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        featureFlagRepository.delete(featureFlag);
-        return null;
+        return FeatureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
     }
 }

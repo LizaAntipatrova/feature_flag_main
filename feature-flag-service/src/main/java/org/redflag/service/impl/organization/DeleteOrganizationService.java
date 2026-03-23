@@ -1,25 +1,24 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.organization;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.organization.OrganizationDTO;
 import org.redflag.dto.organization.OrganizationIdDTO;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
 
-@RequiredArgsConstructor
 @Singleton
-public class GetOrganizationByIdService extends BaseService<OrganizationIdDTO, OrganizationDTO> {
+@RequiredArgsConstructor
+public class DeleteOrganizationService extends BaseService<OrganizationIdDTO, Void> {
     private final OrganizationRepository organizationRepository;
 
     @Override
-    protected OrganizationDTO execute(OrganizationIdDTO request) {
+    protected Void execute(OrganizationIdDTO request) {
         Organization organization = organizationRepository.findById(request.getOrganizationId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        return new OrganizationDTO(
-                organization.getId(),
-                organization.getName());
+
+        organizationRepository.delete(organization);
+        return null;
     }
 }

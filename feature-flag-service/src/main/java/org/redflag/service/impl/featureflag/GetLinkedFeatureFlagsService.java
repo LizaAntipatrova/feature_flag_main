@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,6 @@ public class GetLinkedFeatureFlagsService extends BaseService<GetLinkedFeatureFl
 
     @Override
     protected GetLinkedFeatureFlagsResponse execute(GetLinkedFeatureFlagsRequest request) {
-
         List<FeatureFlag> featureFlags =
                 switch (request.getRelation()) {
                     case RelationType.SELF -> (featureFlagRepository
@@ -46,14 +45,12 @@ public class GetLinkedFeatureFlagsService extends BaseService<GetLinkedFeatureFl
                                     request.getLimit(),
                                     request.getOffset()
                             ));
-
                     case RelationType.ANCESTOR -> (featureFlagRepository
                             .findAllByAncestorsOrganizationNodes(
                                     request.getNodeId(),
                                     request.getLimit(),
                                     request.getOffset()
                             ));
-
                     case RelationType.DESCENDANT -> (featureFlagRepository
                             .findAllByDescendantsOrganizationNodes(
                                     request.getNodeId(),
@@ -66,7 +63,11 @@ public class GetLinkedFeatureFlagsService extends BaseService<GetLinkedFeatureFl
             throw ErrorCatalog.NO_DATA.getException();
         }
 
-        return  GetLinkedFeatureFlagsResponse.builder()
+        return toGetLinkedFeatureFlagsResponse(request, featureFlags);
+    }
+
+    private GetLinkedFeatureFlagsResponse toGetLinkedFeatureFlagsResponse(GetLinkedFeatureFlagsRequest request, List<FeatureFlag> featureFlags) {
+        return GetLinkedFeatureFlagsResponse.builder()
                 .nodeId(request.getNodeId())
                 .items(featureFlags.stream().map(this::toItem).toList())
                 .relation(request.getRelation())

@@ -8,6 +8,9 @@ import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.dto.organization.OrganizationDTO;
 import org.redflag.dto.organization.create.CreateOrganizationRequest;
 import org.redflag.service.BaseService;
+import org.redflag.service.impl.node.CreateOrganizationNodeService;
+import org.redflag.service.impl.organization.CreateOrganizationService;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 
 @RequiredArgsConstructor
 @Singleton
@@ -19,28 +22,28 @@ public class CreateOrganizationWithRootNodesService extends BaseService<CreateOr
     protected CreateOrganizationWithRootNodeResponse execute(CreateOrganizationRequest request) {
         OrganizationDTO organizationDTO = createOrganizationService
                 .service(request);
+
         CreateOrganizationNodeRequest createOrganizationNodeRequest = CreateOrganizationNodeRequest
                 .builder()
                 .isService(false)
                 .parentId(null)
                 .name(request.getName()).build();
+
         createOrganizationNodeRequest.setOrganizationId(organizationDTO.getId());
-        OrganizationNodeDTO createNodeResponse = createOrganizationNodeService
+        OrganizationNodeDTO newOrganizationNodeDTO = createOrganizationNodeService
                 .service(createOrganizationNodeRequest);
 
+        return toCreateOrganizationWithRootNodeResponse(organizationDTO, newOrganizationNodeDTO);
+    }
+
+    private static CreateOrganizationWithRootNodeResponse toCreateOrganizationWithRootNodeResponse(
+            OrganizationDTO organizationDTO,
+            OrganizationNodeDTO newOrganizationNodeDTO
+    ) {
         return CreateOrganizationWithRootNodeResponse.builder()
                 .id(organizationDTO.getId())
                 .name(organizationDTO.getName())
-                .organizationNode(
-                        OrganizationNodeDTO.builder()
-                        .id(createNodeResponse.getId())
-                        .organizationId(createNodeResponse.getOrganizationId())
-                        .uuid(createNodeResponse.getUuid())
-                        .path(createNodeResponse.getPath())
-                        .name(createNodeResponse.getName())
-                        .isService(createNodeResponse.getIsService())
-                        .version(createNodeResponse.getVersion())
-                        .build())
+                .organizationNode(newOrganizationNodeDTO)
                 .build();
     }
 }

@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
@@ -9,6 +9,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 
 import java.util.Objects;
 
@@ -53,11 +54,14 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
     protected OrganizationNodeDTO execute(UpdateOrganizationNodeRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
+
         if (!organizationNode.getVersion().equals(request.getVersion())) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
+
         organizationNode.setName(request.getName())
                 .setIsService(request.getIsService());
+
         OrganizationNode newOrganizationNode;
         try {
             newOrganizationNode = organizationNodeRepository
@@ -65,14 +69,7 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
         } catch (OptimisticLockException e) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
-        return OrganizationNodeDTO.builder()
-                .id(newOrganizationNode.getId())
-                .organizationId(newOrganizationNode.getOrganization().getId())
-                .uuid(newOrganizationNode.getUuid())
-                .path(newOrganizationNode.getPath())
-                .name(newOrganizationNode.getName())
-                .isService(newOrganizationNode.getIsService())
-                .version(newOrganizationNode.getVersion())
-                .build();
+
+        return OrganizationNodeDTOMapper.toOrganizationNodeDTO(newOrganizationNode);
     }
 }

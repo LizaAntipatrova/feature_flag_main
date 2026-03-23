@@ -19,7 +19,7 @@ import org.redflag.dto.node.get.*;
 import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
-import org.redflag.service.impl.*;
+import org.redflag.service.impl.node.*;
 
 @RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes")

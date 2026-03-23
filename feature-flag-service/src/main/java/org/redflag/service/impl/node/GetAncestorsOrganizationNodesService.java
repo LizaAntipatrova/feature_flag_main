@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 
 import java.util.List;
 
@@ -20,25 +21,25 @@ public class GetAncestorsOrganizationNodesService extends BaseService<Organizati
 
     @Override
     protected GetAncestorsOrganizationNodesResponse execute(OrganizationNodeIdDTO request) {
-        List<OrganizationNode> organizationNodes = organizationNodeRepository.findAllAncestorsById(request.getOrganizationId(), request.getNodeId());
+        List<OrganizationNode> organizationNodes = organizationNodeRepository
+                .findAllAncestorsById(request.getOrganizationId(), request.getNodeId());
         if (organizationNodes.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();
         }
-        return new GetAncestorsOrganizationNodesResponse(request.getNodeId(),
-                organizationNodes.stream()
-                        .map(this::toOrganizationNodeDTO)
-                        .toList());
+        return toGetAncestorsOrganizationNodesResponse(request, organizationNodes);
     }
 
-    private OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
-        return OrganizationNodeDTO.builder()
-                .id(organizationNode.getId())
-                .organizationId(organizationNode.getOrganization().getId())
-                .uuid(organizationNode.getUuid())
-                .path(organizationNode.getPath())
-                .name(organizationNode.getName())
-                .isService(organizationNode.getIsService())
-                .version(organizationNode.getVersion())
+    private static GetAncestorsOrganizationNodesResponse toGetAncestorsOrganizationNodesResponse(
+            OrganizationNodeIdDTO request,
+            List<OrganizationNode> organizationNodes
+    ) {
+        return GetAncestorsOrganizationNodesResponse.builder()
+                .nodeId(request.getNodeId())
+                .items(organizationNodes.stream()
+                        .map(OrganizationNodeDTOMapper::toOrganizationNodeDTO)
+                        .toList())
                 .build();
     }
+
+
 }

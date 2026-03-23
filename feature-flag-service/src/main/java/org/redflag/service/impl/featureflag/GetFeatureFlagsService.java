@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.FeatureFlagDTOMapper;
 import org.redflag.validator.PaginationParameterValidator;
 
 import java.util.List;
@@ -36,22 +37,16 @@ public class GetFeatureFlagsService extends BaseService<GetFeatureFlagsRequest, 
             throw ErrorCatalog.NO_DATA.getException();
         }
 
+        return toGetFeatureFlagsResponse(request, featureFlags);
+    }
+
+    private static GetFeatureFlagsResponse toGetFeatureFlagsResponse(GetFeatureFlagsRequest request, List<FeatureFlag> featureFlags) {
         return GetFeatureFlagsResponse.builder()
                 .nodeId(request.getNodeId())
-                .items(featureFlags.stream().map(this::toFeatureFlag).toList())
+                .items(featureFlags.stream().map(FeatureFlagDTOMapper::toFeatureFlagDTO).toList())
                 .limit(request.getLimit())
                 .offset(request.getOffset())
                 .total(featureFlags.size())
-                .build();
-    }
-
-    private FeatureFlagDTO toFeatureFlag(FeatureFlag featureFlag) {
-        return FeatureFlagDTO.builder()
-                .id(featureFlag.getId())
-                .nodeId(featureFlag.getOrganizationNode().getId())
-                .name(featureFlag.getName())
-                .value(featureFlag.getValue())
-                .version(featureFlag.getVersion())
                 .build();
     }
 

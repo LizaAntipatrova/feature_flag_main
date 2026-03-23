@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +10,10 @@ import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
+import org.redflag.service.util.LtreePathUtil;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
@@ -70,18 +71,12 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
             OrganizationNode parentNode = organizationNodeRepository.findById(request.getParentId())
                     .orElseThrow(ErrorCatalog.NO_DATA::getException);
 
-            //TODO: вынести конкатенацию для path
-            organizationNode.setPath(parentNode.getPath() + "." + organizationNode.getId().toString());
+            organizationNode.setPath(LtreePathUtil.getChildPath(parentNode.getPath(), organizationNode.getId()));
         }
         organizationNodeRepository.update(organizationNode);
 
-        return new OrganizationNodeDTO(organizationNode.getId(),
-                organizationNode.getOrganization().getId(),
-                organizationNode.getUuid(),
-                organizationNode.getPath(),
-                organizationNode.getName(),
-                organizationNode.getIsService(),
-                organizationNode.getVersion()
-        );
+        return OrganizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
     }
+
+
 }

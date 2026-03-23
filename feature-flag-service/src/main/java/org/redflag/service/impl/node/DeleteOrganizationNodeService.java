@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;

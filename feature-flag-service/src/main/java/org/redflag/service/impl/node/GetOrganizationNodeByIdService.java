@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 
 @RequiredArgsConstructor
 @Singleton
@@ -19,14 +20,7 @@ public class GetOrganizationNodeByIdService extends BaseService<OrganizationNode
         OrganizationNode organizationNode = organizationNodeRepository
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        return OrganizationNodeDTO.builder()
-                .id(organizationNode.getId())
-                .organizationId(organizationNode.getOrganization().getId())
-                .uuid(organizationNode.getUuid())
-                .path(organizationNode.getPath())
-                .name(organizationNode.getName())
-                .isService(organizationNode.getIsService())
-                .version(organizationNode.getVersion())
-                .build();
+
+        return OrganizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
     }
 }

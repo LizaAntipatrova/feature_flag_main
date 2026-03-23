@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
@@ -9,6 +9,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.FeatureFlagDTOMapper;
 
 import java.util.Objects;
 
@@ -41,24 +42,19 @@ public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagReque
     protected FeatureFlagDTO execute(UpdateFeatureFlagRequest request) {
         FeatureFlag featureFlag = featureFlagRepository.findById(request.getFeatureFlagId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
+
         if (!featureFlag.getVersion().equals(request.getVersion())) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
-        featureFlag
-                .setValue(request.getValue());
+        featureFlag.setValue(request.getValue());
+
         FeatureFlag newFeatureFlag;
         try {
-            newFeatureFlag = featureFlagRepository
-                    .update(featureFlag);
+            newFeatureFlag = featureFlagRepository.update(featureFlag);
         } catch (OptimisticLockException e) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
-        return FeatureFlagDTO.builder()
-                .id(newFeatureFlag.getId())
-                .nodeId(newFeatureFlag.getOrganizationNode().getId())
-                .name(newFeatureFlag.getName())
-                .value(newFeatureFlag.getValue())
-                .version(newFeatureFlag.getVersion())
-                .build();
+
+        return FeatureFlagDTOMapper.toFeatureFlagDTO(newFeatureFlag);
     }
 }

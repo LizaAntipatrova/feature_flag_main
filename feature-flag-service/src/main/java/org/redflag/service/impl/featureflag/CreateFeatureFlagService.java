@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +10,7 @@ import org.redflag.model.OrganizationNode;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.FeatureFlagDTOMapper;
 
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
         if (Objects.isNull(name) || name.isBlank()) {
             throw ErrorCatalog.EMPTY_FIELD.withMessageArgs("name");
         }
+
         if (Objects.isNull(request.getValue())) {
             throw ErrorCatalog.EMPTY_FIELD.withMessageArgs("value");
         }
@@ -42,17 +44,14 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
     protected FeatureFlagDTO execute(CreateFeatureFlagRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
+
         FeatureFlag featureFlag = new FeatureFlag()
                 .setName(request.getName())
                 .setValue(request.getValue())
                 .setOrganizationNode(organizationNode);
+
         featureFlagRepository.save(featureFlag);
-        return FeatureFlagDTO.builder()
-                .id(featureFlag.getId())
-                .nodeId(featureFlag.getOrganizationNode().getId())
-                .name(featureFlag.getName())
-                .value(featureFlag.getValue())
-                .version(featureFlag.getVersion())
-                .build();
+
+        return FeatureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
     }
 }

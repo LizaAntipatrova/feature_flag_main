@@ -16,7 +16,7 @@ import org.redflag.dto.featureflag.FeatureFlagIdDTO;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagRequest;
 import org.redflag.dto.featureflag.get.*;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
-import org.redflag.service.impl.*;
+import org.redflag.service.impl.featureflag.*;
 
 @RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes/{nodeId}/feature-flags")
@@ -291,7 +291,11 @@ public class FeatureFlagController {
             @Parameter(description = "Идентификатор фича флага", required = true, example = "1")
             @PathVariable Long flagId
     ) {
-        FeatureFlagIdDTO request = new FeatureFlagIdDTO(organizationId, nodeId, flagId);
+        FeatureFlagIdDTO request = FeatureFlagIdDTO.builder()
+                .organizationId(organizationId)
+                .nodeId(nodeId)
+                .flagId(flagId)
+                .build();
         return getFeatureFlagByIdService.service(request);
     }
 
@@ -393,7 +397,11 @@ public class FeatureFlagController {
             @Parameter(description = "Идентификатор фича флага", required = true, example = "1")
             @PathVariable Long flagId
     ) {
-        FeatureFlagIdDTO request = new FeatureFlagIdDTO(organizationId, nodeId, flagId);
+        FeatureFlagIdDTO request = FeatureFlagIdDTO.builder()
+                .organizationId(organizationId)
+                .nodeId(nodeId)
+                .flagId(flagId)
+                .build();
         deleteFeatureFlagService.service(request);
         return HttpResponse.noContent();
     }

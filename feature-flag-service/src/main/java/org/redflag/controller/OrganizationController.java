@@ -17,7 +17,7 @@ import org.redflag.dto.organization.create.CreateOrganizationRequest;
 import org.redflag.dto.organization.get.GetOrganizationsResponse;
 import org.redflag.dto.organization.OrganizationDTO;
 import org.redflag.dto.organization.update.UpdateOrganizationRequest;
-import org.redflag.service.impl.*;
+import org.redflag.service.impl.organization.*;
 
 @Controller("api/v1/organizations")
 @RequiredArgsConstructor
@@ -156,7 +156,9 @@ public class OrganizationController {
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId
     ) {
-        OrganizationIdDTO request = new OrganizationIdDTO(organizationId);
+        OrganizationIdDTO request = OrganizationIdDTO.builder()
+                .organizationId(organizationId)
+                .build();
         return getOrganizationByIdService.service(request);
     }
 
@@ -248,7 +250,9 @@ public class OrganizationController {
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId
     ) {
-        OrganizationIdDTO request = new OrganizationIdDTO(organizationId);
+        OrganizationIdDTO request = OrganizationIdDTO.builder()
+                .organizationId(organizationId)
+                .build();
         deleteOrganizationService.service(request);
         return HttpResponse.noContent();
     }

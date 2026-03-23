@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.FeatureFlagDTOMapper;
 
 import java.util.Objects;
 
@@ -28,12 +29,6 @@ public class GetFeatureFlagByNameService extends BaseService<GetFeatureFlagByNam
     protected FeatureFlagDTO execute(GetFeatureFlagByNameRequest request) {
         FeatureFlag featureFlag = featureFlagRepository.findByName(request.getFlagName())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        return FeatureFlagDTO.builder()
-                .id(featureFlag.getId())
-                .nodeId(featureFlag.getOrganizationNode().getId())
-                .name(featureFlag.getName())
-                .value(featureFlag.getValue())
-                .version(featureFlag.getVersion())
-                .build();
+        return FeatureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
     }
 }

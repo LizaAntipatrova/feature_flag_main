@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 import org.redflag.validator.PaginationParameterValidator;
 
 import java.util.List;
@@ -35,12 +36,17 @@ public class GetOrganizationNodesService extends BaseService<GetOrganizationNode
                 request.getNodeId(),
                 request.getLimit(),
                 request.getOffset());
+
         if (organizationNodes.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();
         }
+        return toGetOrganizationNodesResponse(request, organizationNodes);
+    }
+
+    private static GetOrganizationNodesResponse toGetOrganizationNodesResponse(GetOrganizationNodesRequest request, List<OrganizationNode> organizationNodes) {
         return GetOrganizationNodesResponse.builder()
                 .items(organizationNodes.stream()
-                        .map(this::toOrganizationNodeDTO)
+                        .map(OrganizationNodeDTOMapper::toOrganizationNodeDTO)
                         .toList())
                 .limit(request.getLimit())
                 .offset(request.getOffset())
@@ -48,15 +54,4 @@ public class GetOrganizationNodesService extends BaseService<GetOrganizationNode
                 .build();
     }
 
-    private OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
-        return OrganizationNodeDTO.builder()
-                .id(organizationNode.getId())
-                .organizationId(organizationNode.getOrganization().getId())
-                .uuid(organizationNode.getUuid())
-                .path(organizationNode.getPath())
-                .name(organizationNode.getName())
-                .isService(organizationNode.getIsService())
-                .version(organizationNode.getVersion())
-                .build();
-    }
 }

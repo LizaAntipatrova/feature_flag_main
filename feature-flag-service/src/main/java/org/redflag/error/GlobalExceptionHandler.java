@@ -16,11 +16,11 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
 
         exception.printStackTrace();
 
-        ErrorResponse responseBody = new ErrorResponse(
-                error.getCode(),
-                error.getErrorType().getValue(),
-                exception.getMessage()
-        );
+        ErrorResponse responseBody = ErrorResponse.builder()
+                .code(error.getCode())
+                .errorType(error.getErrorType().getValue())
+                .message(exception.getMessage())
+                .build();
 
         return HttpResponse
                 .status(error.getStatus())

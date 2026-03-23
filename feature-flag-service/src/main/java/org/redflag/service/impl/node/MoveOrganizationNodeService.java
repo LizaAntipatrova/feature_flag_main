@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,8 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
+import org.redflag.service.util.LtreePathUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,16 +56,25 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
     protected MoveOrganizationNodeResponse execute(MoveOrganizationNodeRequest request) {
         List<OrganizationNode> subtree = organizationNodeRepository
                 .findSubtreeByOrganizationIdAndParentId(request.getOrganizationId(), request.getNodeId());
+
         OrganizationNode parentNode = organizationNodeRepository.findByOrganization_IdAndId(request.getOrganizationId(),
                 request.getNewParentId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
+
         OrganizationNode rootNode = subtree.stream()
                 .filter((node) -> node.getId().equals(request.getNodeId()))
                 .findAny()
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
+
         String oldRootPath = rootNode.getPath();
-        rewritePath(subtree, oldRootPath, parentNode.getPath());
+        LtreePathUtil.replaceSubtreeNodesParentPath(subtree, oldRootPath, parentNode.getPath());
+
         organizationNodeRepository.updateAll(subtree);
+
+        return toMoveOrganizationNodeResponse(request, rootNode, oldRootPath, subtree);
+    }
+
+    private static MoveOrganizationNodeResponse toMoveOrganizationNodeResponse(MoveOrganizationNodeRequest request, OrganizationNode rootNode, String oldRootPath, List<OrganizationNode> subtree) {
         return MoveOrganizationNodeResponse.builder()
                 .id(rootNode.getId())
                 .uuid(rootNode.getUuid())
@@ -71,27 +82,9 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
                 .newPath(rootNode.getPath())
                 .movedDescendants(subtree.stream()
                         .filter((node) -> !node.getId().equals(request.getNodeId()))
-                        .map(this::toOrganizationNodeDTO)
+                        .map(OrganizationNodeDTOMapper::toOrganizationNodeDTO)
                         .toList())
                 .build();
     }
 
-    private void rewritePath(List<OrganizationNode> nodes, String oldRootNodePath, String parentPath) {
-        //TODO: вынести работу с path
-        int index = oldRootNodePath.lastIndexOf('.');
-        String oldParentPath = oldRootNodePath.substring(0, index);
-        nodes.forEach(node -> node.setPath(node.getPath().replace(oldParentPath, parentPath)));
-    }
-
-    private OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
-        return OrganizationNodeDTO.builder()
-                .id(organizationNode.getId())
-                .organizationId(organizationNode.getOrganization().getId())
-                .uuid(organizationNode.getUuid())
-                .path(organizationNode.getPath())
-                .name(organizationNode.getName())
-                .isService(organizationNode.getIsService())
-                .version(organizationNode.getVersion())
-                .build();
-    }
 }

@@ -2,9 +2,12 @@ package org.redflag.dto.organization;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Builder
+@Getter
 @Serdeable
 @Introspected
 public class OrganizationIdDTO {

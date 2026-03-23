@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.organization;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationDTOMapper;
 import org.redflag.validator.PaginationParameterValidator;
 
 import java.util.List;
@@ -34,12 +35,16 @@ public class GetOrganizationsService extends BaseService<PaginationDTO, GetOrgan
                 .findAll(getOrganizationsRequest.getLimit(), getOrganizationsRequest.getOffset());
 
         List<OrganizationDTO> organizationDTOS = organizations.stream()
-                .map(this::toOrganizationDTO).toList();
+                .map(OrganizationDTOMapper::toOrganizationDTO).toList();
 
         if (organizationDTOS.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();
         }
 
+        return toGetOrganizationsResponse(getOrganizationsRequest, organizationDTOS);
+    }
+
+    private static GetOrganizationsResponse toGetOrganizationsResponse(PaginationDTO getOrganizationsRequest, List<OrganizationDTO> organizationDTOS) {
         return GetOrganizationsResponse.builder()
                 .items(organizationDTOS)
                 .limit(getOrganizationsRequest.getLimit())
@@ -48,8 +53,4 @@ public class GetOrganizationsService extends BaseService<PaginationDTO, GetOrgan
                 .build();
     }
 
-    private OrganizationDTO toOrganizationDTO(Organization organization) {
-        return new OrganizationDTO(organization.getId(),
-                organization.getName());
-    }
 }

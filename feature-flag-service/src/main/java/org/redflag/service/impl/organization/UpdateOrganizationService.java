@@ -1,4 +1,4 @@
-package org.redflag.service.impl;
+package org.redflag.service.impl.organization;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,7 @@ import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.OrganizationDTOMapper;
 
 import java.util.Objects;
 
@@ -42,6 +43,6 @@ public class UpdateOrganizationService extends BaseService<UpdateOrganizationReq
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         organization.setName(request.getName());
         Organization newOrganization = organizationRepository.update(organization);
-        return new OrganizationDTO(newOrganization.getId(), newOrganization.getName());
+        return OrganizationDTOMapper.toOrganizationDTO(newOrganization);
     }
 }
