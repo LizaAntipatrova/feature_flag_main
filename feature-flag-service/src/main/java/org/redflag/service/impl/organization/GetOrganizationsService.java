@@ -18,6 +18,7 @@ import java.util.List;
 @Singleton
 public class GetOrganizationsService extends BaseService<PaginationDTO, GetOrganizationsResponse> {
     private final OrganizationRepository organizationRepository;
+    private final OrganizationDTOMapper organizationDTOMapper;
 
     @Override
     protected void validateRequest(PaginationDTO request) {
@@ -35,7 +36,7 @@ public class GetOrganizationsService extends BaseService<PaginationDTO, GetOrgan
                 .findAll(getOrganizationsRequest.getLimit(), getOrganizationsRequest.getOffset());
 
         List<OrganizationDTO> organizationDTOS = organizations.stream()
-                .map(OrganizationDTOMapper::toOrganizationDTO).toList();
+                .map(organizationDTOMapper::toOrganizationDTO).toList();
 
         if (organizationDTOS.isEmpty()) {
             throw ErrorCatalog.NO_DATA.getException();

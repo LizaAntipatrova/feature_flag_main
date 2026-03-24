@@ -14,11 +14,12 @@ import org.redflag.service.mapper.OrganizationDTOMapper;
 @Singleton
 public class GetOrganizationByIdService extends BaseService<OrganizationIdDTO, OrganizationDTO> {
     private final OrganizationRepository organizationRepository;
+    private final OrganizationDTOMapper organizationDTOMapper;
 
     @Override
     protected OrganizationDTO execute(OrganizationIdDTO request) {
         Organization organization = organizationRepository.findById(request.getOrganizationId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        return OrganizationDTOMapper.toOrganizationDTO(organization);
+        return organizationDTOMapper.toOrganizationDTO(organization);
     }
 }

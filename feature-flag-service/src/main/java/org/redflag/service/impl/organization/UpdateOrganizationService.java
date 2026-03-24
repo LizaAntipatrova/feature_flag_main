@@ -16,6 +16,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UpdateOrganizationService extends BaseService<UpdateOrganizationRequest, OrganizationDTO> {
     private final OrganizationRepository organizationRepository;
+    private final OrganizationDTOMapper organizationDTOMapper;
 
     @Override
     protected void validateRequest(UpdateOrganizationRequest request) {
@@ -43,6 +44,6 @@ public class UpdateOrganizationService extends BaseService<UpdateOrganizationReq
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
         organization.setName(request.getName());
         Organization newOrganization = organizationRepository.update(organization);
-        return OrganizationDTOMapper.toOrganizationDTO(newOrganization);
+        return organizationDTOMapper.toOrganizationDTO(newOrganization);
     }
 }

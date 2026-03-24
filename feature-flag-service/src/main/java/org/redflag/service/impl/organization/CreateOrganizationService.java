@@ -16,6 +16,7 @@ import java.util.Objects;
 @Singleton
 public class CreateOrganizationService extends BaseService<CreateOrganizationRequest, OrganizationDTO> {
     private final OrganizationRepository organizationRepository;
+    private final  OrganizationDTOMapper organizationDTOMapper;
 
     @Override
     protected void validateRequest(CreateOrganizationRequest request) {
@@ -38,6 +39,6 @@ public class CreateOrganizationService extends BaseService<CreateOrganizationReq
                 .setName(request.getName());
 
         organizationRepository.save(organization);
-        return OrganizationDTOMapper.toOrganizationDTO(organization);
+        return organizationDTOMapper.toOrganizationDTO(organization);
     }
 }
