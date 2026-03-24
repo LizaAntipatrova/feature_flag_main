@@ -130,6 +130,7 @@ public class OrganizationNodeController {
         return getOrganizationNodeByIdService.service(getOrganizationNodeByIdRequest);
     }
 
+
     @Get
     @Operation(
             summary = "Получить список звеньев организации",

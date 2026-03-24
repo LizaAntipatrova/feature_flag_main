@@ -8,6 +8,7 @@ import org.redflag.model.OrganizationNode;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface OrganizationNodeRepository extends JpaRepository<OrganizationNode, Long> {
@@ -104,5 +105,7 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
             order by nlevel(descedants.path), descedants.path
             """, nativeQuery = true)
     List<OrganizationNode> findAllDescendantsByIdAndDepth(Long organizationId, Long nodeId, @Nullable Integer depth);
+
+    Optional<OrganizationNode> findByUuid(UUID uuid);
 
 }
