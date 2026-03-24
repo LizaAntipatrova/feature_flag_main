@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetChildrenOrganizationNodesService extends BaseService<OrganizationNodeIdDTO, GetChildrenOrganizationNodesResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
 
     @Override
     protected GetChildrenOrganizationNodesResponse execute(OrganizationNodeIdDTO request) {
@@ -28,11 +29,11 @@ public class GetChildrenOrganizationNodesService extends BaseService<Organizatio
         return toGetChildrenOrganizationNodesResponse(request, organizationNodes);
     }
 
-    private static GetChildrenOrganizationNodesResponse toGetChildrenOrganizationNodesResponse(OrganizationNodeIdDTO request, List<OrganizationNode> organizationNodes) {
+    private GetChildrenOrganizationNodesResponse toGetChildrenOrganizationNodesResponse(OrganizationNodeIdDTO request, List<OrganizationNode> organizationNodes) {
         return GetChildrenOrganizationNodesResponse.builder()
                 .nodeId(request.getNodeId())
                 .items(organizationNodes.stream()
-                        .map(OrganizationNodeDTOMapper::toOrganizationNodeDTO)
+                        .map(organizationNodeDTOMapper::toOrganizationNodeDTO)
                         .toList())
                 .build();
     }

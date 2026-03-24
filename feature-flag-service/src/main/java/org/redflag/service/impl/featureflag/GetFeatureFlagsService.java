@@ -18,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetFeatureFlagsService extends BaseService<GetFeatureFlagsRequest, GetFeatureFlagsResponse> {
     private final FeatureFlagRepository featureFlagRepository;
+    private final FeatureFlagDTOMapper featureFlagDTOMapper;
 
     @Override
     protected void validateRequest(GetFeatureFlagsRequest request) {
@@ -40,10 +41,10 @@ public class GetFeatureFlagsService extends BaseService<GetFeatureFlagsRequest, 
         return toGetFeatureFlagsResponse(request, featureFlags);
     }
 
-    private static GetFeatureFlagsResponse toGetFeatureFlagsResponse(GetFeatureFlagsRequest request, List<FeatureFlag> featureFlags) {
+    private GetFeatureFlagsResponse toGetFeatureFlagsResponse(GetFeatureFlagsRequest request, List<FeatureFlag> featureFlags) {
         return GetFeatureFlagsResponse.builder()
                 .nodeId(request.getNodeId())
-                .items(featureFlags.stream().map(FeatureFlagDTOMapper::toFeatureFlagDTO).toList())
+                .items(featureFlags.stream().map(featureFlagDTOMapper::toFeatureFlagDTO).toList())
                 .limit(request.getLimit())
                 .offset(request.getOffset())
                 .total(featureFlags.size())

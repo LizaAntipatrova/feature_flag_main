@@ -16,6 +16,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class GetFeatureFlagByNameService extends BaseService<GetFeatureFlagByNameRequest, FeatureFlagDTO> {
     private final FeatureFlagRepository featureFlagRepository;
+    private final FeatureFlagDTOMapper featureFlagDTOMapper;
 
     @Override
     protected void validateRequest(GetFeatureFlagByNameRequest request) {
@@ -29,6 +30,6 @@ public class GetFeatureFlagByNameService extends BaseService<GetFeatureFlagByNam
     protected FeatureFlagDTO execute(GetFeatureFlagByNameRequest request) {
         FeatureFlag featureFlag = featureFlagRepository.findByName(request.getFlagName())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        return FeatureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
+        return featureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
     }
 }

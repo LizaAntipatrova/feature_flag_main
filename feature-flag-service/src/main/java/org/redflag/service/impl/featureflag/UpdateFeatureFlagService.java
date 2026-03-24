@@ -10,6 +10,7 @@ import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.FeatureFlagDTOMapper;
+import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 
 import java.util.Objects;
 
@@ -17,6 +18,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagRequest, FeatureFlagDTO> {
     private final FeatureFlagRepository featureFlagRepository;
+    private final FeatureFlagDTOMapper featureFlagDTOMapper;
 
     @Override
     protected void validateRequest(UpdateFeatureFlagRequest request) {
@@ -55,6 +57,6 @@ public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagReque
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
 
-        return FeatureFlagDTOMapper.toFeatureFlagDTO(newFeatureFlag);
+        return featureFlagDTOMapper.toFeatureFlagDTO(newFeatureFlag);
     }
 }

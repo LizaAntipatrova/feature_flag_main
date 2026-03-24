@@ -16,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetDescendantsOrganizationNodesService extends BaseService<GetDescendantsOrganizationNodesRequest, GetDescendantsOrganizationNodesResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
 
     @Override
     protected GetDescendantsOrganizationNodesResponse execute(GetDescendantsOrganizationNodesRequest request) {
@@ -29,12 +30,12 @@ public class GetDescendantsOrganizationNodesService extends BaseService<GetDesce
         return toOrganizationNodesResponse(request, organizationNodes);
     }
 
-    private static GetDescendantsOrganizationNodesResponse toOrganizationNodesResponse(GetDescendantsOrganizationNodesRequest request, List<OrganizationNode> organizationNodes) {
+    private GetDescendantsOrganizationNodesResponse toOrganizationNodesResponse(GetDescendantsOrganizationNodesRequest request, List<OrganizationNode> organizationNodes) {
         return GetDescendantsOrganizationNodesResponse.builder()
                 .nodeId(request.getNodeId())
                 .depth(request.getDepth())
                 .items(organizationNodes.stream()
-                        .map(OrganizationNodeDTOMapper::toOrganizationNodeDTO)
+                        .map(organizationNodeDTOMapper::toOrganizationNodeDTO)
                         .toList())
                 .build();
     }

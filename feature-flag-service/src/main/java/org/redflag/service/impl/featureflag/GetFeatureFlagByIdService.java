@@ -14,11 +14,12 @@ import org.redflag.service.mapper.FeatureFlagDTOMapper;
 @RequiredArgsConstructor
 public class GetFeatureFlagByIdService extends BaseService<FeatureFlagIdDTO, FeatureFlagDTO> {
     private final FeatureFlagRepository featureFlagRepository;
+    private final FeatureFlagDTOMapper featureFlagDTOMapper;
 
     @Override
     protected FeatureFlagDTO execute(FeatureFlagIdDTO request) {
         FeatureFlag featureFlag = featureFlagRepository.findById(request.getFlagId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        return FeatureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
+        return featureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
     }
 }

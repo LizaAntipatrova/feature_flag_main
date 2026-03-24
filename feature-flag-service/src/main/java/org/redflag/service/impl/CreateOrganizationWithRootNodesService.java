@@ -36,7 +36,7 @@ public class CreateOrganizationWithRootNodesService extends BaseService<CreateOr
         return toCreateOrganizationWithRootNodeResponse(organizationDTO, newOrganizationNodeDTO);
     }
 
-    private static CreateOrganizationWithRootNodeResponse toCreateOrganizationWithRootNodeResponse(
+    private CreateOrganizationWithRootNodeResponse toCreateOrganizationWithRootNodeResponse(
             OrganizationDTO organizationDTO,
             OrganizationNodeDTO newOrganizationNodeDTO
     ) {

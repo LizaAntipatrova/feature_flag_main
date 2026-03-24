@@ -19,6 +19,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNodeRequest, MoveOrganizationNodeResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
 
     @Override
     protected void validateRequest(MoveOrganizationNodeRequest request) {
@@ -74,7 +75,7 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
         return toMoveOrganizationNodeResponse(request, rootNode, oldRootPath, subtree);
     }
 
-    private static MoveOrganizationNodeResponse toMoveOrganizationNodeResponse(MoveOrganizationNodeRequest request, OrganizationNode rootNode, String oldRootPath, List<OrganizationNode> subtree) {
+    private MoveOrganizationNodeResponse toMoveOrganizationNodeResponse(MoveOrganizationNodeRequest request, OrganizationNode rootNode, String oldRootPath, List<OrganizationNode> subtree) {
         return MoveOrganizationNodeResponse.builder()
                 .id(rootNode.getId())
                 .uuid(rootNode.getUuid())
@@ -82,7 +83,7 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
                 .newPath(rootNode.getPath())
                 .movedDescendants(subtree.stream()
                         .filter((node) -> !node.getId().equals(request.getNodeId()))
-                        .map(OrganizationNodeDTOMapper::toOrganizationNodeDTO)
+                        .map(organizationNodeDTOMapper::toOrganizationNodeDTO)
                         .toList())
                 .build();
     }

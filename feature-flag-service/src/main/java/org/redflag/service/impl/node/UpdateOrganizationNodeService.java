@@ -17,6 +17,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizationNodeRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
 
     @Override
     protected void validateRequest(UpdateOrganizationNodeRequest request) {
@@ -70,6 +71,6 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
 
-        return OrganizationNodeDTOMapper.toOrganizationNodeDTO(newOrganizationNode);
+        return organizationNodeDTOMapper.toOrganizationNodeDTO(newOrganizationNode);
     }
 }

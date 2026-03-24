@@ -14,6 +14,7 @@ import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 @Singleton
 public class GetOrganizationNodeByIdService extends BaseService<OrganizationNodeIdDTO, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
 
     @Override
     protected OrganizationNodeDTO execute(OrganizationNodeIdDTO request) {
@@ -21,6 +22,6 @@ public class GetOrganizationNodeByIdService extends BaseService<OrganizationNode
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
 
-        return OrganizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
+        return organizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
     }
 }

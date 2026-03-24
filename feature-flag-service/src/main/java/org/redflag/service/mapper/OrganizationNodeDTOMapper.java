@@ -1,11 +1,12 @@
 package org.redflag.service.mapper;
 
+import jakarta.inject.Singleton;
 import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.model.OrganizationNode;
-
+@Singleton
 public class OrganizationNodeDTOMapper {
 
-    public static OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
+    public OrganizationNodeDTO toOrganizationNodeDTO(OrganizationNode organizationNode) {
         return OrganizationNodeDTO.builder()
                 .id(organizationNode.getId())
                 .organizationId(organizationNode.getOrganization().getId())

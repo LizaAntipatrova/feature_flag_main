@@ -19,6 +19,7 @@ import java.util.Objects;
 public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagRequest, FeatureFlagDTO> {
     private final FeatureFlagRepository featureFlagRepository;
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final FeatureFlagDTOMapper featureFlagDTOMapper;
 
     @Override
     protected void validateRequest(CreateFeatureFlagRequest request) {
@@ -52,6 +53,6 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
 
         featureFlagRepository.save(featureFlag);
 
-        return FeatureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
+        return featureFlagDTOMapper.toFeatureFlagDTO(featureFlag);
     }
 }

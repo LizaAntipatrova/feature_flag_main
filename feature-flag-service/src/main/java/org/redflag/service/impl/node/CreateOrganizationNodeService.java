@@ -21,6 +21,7 @@ import java.util.UUID;
 public class CreateOrganizationNodeService extends BaseService<CreateOrganizationNodeRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationRepository organizationRepository;
+    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
 
     @Override
     protected void validateRequest(CreateOrganizationNodeRequest request) {
@@ -75,7 +76,7 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
         }
         organizationNodeRepository.update(organizationNode);
 
-        return OrganizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
+        return organizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
     }
 
 

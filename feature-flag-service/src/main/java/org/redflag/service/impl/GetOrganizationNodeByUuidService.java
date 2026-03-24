@@ -20,6 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetOrganizationNodeByUuidService extends BaseService<GetOrganizationNodeByUuidRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
+
     @Override
     protected void validateRequest(GetOrganizationNodeByUuidRequest request) {
         UUID uuid = request.getNodeUuid();
@@ -32,6 +34,6 @@ public class GetOrganizationNodeByUuidService extends BaseService<GetOrganizatio
     protected OrganizationNodeDTO execute(GetOrganizationNodeByUuidRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findByUuid(request.getNodeUuid())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        return OrganizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
+        return organizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
     }
 }
