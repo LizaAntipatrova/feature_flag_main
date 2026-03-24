@@ -1,10 +1,12 @@
-package org.redflag.error;
+package org.redflag.error.handler;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
 import jakarta.inject.Singleton;
 import org.redflag.dto.ErrorResponse;
+import org.redflag.error.ErrorCatalog;
+import org.redflag.error.FeatureFlagAppException;
 
 @Singleton
 public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpResponse<ErrorResponse>> {
