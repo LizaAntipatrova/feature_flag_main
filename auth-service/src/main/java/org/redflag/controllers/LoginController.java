@@ -15,6 +15,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.redflag.constants.SecurityConstants;
 import org.redflag.exception.BadCredentialsCustomException;
 import org.redflag.services.sessionServices.SessionService;
 import reactor.core.publisher.Mono;
@@ -22,17 +23,18 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @Controller("/api/v1/auth")
-@Secured(SecurityRule.IS_ANONYMOUS)
+//@Secured(SecurityRule.IS_ANONYMOUS)
 @RequiredArgsConstructor
 @Tag(name = "Авторизация ui пользователей через сессии")
 public class LoginController {
 
-    private static final String COOKIES_NAME = "SESSION";
+//    private static final String COOKIES_NAME = "SESSION";
 
     private final SessionService sessionService;
     private final Authenticator<HttpRequest<?>> authenticator;
 
     @Post("/login")
+    @Secured(SecurityRule.IS_ANONYMOUS)
     public Mono<HttpResponse<?>> login(@Body UsernamePasswordCredentials credentials, HttpRequest<?> request) {
         return Mono.from(authenticator.authenticate(request, credentials))
                 .filter(AuthenticationResponse::isAuthenticated)
@@ -42,11 +44,11 @@ public class LoginController {
     }
 
     @Post("/logout")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
+//    @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<?> logout(HttpRequest<?> request, Authentication authentication) {
         String userLogin = authentication.getName();
 
-        request.getCookies().get(COOKIES_NAME, String.class)
+        request.getCookies().get(SecurityConstants.COOKIES_NAME, String.class)
                 .ifPresent(sessionId -> sessionService.invalidateSession(sessionId, userLogin));
 
         return HttpResponse.ok()
@@ -54,7 +56,7 @@ public class LoginController {
     }
 
     @Post("/logout-all")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
+//    @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<?> logoutAll(Authentication authentication) {
         Long userId = (Long) authentication.getAttributes().get("id");
         sessionService.invalidateAllUserSessions(userId);
@@ -64,7 +66,7 @@ public class LoginController {
     }
 
     @Get("/introspect")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
+//    @Secured(SecurityRule.IS_AUTHENTICATED)
     public Map<String, Object> introspect(Authentication authentication) {
         return Map.of(
                 "active", true,

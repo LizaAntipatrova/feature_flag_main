@@ -6,6 +6,7 @@ import io.micronaut.security.filters.AuthenticationFetcher;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
+import org.redflag.constants.SecurityConstants;
 import org.redflag.entities.Session;
 import reactor.core.publisher.Mono;
 
@@ -26,18 +27,22 @@ public class SessionAuthenticationFetcher implements AuthenticationFetcher<HttpR
     }
 
     private Long extractId(HttpRequest<?> request) {
-        return request.getCookies().get("SESSION", String.class).map(Long::valueOf).orElse(null);
+        return request.getCookies().get(SecurityConstants.COOKIES_NAME, String.class).map(Long::valueOf).orElse(null);
     }
 
     private Authentication mapToAuth(Session session) {
-        List<String> roles = session.getUser().getRoles().stream()
+        List<String> roles = session.getUser()
+                                    .getRoles()
+                                    .stream()
                 .map(org.redflag.entities.Role::getName)
                 .toList();
 
         return Authentication.build(
-                session.getUser().getLogin(),
+                session.getUser()
+                        .getLogin(),
                 roles,
-                Map.of("id", session.getUser().getId())
+                Map.of(SecurityConstants.UI_CLIENT_ID_NAME,
+                        session.getUser().getId())
         );
     }
 }

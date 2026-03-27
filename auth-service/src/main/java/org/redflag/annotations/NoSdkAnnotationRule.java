@@ -10,14 +10,17 @@ import io.micronaut.web.router.MethodBasedRouteMatch;
 import io.micronaut.web.router.RouteMatch;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import org.redflag.constants.SecurityConstants;
 import reactor.core.publisher.Mono;
 
 @Singleton
 public class NoSdkAnnotationRule implements SecurityRule<HttpRequest<?>>, Ordered {
 
+//    private static final String ROUTE_MATCH_ATTRIBUTE = "micronaut.http.route.match";
+
     @Override
     public Publisher<SecurityRuleResult> check(HttpRequest<?> request, @Nullable Authentication auth) {
-        return Mono.just(request.getAttribute("micronaut.http.route.match", RouteMatch.class)
+        return Mono.just(request.getAttribute(SecurityConstants.ROUTE_MATCH_ATTRIBUTE, RouteMatch.class)
                 .filter(match -> match instanceof MethodBasedRouteMatch)
                 .map(match -> (MethodBasedRouteMatch<?, ?>) match)
                 .map(methodRoute -> {
@@ -43,7 +46,7 @@ public class NoSdkAnnotationRule implements SecurityRule<HttpRequest<?>>, Ordere
 
     @Override
     public int getOrder() {
-        return -10000;
+        return Integer.MIN_VALUE;
     }
 
 }

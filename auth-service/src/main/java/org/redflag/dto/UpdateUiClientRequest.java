@@ -16,6 +16,6 @@ public record UpdateUiClientRequest(
         String newLogin,
 
         @Nullable
-        @Size(min = 6)
+        @Size(min = 8)
         String newPassword
 ) {}

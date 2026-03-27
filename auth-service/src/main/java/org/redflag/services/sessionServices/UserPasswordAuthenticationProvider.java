@@ -8,6 +8,7 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
+import org.redflag.constants.SecurityConstants;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -17,6 +18,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserPasswordAuthenticationProvider implements
         ReactiveAuthenticationProvider<HttpRequest<?>, String, String> {
+
+//    private final static String UI_CLIENT_ID_NAME = "id";
+//    private final static String UI_DEPARTMENT_NAME = "uuidDepartament";
 
     private final UiClientService uiClientService;
 
@@ -28,8 +32,8 @@ public class UserPasswordAuthenticationProvider implements
                 .map(dto -> AuthenticationResponse.success(
                         dto.login(),
                         dto.roles(),
-                        Map.of("id", dto.id(),
-                                "uuidDepartament", dto.uuidDepartament())
+                        Map.of(SecurityConstants.UI_CLIENT_ID_NAME, dto.id(),
+                                SecurityConstants.UI_DEPARTMENT_NAME, dto.uuidDepartament())
                 ))
                 .onErrorResume(e -> Mono.just(AuthenticationResponse.failure(e.getMessage())));
     }

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class UiClientToUiClientDtoMapper {
 
-    public static UiClientDto mapToUiClientDto(UiClient client) {
+    public UiClientDto mapToUiClientDto(UiClient client) {
         return new UiClientDto(
                 client.getId(),
                 client.getLogin(),

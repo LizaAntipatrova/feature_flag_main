@@ -28,6 +28,7 @@ public class UiClientService {
     private final UiClientRepository clientRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UiClientToUiClientDtoMapper mapper;
 
     public List<UiClientDto> getAllByDepartment(UUID uuidDepartament) {
         if (uuidDepartament == null) {
@@ -41,17 +42,16 @@ public class UiClientService {
         }
 
         return clients.stream()
-                .map(UiClientToUiClientDtoMapper::mapToUiClientDto)
+                .map(mapper::mapToUiClientDto)
                 .toList();
     }
 
     public UiClientDto getByLogin(String login) {
         return clientRepository.findByLogin(login)
-                .map(UiClientToUiClientDtoMapper::mapToUiClientDto)
+                .map(mapper::mapToUiClientDto)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("User not found"));
     }
 
-    @Transactional
     public void delete(Long id) {
         clientRepository.deleteById(id);
     }

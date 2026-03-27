@@ -6,6 +6,7 @@ import io.micronaut.security.token.jwt.generator.JwtTokenGenerator;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redflag.constants.SecurityConstants;
 import org.redflag.exception.BadCredentialsCustomException;
 import org.redflag.repositories.SdkClientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SdkAuthService {
 
-    private static final Integer EXPIRATION_SECONDS = 86400;
+//    private static final Integer EXPIRATION_SECONDS = 86400;
 
     private final SdkClientRepository sdkClientRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,14 +34,14 @@ public class SdkAuthService {
                 .flatMap(client -> {
                     Authentication authentication = Authentication.build(
                             client.getLogin().toString(),
-                            Map.of("type", "sdk_client")
+                            Map.of(SecurityConstants.SDK_TOKEN_TYPE, SecurityConstants.SDK_TOKEN_TYPE_VALUE)
                     );
 
-                    return tokenGenerator.generateToken(authentication, EXPIRATION_SECONDS);
+                    return tokenGenerator.generateToken(authentication, SecurityConstants.EXPIRATION_TOKEN_SECONDS);
                 });
     }
 
-    private UUID parseUuidOrThrow(String login) {
+    private static UUID parseUuidOrThrow(String login) {
         try {
             return UUID.fromString(login);
         } catch (IllegalArgumentException e) {

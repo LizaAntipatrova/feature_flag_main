@@ -3,6 +3,9 @@ package org.redflag.services;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
 import org.redflag.dto.SdkClientResponse;
 import org.redflag.entities.SdkClient;
 import org.redflag.exception.ConflictCustomException;
@@ -16,8 +19,6 @@ import java.util.UUID;
 @Singleton
 @RequiredArgsConstructor
 public class SdkClientService {
-
-    private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     private final SdkClientRepository repository;
     private final PasswordEncoder passwordEncoder;
@@ -71,11 +72,13 @@ public class SdkClientService {
     }
 
     private String generateRandomPassword() {
-        SecureRandom random = new SecureRandom();
-        StringBuilder sb = new StringBuilder(8);
-        for (int i = 0; i < 8; i++) {
-            sb.append(CHARS.charAt(random.nextInt(CHARS.length())));
-        }
-        return sb.toString();
+        PasswordGenerator gen = new PasswordGenerator();
+
+        CharacterRule lowerCase = new CharacterRule(EnglishCharacterData.LowerCase, 2);
+        CharacterRule upperCase = new CharacterRule(EnglishCharacterData.UpperCase, 2);
+        CharacterRule digits = new CharacterRule(EnglishCharacterData.Digit, 2);
+
+        return gen.generatePassword(8, lowerCase, upperCase, digits);
     }
+
 }

@@ -35,6 +35,8 @@ dependencies {
     implementation("org.springframework.security:spring-security-crypto:6.4.5")
     implementation("io.micronaut.security:micronaut-security-jwt")
 
+    implementation("org.passay:passay:1.6.0")
+
     implementation("org.slf4j:jcl-over-slf4j:2.0.9")
 
     implementation("io.projectreactor:reactor-core")

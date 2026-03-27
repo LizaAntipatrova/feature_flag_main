@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class FeatureFlagServiceClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FeatureFlagServiceClient.class);
+    private final Logger logger = LoggerFactory.getLogger(FeatureFlagServiceClient.class);
 
     private final Random random = new Random();
 
@@ -21,7 +21,7 @@ public class FeatureFlagServiceClient {
      */
     public UUID createOrganizationNode(String name) {
         UUID orgUuid = UUID.randomUUID();
-        LOG.info("External Service: Created organization node '{}' with UUID: {}", name, orgUuid);
+        logger.info("External Service: Created organization node '{}' with UUID: {}", name, orgUuid);
         return orgUuid;
     }
 }

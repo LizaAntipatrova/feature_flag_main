@@ -5,6 +5,7 @@ import io.micronaut.http.cookie.Cookie;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.configs.properties.SessionProperties;
+import org.redflag.constants.SecurityConstants;
 import org.redflag.dto.SessionResponseDto;
 import org.redflag.entities.Session;
 import org.redflag.entities.UiClient;
@@ -23,7 +24,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SessionService {
 
-    public static final String COOKIE_NAME = "SESSION";
+//    public static final String COOKIE_NAME = "SESSION";
+//    public static final int SECONDS_IN_HOUR = 3600;
 
     private final SessionRepository sessionRepository;
     private final UiClientRepository uiClientRepository;
@@ -31,7 +33,7 @@ public class SessionService {
 
     public Mono<Session> findActiveSession(Long sessionId) {
         return Mono.justOrEmpty(sessionRepository.findById(sessionId))
-                .filter(this::isValid);
+                    .filter(this::isValid);
     }
 
     private boolean isValid(Session session) {
@@ -67,17 +69,20 @@ public class SessionService {
     }
 
     public void invalidateSession(String sessionIdStr, String currentUserLogin) {
-        long sessionId;
-        try {
-            sessionId = Long.parseLong(sessionIdStr);
-        } catch (NumberFormatException e) {
-            throw new BadCredentialsCustomException("Invalid session format");
-        }
+//        long sessionId;
+//        try {
+//            sessionId = Long.parseLong(sessionIdStr);
+//        } catch (NumberFormatException e) {
+//            throw new BadCredentialsCustomException("Invalid session format");
+//        }
+        long sessionId = SupportSessionUtils.parseSessionId(sessionIdStr);
 
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("Session not found"));
 
-        if (!session.getUser().getLogin().equals(currentUserLogin)) {
+        if (!session.getUser()
+                    .getLogin()
+                    .equals(currentUserLogin)) {
             throw new AccessDeniedCustomException("You cannot invalidate someone else's session");
         }
 
@@ -92,7 +97,7 @@ public class SessionService {
     }
 
     public HttpResponse<SessionResponseDto> buildSuccessResponse(Session session) {
-        final long SESSION_MAX_AGE = sessionProperties.getTtlHours() * 3600;
+        final long SESSION_MAX_AGE = sessionProperties.getTtlHours() * SecurityConstants.SECONDS_IN_HOUR;
 
         UiClient user = session.getUser();
 
@@ -106,8 +111,8 @@ public class SessionService {
     }
 
     public Cookie createSessionCookie(Object value, long maxAge) {
-        return Cookie.of(COOKIE_NAME, String.valueOf(value))
-                .path("/")
+        return Cookie.of(SecurityConstants.COOKIES_NAME, String.valueOf(value))
+                .path(SecurityConstants.COOKIES_PATH)
                 .httpOnly(true)
                 .maxAge(maxAge);
     }

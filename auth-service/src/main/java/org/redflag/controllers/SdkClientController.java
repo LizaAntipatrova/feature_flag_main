@@ -15,7 +15,7 @@ import org.redflag.services.SdkClientService;
 
 @Controller("/api/v1/sdk-clients")
 @RequiredArgsConstructor
-@Secured(SecurityRule.IS_AUTHENTICATED)
+//@Secured(SecurityRule.IS_AUTHENTICATED)
 @NoSdkAllowed
 @Tag(name = "CRUD методы для сущности Sdk клиент")
 public class SdkClientController {

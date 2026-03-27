@@ -72,6 +72,9 @@ micronaut:
       - pattern: /v3/api-docs/**
         access: isAnonymous()
 
+      - pattern: /api/v1/**
+        access: isAuthenticated()
+
 #    server:
 #      cors:
 #        enabled: true

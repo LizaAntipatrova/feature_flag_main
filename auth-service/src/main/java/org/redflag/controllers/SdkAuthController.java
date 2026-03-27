@@ -9,6 +9,7 @@ import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.redflag.constants.SecurityConstants;
 import org.redflag.services.tokenServices.SdkAuthService;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -30,8 +31,8 @@ public class SdkAuthController {
 
                     if (tokenOptional.isPresent()) {
                         return HttpResponse.ok(Map.of(
-                                "access_token", tokenOptional.get(),
-                                "token_type", "Bearer"
+                                SecurityConstants.SDK_ACCESS_TOKEN_NAME, tokenOptional.get(),
+                                SecurityConstants.SDK_AUTH_TOKEN_TYPE, SecurityConstants.SDK_AUTH_TOKEN_VALUE
                         ));
                     } else {
                         return HttpResponse.unauthorized();
