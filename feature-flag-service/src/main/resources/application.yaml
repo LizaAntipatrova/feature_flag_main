@@ -1,0 +1,56 @@
+micronaut:
+  application:
+    name: feature-flag-service
+  router:
+    static-resources:
+      swagger:
+        enabled: true
+        mapping: /swagger/**
+        paths: classpath:META-INF/swagger
+      swagger-ui:
+        enabled: true
+        mapping: /swagger-ui/**
+        paths: classpath:META-INF/swagger/views/swagger-ui
+
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - OPTIONS
+          allowedHeaders:
+            - Content-Type
+            - Authorization
+          exposedHeaders:
+            - Location
+          allowCredentials: true
+          maxAge: 3600
+
+datasources:
+  default:
+    driverClassName: org.postgresql.Driver
+    dialect: POSTGRES
+
+liquibase:
+  datasources:
+    default:
+      enabled: true
+      change-log: classpath:db/changelog/db.changelog-master.yaml
+
+jpa:
+  default:
+    entity-scan:
+      packages:
+        - "org.redflag.model"
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        show_sql: false
+        format_sql: true
