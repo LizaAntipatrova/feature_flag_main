@@ -1,0 +1,29 @@
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5433/authdatabase
+    username: ${AUTH_SERVICE_DB_USER}
+    password: ${AUTH_SERVICE_DB_PASSWORD}
+    driverClassName: org.postgresql.Driver
+    db-type: postgres
+
+jpa:
+  default:
+    properties:
+      hibernate:
+        show_sql: true
+
+logger:
+  levels:
+    io.micronaut.security: DEBUG
+    io.micronaut.session: DEBUG
+
+micronaut:
+  server:
+    cors:
+      configurations:
+        web:
+          allowed-origins:
+            - "http://localhost:3000"
+          allowed-methods: [GET, POST, PUT, DELETE, OPTIONS]
+          allowed-headers: ["*"]
+          allow-credentials: true

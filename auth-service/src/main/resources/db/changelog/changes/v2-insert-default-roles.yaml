@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: irina
+      changes:
+        - loadData:
+            file: db/data/roles.csv
+            tableName: role
+            columns:
+              - column:
+                  name: name
+                  type: STRING

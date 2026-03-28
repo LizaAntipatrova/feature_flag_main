@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: irina
+      changes:
+        - modifyDataType:
+            tableName: sdk_client
+            columnName: login
+            newDataType: uuid

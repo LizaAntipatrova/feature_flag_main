@@ -13,14 +13,41 @@ repositories {
 
 dependencies {
     annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+
+//    implementation("io.micronaut.validation:micronaut-validation-http")
+
+    implementation("io.micronaut.data:micronaut-data-jpa")
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
-    compileOnly("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut.data:micronaut-data-tx-hibernate")
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+
+    implementation("io.micronaut.liquibase:micronaut-liquibase")
+    implementation("org.liquibase:liquibase-core")
+    implementation("io.micronaut:micronaut-http")
+
+    implementation("io.micronaut.security:micronaut-security")
+    implementation("io.micronaut.security:micronaut-security-session")
+    implementation("org.springframework.security:spring-security-crypto:6.4.5")
+    implementation("io.micronaut.security:micronaut-security-jwt")
+
+    implementation("org.passay:passay:1.6.0")
+
+    implementation("org.slf4j:jcl-over-slf4j:2.0.9")
+
+    implementation("io.projectreactor:reactor-core")
+
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("ch.qos.logback:logback-classic")
-    testImplementation("io.micronaut:micronaut-http-client")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    runtimeOnly("org.postgresql:postgresql")
+
+    compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
+
 }
 
 
@@ -59,6 +86,10 @@ micronaut {
 
 tasks.named("dockerfileNative") {
     jdkVersion = "21"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 

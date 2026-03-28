@@ -1,0 +1,123 @@
+micronaut:
+  application:
+    name: auth-service
+
+  router:
+    static-resources:
+      swagger:
+        enabled: true
+        mapping: /swagger/**
+        paths: classpath:META-INF/swagger
+      swagger-ui:
+        enabled: true
+        mapping: /swagger-ui/**
+        paths: classpath:META-INF/swagger/views/swagger-ui
+
+  openapi:
+    views:
+      spec: swagger-ui.enabled=true,redoc.enabled=true
+
+  server:
+    cors:
+      enabled: true
+
+  security:
+    authentication: session
+    redirect:
+      enabled: false
+
+    token:
+      jwt:
+        enabled: true
+        cookie:
+          enabled: false
+        signatures:
+          secret:
+            generator:
+              secret: '${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForProduction}'
+        bearer:
+          enabled: true
+
+    endpoints:
+      login:
+        enabled: false
+      logout:
+        enabled: false
+
+    session:
+      enabled: false
+      login-handler:
+        enabled: false
+      cookie:
+        enabled: true
+        cookie-name: SESSION
+        http-only: true
+      jdbc:
+        enabled: true
+        table-name: session
+      cleanup-interval: 1h
+      ttl-hours: 1
+      max-session: 5
+
+#    csrf:
+#      enabled: true
+#      cookie:
+#        enabled: true
+
+    intercept-url-map:
+      - pattern: /swagger-ui/**
+        access: isAnonymous()
+      - pattern: /swagger/**
+        access: isAnonymous()
+      - pattern: /v3/api-docs/**
+        access: isAnonymous()
+
+      - pattern: /api/v1/**
+        access: isAuthenticated()
+
+#    server:
+#      cors:
+#        enabled: true
+#        configurations:
+#          web:
+#            allowed-origins:
+#              - ${FRONT_SERVER_URL}
+#            allowed-methods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#              - OPTIONS
+#            allowed-headers:
+#              - "*"
+#            allow-credentials: true
+
+
+#datasources:
+#  default:
+#    url: jdbc:postgresql://localhost:5433/authdatabase
+#    username: user
+#    password: "1234"
+#    driverClassName: org.postgresql.Driver
+#    db-type: postgres
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'org.redflag.entities'
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        show_sql: false
+
+liquibase:
+  datasources:
+    default:
+      enabled: true
+      change-log: 'classpath:db/changelog/db.changelog-master.yml'
+
+#logger:
+#  levels:
+#    io.micronaut.security: DEBUG
+#    io.micronaut.session: DEBUG

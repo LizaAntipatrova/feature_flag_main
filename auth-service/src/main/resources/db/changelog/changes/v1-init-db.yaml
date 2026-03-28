@@ -1,0 +1,135 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: irina
+      changes:
+        # 1. Таблица sdk_client
+        - createTable:
+            tableName: sdk_client
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: login
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        # 2. Таблица role
+        - createTable:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+        # 3. Таблица ui_client
+        - createTable:
+            tableName: ui_client
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: login
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: uuid_departament
+                  type: uuid
+                  constraints:
+                    nullable: false
+
+        # 4. Таблица user_role (Связующая)
+        - createTable:
+            tableName: user_role
+            columns:
+              - column:
+                  name: id_user
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: id_role
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+        # 5. Таблица session
+        - createTable:
+            tableName: session
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ttl
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        # 6. Внешние ключи (Foreign Keys)
+        - addForeignKeyConstraint:
+            baseTableName: user_role
+            baseColumnNames: id_user
+            constraintName: fk_user_role_ui_client
+            referencedTableName: ui_client
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: user_role
+            baseColumnNames: id_role
+            constraintName: fk_user_role_role
+            referencedTableName: role
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: session
+            baseColumnNames: user_id
+            constraintName: fk_session_ui_client
+            referencedTableName: ui_client
+            referencedColumnNames: id
+            onDelete: CASCADE
