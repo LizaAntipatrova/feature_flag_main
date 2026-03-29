@@ -7,6 +7,7 @@ import org.redflag.model.FeatureFlag;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> {
@@ -50,4 +51,13 @@ public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> 
             """, nativeQuery = true)
     List<FeatureFlag> findAllByDescendantsOrganizationNodes(Long nodeId, Integer limit, Integer offset);
 
+    @Query(value = """
+            select ff.*
+            from organization_node on2
+            join feature_flag ff on on2.id = ff.organization_node_id
+            where on2.path @> (select o.path
+                                from organization_node o
+                                where o.uuid = :nodeUuid)
+            """, nativeQuery = true)
+    List<FeatureFlag> findAllAncestorsFeatureFlagsByOrganizationNodeUuid(UUID nodeUuid);
 }
