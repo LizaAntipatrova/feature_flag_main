@@ -22,7 +22,7 @@ import java.util.UUID;
 @Controller("/api/v1/clients")
 @RequiredArgsConstructor
 @NoSdkAllowed
-//@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "CRUD методы для сущности ui пользователь")
 public class UiClientController {
 

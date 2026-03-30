@@ -48,32 +48,6 @@ public class SdkClientService {
         return new SdkClientResponse(client.getId(), client.getLogin(), password);
     }
 
-//    @Transactional
-//    public SdkClientResponse updateLogin(Long id, UUID newLogin) {
-//        SdkClient client = repository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundCustomException("SDK Client not found"));
-//
-//        if (!client.getLogin().equals(newLogin) && repository.findByLogin(newLogin).isPresent()) {
-//            throw new ConflictCustomException("Login already taken");
-//        }
-//
-//        client.setLogin(newLogin);
-//        repository.update(client);
-//        return new SdkClientResponse(client.getId(), client.getLogin(), null);
-//    }
-//
-//    @Transactional
-//    public SdkClientResponse regeneratePassword(Long id) {
-//        SdkClient client = repository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundCustomException("SDK Client not found"));
-//
-//        String newPassword = generateRandomPassword();
-//        client.setPassword(passwordEncoder.encode(newPassword));
-//        repository.update(client);
-//
-//        return new SdkClientResponse(client.getId(), client.getLogin(), newPassword);
-//    }
-
     @Transactional
     public void deleteWithKafka(UUID login) {
         SdkClient sdkClient = repository.findByLogin(login)

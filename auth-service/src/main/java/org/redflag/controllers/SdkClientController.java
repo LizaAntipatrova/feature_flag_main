@@ -3,6 +3,8 @@ package org.redflag.controllers;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,6 +19,7 @@ import org.redflag.services.SdkClientService;
 @NoSdkAllowed
 @Validated
 @Tag(name = "CRUD методы для сущности Sdk клиент")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class SdkClientController {
 
     private final SdkClientService sdkService;
@@ -26,16 +29,6 @@ public class SdkClientController {
     public CreateServiceAccessResponse create(@Body @Valid SdkLoginRequest request) {
         return sdkService.createSdkWithKafka(request.newLogin());
     }
-
-//    @Patch("/{id}/login")
-//    public SdkClientResponse updateLogin(@PathVariable Long id, @Body @Valid SdkLoginRequest request) {
-//        return sdkService.updateLogin(id, request.newLogin());
-//    }
-//
-//    @Patch("/{id}/password")
-//    public SdkClientResponse regeneratePassword(@PathVariable Long id) {
-//        return sdkService.regeneratePassword(id);
-//    }
 
     @Delete("/delete")
     public HttpResponse<?> delete(@Body @Valid SdkLoginRequest request) {

@@ -28,6 +28,7 @@ import java.util.Map;
 @Controller("/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Авторизация ui пользователей через сессии")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class LoginController {
 
     private final SessionService sessionService;
