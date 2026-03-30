@@ -13,10 +13,10 @@ import org.reactivestreams.Publisher;
 import org.redflag.constants.SecurityConstants;
 import reactor.core.publisher.Mono;
 
+import static org.redflag.constants.SecurityConstants.SDK_TOKEN_TYPE_VALUE;
+
 @Singleton
 public class NoSdkAnnotationRule implements SecurityRule<HttpRequest<?>>, Ordered {
-
-//    private static final String ROUTE_MATCH_ATTRIBUTE = "micronaut.http.route.match";
 
     @Override
     public Publisher<SecurityRuleResult> check(HttpRequest<?> request, @Nullable Authentication auth) {
@@ -29,17 +29,16 @@ public class NoSdkAnnotationRule implements SecurityRule<HttpRequest<?>>, Ordere
                     if (!hasNoSdk) {
                         return SecurityRuleResult.UNKNOWN;
                     }
-                    if (auth == null) {
+                    else {
+                        Object typeAttr = auth.getAttributes().get("type");
+                        String clientType = (typeAttr != null) ? typeAttr.toString() : "";
+
+                        if (clientType.equals(SDK_TOKEN_TYPE_VALUE)) {
+                            return SecurityRuleResult.REJECTED;
+                        }
+
                         return SecurityRuleResult.UNKNOWN;
                     }
-                    Object typeAttr = auth.getAttributes().get("type");
-                    String clientType = (typeAttr != null) ? typeAttr.toString() : "";
-
-                    if ("sdk_client".equals(clientType)) {
-                        return SecurityRuleResult.REJECTED;
-                    }
-
-                    return SecurityRuleResult.UNKNOWN;
                 })
                 .orElse(SecurityRuleResult.UNKNOWN));
     }
