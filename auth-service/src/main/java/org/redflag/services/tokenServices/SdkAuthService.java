@@ -20,8 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SdkAuthService {
 
-//    private static final Integer EXPIRATION_SECONDS = 86400;
-
     private final SdkClientRepository sdkClientRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenGenerator tokenGenerator;

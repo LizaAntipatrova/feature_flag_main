@@ -71,7 +71,7 @@ public class SdkClientService {
         repository.deleteById(id);
     }
 
-    private String generateRandomPassword() {
+    public String generateRandomPassword() {
         PasswordGenerator gen = new PasswordGenerator();
 
         CharacterRule lowerCase = new CharacterRule(EnglishCharacterData.LowerCase, 2);

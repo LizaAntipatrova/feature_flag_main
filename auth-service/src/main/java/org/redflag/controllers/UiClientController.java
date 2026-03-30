@@ -4,6 +4,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Controller("/api/v1/clients")
 @RequiredArgsConstructor
 @NoSdkAllowed
+//@Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "CRUD методы для сущности ui пользователь")
 public class UiClientController {
 

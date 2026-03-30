@@ -28,8 +28,8 @@ micronaut:
         web:
           allowed-origins:
             - "http://localhost:3000"
-          allowed-methods: [GET, POST, PUT, DELETE, OPTIONS]
-          allowed-headers: ["*"]
+          allowed-methods: [ GET, POST, PUT, DELETE, OPTIONS ]
+          allowed-headers: [ "*" ]
           allow-credentials: true
 
 redflag:
@@ -38,3 +38,14 @@ redflag:
       url: "http://localhost:8080"
     auth-service:
       url: "http://localhost:8081"
+
+kafka:
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS:`localhost:9094`}
+  security:
+    protocol: SASL_PLAINTEXT
+  sasl:
+    mechanism: SCRAM-SHA-512
+    jaas:
+      config: "org.apache.kafka.common.security.scram.ScramLoginModule required username='${KAFKA_USERNAME:admin}' password='${KAFKA_PASSWORD:admin-secret}';"
+

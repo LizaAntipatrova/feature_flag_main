@@ -33,6 +33,7 @@ public class GlobalExceptionHandler implements ExceptionHandler<Exception, HttpR
         }
 
         log.error("Error [{}] at path [{}]: {}", status.getCode(), request.getPath(), exception.getMessage());
+        exception.printStackTrace();
 
         var response = new CustomErrorResponse(exception.getMessage(), Map.of(
                 "timestamp", LocalDateTime.now(),
