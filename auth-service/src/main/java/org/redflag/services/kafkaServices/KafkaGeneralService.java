@@ -118,4 +118,11 @@ public class KafkaGeneralService {
             log.info("Rollback: ACLs restored for user {}", user);
         }
     }
+
+    public void setupMainServiceAcls() {
+        aclKafkaService.createMainProducerPrefixAcls("svc.");
+        aclKafkaService.createMainIdempotentWriteAcl();
+
+        log.info("Main service ACLs configured successfully");
+    }
 }
