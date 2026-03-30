@@ -20,7 +20,6 @@ import java.util.UUID;
 
 @Controller("/api/v1/clients")
 @RequiredArgsConstructor
-//@Secured(SecurityRule.IS_AUTHENTICATED)
 @NoSdkAllowed
 @Tag(name = "CRUD методы для сущности ui пользователь")
 public class UiClientController {

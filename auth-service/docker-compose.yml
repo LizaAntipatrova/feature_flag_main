@@ -11,5 +11,16 @@ services:
     volumes:
       - postgres-auth-data:/var/lib/postgresql
 
+  redis-auth:
+    image: redis:7-alpine
+    container_name: authredis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    # Команда для включения сохранения данных на диск
+    command: redis-server --appendonly yes
+
 volumes:
   postgres-auth-data:
+  redis-data:

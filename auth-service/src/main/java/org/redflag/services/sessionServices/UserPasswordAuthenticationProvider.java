@@ -19,9 +19,6 @@ import java.util.Map;
 public class UserPasswordAuthenticationProvider implements
         ReactiveAuthenticationProvider<HttpRequest<?>, String, String> {
 
-//    private final static String UI_CLIENT_ID_NAME = "id";
-//    private final static String UI_DEPARTMENT_NAME = "uuidDepartament";
-
     private final UiClientService uiClientService;
 
     @Override
