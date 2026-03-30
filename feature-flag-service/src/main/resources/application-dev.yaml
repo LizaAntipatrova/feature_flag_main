@@ -5,6 +5,20 @@ micronaut:
         web:
           allowedOrigins:
             - http://localhost:3000
+  http:
+    services:
+      url: http://localhost:8081
+      read-timeout: 2s
+      connect-timeout: 1s
+  security:
+    intercept-url-map:
+      - pattern: /swagger-ui/**
+        access: isAnonymous()
+      - pattern: /swagger/**
+        access: isAnonymous()
+
+      - pattern: /api/v1/**
+        access: isAuthenticated()
 
 datasources:
   default:
