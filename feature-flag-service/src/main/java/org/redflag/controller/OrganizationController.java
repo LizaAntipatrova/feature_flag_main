@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.redflag.auth.Role;
@@ -25,6 +26,7 @@ import org.redflag.service.impl.organization.*;
 @Controller("api/v1/organizations")
 @RequiredArgsConstructor
 @Tag(name = "Организация")
+@SecurityRequirement(name = "sessionAuth")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class OrganizationController {
     private final CreateOrganizationService createOrganizationService;
@@ -113,7 +115,6 @@ public class OrganizationController {
             )
 
     })
-
     public GetOrganizationsResponse getOrganizations(
             @Parameter(description = "Верхний лимит количества записей для получения блока записей (от 1 до 100)", required = true, example = "42")
             @QueryValue("limit") Integer limit,

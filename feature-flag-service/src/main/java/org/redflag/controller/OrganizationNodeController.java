@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import org.redflag.service.impl.node.*;
 @RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@SecurityRequirement(name = "sessionAuth")
 @Tag(name = "Звено организации")
 public class OrganizationNodeController {
     private final CreateOrganizationNodeService createOrganizationNodeService;
@@ -127,6 +129,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.READ_DEPARTMENT_ROLE_NAME)
     public OrganizationNodeDTO getOrganizationNodeById(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -175,6 +178,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.READ_DEPARTMENT_ROLE_NAME)
     public GetOrganizationNodesResponse getOrganizationNodes(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -238,6 +242,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.UPDATE_DEPARTMENT_ROLE_NAME)
     public OrganizationNodeDTO updateOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -287,6 +292,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.DELETE_DEPARTMENT_ROLE_NAME)
     public HttpResponse<Void> deleteOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -331,6 +337,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.READ_DEPARTMENT_ROLE_NAME)
     public GetChildrenOrganizationNodesResponse getChildrenOrganizationNodes(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -374,6 +381,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.READ_DEPARTMENT_ROLE_NAME)
     public GetAncestorsOrganizationNodesResponse getAncestorsOrganizationNodes(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -417,6 +425,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.READ_DEPARTMENT_ROLE_NAME)
     public GetDescendantsOrganizationNodesResponse getDescendantsOrganizationNodes(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -467,6 +476,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.READ_DEPARTMENT_ROLE_NAME)
     public GetSubtreeNodeOrganizationsResponse getSubtreeOrganizationNodes(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -515,6 +525,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @Secured(Role.UPDATE_DEPARTMENT_ROLE_NAME)
     public MoveOrganizationNodeResponse moveOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,

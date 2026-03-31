@@ -36,7 +36,7 @@ public class CookieAuthenticationFetcher implements AuthenticationFetcher<HttpRe
                         userDTO.getRoles().stream()
                                 .map(Role::getName)
                                 .collect(Collectors.toSet()),
-                        Map.of(AuthenticationProvider.NODE_UUID_ATTRIBUTE_NAME, userDTO.getDepartmentUuid())
+                        Map.of(AuthenticationProvider.NODE_UUID_ATTRIBUTE_NAME, userDTO.getUuidDepartament())
                 )).onErrorResume(HttpClientResponseException.class,
                         e -> {
                     if (e.getStatus().equals(HttpStatus.UNAUTHORIZED)){

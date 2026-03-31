@@ -17,8 +17,9 @@ dependencies {
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
-    compileOnly("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-http-client")
     compileOnly("org.projectlombok:lombok")
+    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.2.12.Final'
 
     compileOnly("io.micronaut.openapi:micronaut-openapi-annotations")
     runtimeOnly("ch.qos.logback:logback-classic")

@@ -2,14 +2,18 @@ package org.redflag.controller;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.Role;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.FeatureFlagIdDTO;
@@ -20,6 +24,8 @@ import org.redflag.service.impl.featureflag.*;
 
 @RequiredArgsConstructor
 @Controller("api/v1/organizations/{organizationId}/nodes/{nodeId}/feature-flags")
+@SecurityRequirement(name = "sessionAuth")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "Фича флаг")
 public class FeatureFlagController {
     private final CreateFeatureFlagService createFeatureFlagService;
@@ -73,6 +79,7 @@ public class FeatureFlagController {
             )
 
     })
+    @Secured(Role.CREATE_FEATURE_FLAG_ROLE_NAME)
     public HttpResponse<FeatureFlagDTO> createOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -117,6 +124,7 @@ public class FeatureFlagController {
             )
 
     })
+    @Secured(Role.READ_FEATURE_FLAG_ROLE_NAME)
     public GetFeatureFlagsResponse getFeatureFlags(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -173,6 +181,7 @@ public class FeatureFlagController {
             )
 
     })
+    @Secured(Role.READ_FEATURE_FLAG_ROLE_NAME)
     public GetLinkedFeatureFlagsResponse getLinkedFeatureFlags(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -234,6 +243,7 @@ public class FeatureFlagController {
             )
 
     })
+    @Secured(Role.READ_FEATURE_FLAG_ROLE_NAME)
     public FeatureFlagDTO getFeatureFlagByName(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -283,6 +293,7 @@ public class FeatureFlagController {
             )
 
     })
+    @Secured(Role.READ_FEATURE_FLAG_ROLE_NAME)
     public FeatureFlagDTO getFeatureFlagById(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -342,6 +353,7 @@ public class FeatureFlagController {
             )
 
     })
+    @Secured(Role.UPDATE_FEATURE_FLAG_ROLE_NAME)
     public FeatureFlagDTO updateFeatureFlag(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -389,6 +401,7 @@ public class FeatureFlagController {
             )
 
     })
+    @Secured(Role.DELETE_FEATURE_FLAG_ROLE_NAME)
     public HttpResponse<Void> deleteFeatureFlag(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
