@@ -12,8 +12,7 @@ import org.reactivestreams.Publisher;
 import org.redflag.client.AuthClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -33,7 +32,7 @@ public class CookieAuthenticationFetcher implements AuthenticationFetcher<HttpRe
         return Mono.from(authClient.getUser(cookieHeader))
                 .map(userDTO -> Authentication.build(
                         userDTO.getLogin(),
-                        userDTO.getRoles().stream()
+                        Objects.isNull(userDTO.getRoles()) ? Set.of() : userDTO.getRoles().stream()
                                 .map(Role::getName)
                                 .collect(Collectors.toSet()),
                         Map.of(AuthenticationProvider.NODE_UUID_ATTRIBUTE_NAME, userDTO.getUuidDepartament())
