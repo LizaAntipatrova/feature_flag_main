@@ -2,6 +2,7 @@ package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.error.ErrorCatalog;
@@ -22,6 +23,7 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationRepository organizationRepository;
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
+    private final AuthenticationProvider authenticationProvider;
 
     @Override
     protected void validateRequest(CreateOrganizationNodeRequest request) {
@@ -36,6 +38,12 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
 
     @Override
     protected void validateState(CreateOrganizationNodeRequest request) {
+        if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
+                request.getParentId(),
+                authenticationProvider.getAuthenticationNodeUuid()
+        )){
+            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+        }
         if (organizationNodeRepository.existsByOrganization_IdAndName(request.getOrganizationId(), request.getName())) {
             throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION.getException();
         }

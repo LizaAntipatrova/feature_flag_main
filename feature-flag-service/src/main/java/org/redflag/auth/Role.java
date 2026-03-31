@@ -2,6 +2,8 @@ package org.redflag.auth;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum Role {
     CREATE_FEATURE_FLAG_ROLE(Role.CREATE_FEATURE_FLAG_ROLE_NAME),
@@ -34,5 +36,10 @@ public enum Role {
     private final String name;
     Role(String name) {
         this.name = name;
+    }
+
+    public static Role getRoleByName(String name){
+        return Arrays.stream(values()).filter(role -> role.name.equals(name))
+                .findAny().get();
     }
 }

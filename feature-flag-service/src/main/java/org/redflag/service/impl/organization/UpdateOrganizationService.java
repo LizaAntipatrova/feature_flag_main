@@ -2,10 +2,12 @@ package org.redflag.service.impl.organization;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.organization.update.UpdateOrganizationRequest;
 import org.redflag.dto.organization.OrganizationDTO;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
+import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationDTOMapper;
@@ -17,6 +19,8 @@ import java.util.Objects;
 public class UpdateOrganizationService extends BaseService<UpdateOrganizationRequest, OrganizationDTO> {
     private final OrganizationRepository organizationRepository;
     private final OrganizationDTOMapper organizationDTOMapper;
+    private final OrganizationNodeRepository organizationNodeRepository;
+    private final AuthenticationProvider authenticationProvider;
 
     @Override
     protected void validateRequest(UpdateOrganizationRequest request) {
@@ -28,6 +32,12 @@ public class UpdateOrganizationService extends BaseService<UpdateOrganizationReq
 
     @Override
     protected void validateState(UpdateOrganizationRequest request) {
+        if (!organizationNodeRepository.isRootNodeInOrganization(
+                authenticationProvider.getAuthenticationNodeUuid(),
+                request.getId()
+        )){
+            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+        }
         Long id = request.getId();
         if (!organizationRepository.existsById(id)) {
             throw ErrorCatalog.NO_DATA.getException();

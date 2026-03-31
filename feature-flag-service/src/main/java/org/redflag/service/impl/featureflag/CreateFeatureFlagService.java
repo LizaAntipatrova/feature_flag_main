@@ -2,6 +2,8 @@ package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.AuthenticationProvider;
+import org.redflag.auth.Role;
 import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagRequest;
 import org.redflag.error.ErrorCatalog;
@@ -20,6 +22,7 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
     private final FeatureFlagRepository featureFlagRepository;
     private final OrganizationNodeRepository organizationNodeRepository;
     private final FeatureFlagDTOMapper featureFlagDTOMapper;
+    private final AuthenticationProvider authenticationProvider;
 
     @Override
     protected void validateRequest(CreateFeatureFlagRequest request) {
@@ -35,6 +38,12 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
 
     @Override
     protected void validateState(CreateFeatureFlagRequest request) {
+        if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
+                request.getNodeId(),
+                authenticationProvider.getAuthenticationNodeUuid()
+        )){
+            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+        }
         if (featureFlagRepository.existsByOrganizationIdAndName(request.getOrganizationId(), request.getName())) {
             throw ErrorCatalog.NOT_UNIQUE_FEATURE_FLAG_NAME_IN_ORGANIZATION.getException();
         }

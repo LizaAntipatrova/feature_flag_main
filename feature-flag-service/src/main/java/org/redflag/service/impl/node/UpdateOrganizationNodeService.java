@@ -3,6 +3,7 @@ package org.redflag.service.impl.node;
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.error.ErrorCatalog;
@@ -18,6 +19,7 @@ import java.util.Objects;
 public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizationNodeRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
+    private final AuthenticationProvider authenticationProvider;
 
     @Override
     protected void validateRequest(UpdateOrganizationNodeRequest request) {
@@ -35,6 +37,12 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
 
     @Override
     protected void validateState(UpdateOrganizationNodeRequest request) {
+        if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
+                request.getNodeId(),
+                authenticationProvider.getAuthenticationNodeUuid()
+        )){
+            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+        }
         OrganizationNode organizationNode = organizationNodeRepository
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);

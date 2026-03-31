@@ -2,6 +2,7 @@ package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
@@ -14,12 +15,14 @@ import org.redflag.service.util.LtreePathUtil;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Singleton
 @RequiredArgsConstructor
 public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNodeRequest, MoveOrganizationNodeResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
+    private final AuthenticationProvider authenticationProvider;
 
     @Override
     protected void validateRequest(MoveOrganizationNodeRequest request) {
@@ -33,6 +36,18 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
 
     @Override
     protected void validateState(MoveOrganizationNodeRequest request) {
+        UUID authUuid = authenticationProvider.getAuthenticationNodeUuid();
+        Boolean hasRightsOnMovedNode = organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
+                request.getNodeId(),
+                authUuid
+        );
+        Boolean hasRightsOnNewParentNode = organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
+                request.getNewParentId(),
+                authUuid
+        );
+        if (!hasRightsOnMovedNode || !hasRightsOnNewParentNode) {
+            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+        }
         OrganizationNode movedNode = organizationNodeRepository
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
@@ -59,7 +74,7 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
                 .findSubtreeByOrganizationIdAndParentId(request.getOrganizationId(), request.getNodeId());
 
         OrganizationNode parentNode = organizationNodeRepository.findByOrganization_IdAndId(request.getOrganizationId(),
-                request.getNewParentId())
+                        request.getNewParentId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
 
         OrganizationNode rootNode = subtree.stream()

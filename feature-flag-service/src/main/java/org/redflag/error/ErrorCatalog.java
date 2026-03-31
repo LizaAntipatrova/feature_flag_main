@@ -14,6 +14,8 @@ public enum ErrorCatalog {
     BAD_OFFSET("01-0003", "Некорректный формат offset", ErrorType.CLIENT_ERROR, HttpStatus.BAD_REQUEST),
     NO_DATA("01-0004", "Нет данных по переданным параметрам", ErrorType.CLIENT_ERROR, HttpStatus.NOT_FOUND),
     INVALID_JSON("01-0005", "Некорректный JSON", ErrorType.CLIENT_ERROR, HttpStatus.BAD_REQUEST),
+    NO_RIGHTS_TO_OPERATION("01-0006", "Недостаточно прав для выполнения этой оперции", ErrorType.CLIENT_ERROR, HttpStatus.FORBIDDEN),
+    UNAUTHORIZED("01-0007", "Для выполнения данного действия необходима аутентификация", ErrorType.CLIENT_ERROR, HttpStatus.UNAUTHORIZED),
 
     NOT_UNIQUE_ORGANIZATION_NAME("02-0001", "Организация с таким именем уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION("02-0002", "Звено организации с таким именем в этой организации уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
@@ -24,7 +26,9 @@ public enum ErrorCatalog {
     NOT_UNIQUE_FEATURE_FLAG_NAME_IN_ORGANIZATION("02-0007", "Фича флаг с таким именем в этой организации уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     PARENT_NODE_MUST_BE_IN_SAME_ORGANIZATION("02-0008", "Нельзя создать узел, родителем которого является узел другой организации", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     ORGANIZATION_CAN_HAVE_ONE_ROOT_NODE("02-0009", "Организация может иметь только один корневой узел", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    NODE_MUST_BE_SERVICE("02-0010", "Узел, должен быть сервисом", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
+    NODE_MUST_BE_SERVICE("02-0010", "Узел, должен быть сервисом", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+    NO_RIGHTS_TO_ENTITY("02-0011", "Недостаточно прав для работы с данной сущностью", ErrorType.BUSINESS_ERROR, HttpStatus.FORBIDDEN);
+
 
     private final String code;
     private final String message;
