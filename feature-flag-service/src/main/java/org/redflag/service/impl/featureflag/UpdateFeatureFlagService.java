@@ -12,7 +12,6 @@ import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.FeatureFlagDTOMapper;
-import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 
 import java.util.Objects;
 
@@ -42,6 +41,17 @@ public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagReque
         )){
             throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
         }
+        if (!organizationNodeRepository.isNodeInOrganization(
+                request.getNodeId(),
+                request.getOrganizationId())){
+            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
+        }
+        if (!featureFlagRepository.isFeatureFlagInNode(
+                request.getFeatureFlagId(),
+                request.getNodeId())){
+            throw ErrorCatalog.NO_SUCH_FLAG_IN_NODE.getException();
+        }
+
         FeatureFlag featureFlag = featureFlagRepository
                 .findById(request.getFeatureFlagId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);

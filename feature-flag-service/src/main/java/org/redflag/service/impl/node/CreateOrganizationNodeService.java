@@ -38,11 +38,19 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
 
     @Override
     protected void validateState(CreateOrganizationNodeRequest request) {
-        if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
-                request.getParentId(),
-                authenticationProvider.getAuthenticationNodeUuid()
-        )){
-            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+        UUID authNode = authenticationProvider.getAuthenticationNodeUuid();
+        if (Objects.isNull(request.getParentId())){
+            if (!organizationNodeRepository.isRootNodeInOrganization(authNode, request.getOrganizationId())) {
+                throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+            }
+        }else{
+            if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
+                    request.getParentId(), authNode)) {
+                throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+            }
+            if (!organizationNodeRepository.isNodeInOrganization(request.getParentId(), request.getOrganizationId())){
+                throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
+            }
         }
         if (organizationNodeRepository.existsByOrganization_IdAndName(request.getOrganizationId(), request.getName())) {
             throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION.getException();

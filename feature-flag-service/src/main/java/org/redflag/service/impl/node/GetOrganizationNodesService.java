@@ -2,7 +2,7 @@ package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.node.OrganizationNodeDTO;
+import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.node.get.GetOrganizationNodesRequest;
 import org.redflag.dto.node.get.GetOrganizationNodesResponse;
 import org.redflag.error.ErrorCatalog;
@@ -13,12 +13,14 @@ import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 import org.redflag.validator.PaginationParameterValidator;
 
 import java.util.List;
+import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
 public class GetOrganizationNodesService extends BaseService<GetOrganizationNodesRequest, GetOrganizationNodesResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
+    private final AuthenticationProvider authenticationProvider;
 
     @Override
     protected void validateRequest(GetOrganizationNodesRequest request) {
@@ -27,6 +29,20 @@ public class GetOrganizationNodesService extends BaseService<GetOrganizationNode
         }
         if (!PaginationParameterValidator.validateOffset(request.getOffset())) {
             throw ErrorCatalog.BAD_OFFSET.getException();
+        }
+    }
+
+    @Override
+    protected void validateState(GetOrganizationNodesRequest request) {
+        if (!organizationNodeRepository.isNodeInOrganization(
+                authenticationProvider.getAuthenticationNodeUuid(),
+                request.getOrganizationId())) {
+            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
+        }
+        if (Objects.nonNull(request.getNodeId()) && !organizationNodeRepository.isNodeInOrganization(
+                request.getNodeId(),
+                request.getOrganizationId())) {
+            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
         }
     }
 

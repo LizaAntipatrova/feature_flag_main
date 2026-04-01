@@ -22,6 +22,10 @@ public class DeleteOrganizationNodeService extends BaseService<OrganizationNodeI
         )){
             throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
         }
+        if (!organizationNodeRepository.isNodeInOrganization(request.getNodeId(), request.getOrganizationId())){
+            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
+        }
+
     }
 
     @Override

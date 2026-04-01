@@ -43,6 +43,9 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
         )){
             throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
         }
+        if (!organizationNodeRepository.isNodeInOrganization(request.getNodeId(), request.getOrganizationId())){
+            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
+        }
         OrganizationNode organizationNode = organizationNodeRepository
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);

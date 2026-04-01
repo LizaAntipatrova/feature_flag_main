@@ -3,7 +3,6 @@ package org.redflag.service.impl.node;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.auth.AuthenticationProvider;
-import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
 import org.redflag.dto.node.update.MoveOrganizationNodeResponse;
 import org.redflag.error.ErrorCatalog;
@@ -48,6 +47,18 @@ public class MoveOrganizationNodeService extends BaseService<MoveOrganizationNod
         if (!hasRightsOnMovedNode || !hasRightsOnNewParentNode) {
             throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
         }
+        Boolean isMovedNodeInOrganization = organizationNodeRepository.isNodeInOrganization(
+                request.getNodeId(),
+                request.getOrganizationId()
+        );
+        Boolean isNewParentNodeInOrganization = organizationNodeRepository.isNodeInOrganization(
+                request.getNewParentId(),
+                request.getOrganizationId()
+        );
+        if (!isMovedNodeInOrganization || !isNewParentNodeInOrganization) {
+            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
+        }
+
         OrganizationNode movedNode = organizationNodeRepository
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);

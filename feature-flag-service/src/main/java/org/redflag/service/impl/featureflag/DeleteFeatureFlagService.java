@@ -25,6 +25,16 @@ public class DeleteFeatureFlagService extends BaseService<FeatureFlagIdDTO, Void
         )){
             throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
         }
+        if (!organizationNodeRepository.isNodeInOrganization(
+                request.getNodeId(),
+                request.getOrganizationId())){
+            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
+        }
+        if (!featureFlagRepository.isFeatureFlagInNode(
+                request.getFlagId(),
+                request.getNodeId())){
+            throw ErrorCatalog.NO_SUCH_FLAG_IN_NODE.getException();
+        }
     }
 
     @Override

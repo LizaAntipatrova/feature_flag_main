@@ -20,10 +20,27 @@ public interface FeatureFlagRepository extends JpaRepository<FeatureFlag, Long> 
             """)
     boolean existsByOrganizationIdAndName(Long organizationId, String name);
 
-    Optional<FeatureFlag> findByName(String name);
+    @Query("""
+            select exists (
+            select 1
+            from FeatureFlag ff
+            where ff.organizationNode.id = :nodeId
+              and ff.id = :flagId)
+            """)
+    Boolean isFeatureFlagInNode(Long flagId, Long nodeId);
+    @Query("""
+            select exists (
+            select 1
+            from FeatureFlag ff
+            where ff.organizationNode.id = :nodeId
+              and ff.name = :name)
+            """)
+    Boolean isFeatureFlagInNodeByFlagName(String name, Long nodeId);
+
+    Optional<FeatureFlag> findByNameAndOrganizationNode_Id(String name, Long nodeId);
 
     @Query(value = """
-            select * from feature_flag ff 
+            select * from feature_flag ff
             where ff.organization_node_id = :nodeId
             limit :limit offset :offset
             """, nativeQuery = true)
