@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @Introspected
 public class PaginationDTO {
     @JsonProperty("limit")
-    @Schema(description = "Верхний лимит количества записей для текущего массива", requiredMode = Schema.RequiredMode.REQUIRED, example = "50")
+    @Schema(description = "Верхний лимит количества записей для текущего массива (от 1 до 100)", requiredMode = Schema.RequiredMode.REQUIRED, example = "50")
     protected final Integer limit;
 
     @JsonProperty("offset")

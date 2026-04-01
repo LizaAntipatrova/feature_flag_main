@@ -10,6 +10,6 @@ import java.util.UUID;
 @Getter
 @Introspected
 @Serdeable
-public class GetOrganizationNodeByUuidRequest {
+public class OrganizationNodeUuidDTO {
     private final UUID nodeUuid;
 }

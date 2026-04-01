@@ -23,8 +23,8 @@ public enum ErrorCatalog {
     MOVE_ROOT_NODE("02-0006", "Нельзя переместить корневой узел организации", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     NOT_UNIQUE_FEATURE_FLAG_NAME_IN_ORGANIZATION("02-0007", "Фича флаг с таким именем в этой организации уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     PARENT_NODE_MUST_BE_IN_SAME_ORGANIZATION("02-0008", "Нельзя создать узел, родителем которого является узел другой организации", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    ORGANIZATION_CAN_HAVE_ONE_ROOT_NODE("02-0008", "Организация может иметь только один корневой узел", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
-
+    ORGANIZATION_CAN_HAVE_ONE_ROOT_NODE("02-0009", "Организация может иметь только один корневой узел", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+    NODE_MUST_BE_SERVICE("02-0010", "Узел, должен быть сервисом", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
 
     private final String code;
     private final String message;
