@@ -2,7 +2,7 @@ package org.redflag.exception;
 
 import io.micronaut.http.HttpStatus;
 
-// 401
+// 400
 public class BadCredentialsCustomException extends RuntimeException implements HttpStatusAware {
 
     public BadCredentialsCustomException(String message) {
@@ -11,6 +11,6 @@ public class BadCredentialsCustomException extends RuntimeException implements H
 
     @Override
     public HttpStatus getStatus() {
-        return HttpStatus.UNAUTHORIZED;
+        return HttpStatus.BAD_REQUEST;
     }
 }

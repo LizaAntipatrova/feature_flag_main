@@ -11,6 +11,8 @@ import java.util.UUID;
 public interface SdkClientRepository extends JpaRepository<SdkClient, Long> {
 
     Optional<SdkClient> findByLogin(UUID login);
+
+    void deleteById(Long id);
 }
 
 

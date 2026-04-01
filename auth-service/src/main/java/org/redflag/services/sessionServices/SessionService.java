@@ -2,6 +2,8 @@ package org.redflag.services.sessionServices;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.cookie.Cookie;
+import io.micronaut.http.cookie.SameSite;
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.configs.properties.SessionProperties;
@@ -26,6 +28,19 @@ public class SessionService {
     private final SessionRepository sessionRepository;
     private final UiClientRepository uiClientRepository;
     private final SessionProperties sessionProperties;
+
+    @Transactional
+    public Session refreshSession(String sessionIdStr) {
+        long sessionId = SupportSessionUtils.parseSessionId(sessionIdStr);
+
+        Session session = sessionRepository.findById(sessionId)
+                .filter(this::isValid)
+                .orElseThrow(() -> new AccessDeniedCustomException("Session expired or invalid"));
+
+        session.setTtl(LocalDateTime.now().plusHours(sessionProperties.getTtlHours()));
+
+        return sessionRepository.update(session);
+    }
 
     public Mono<Session> findActiveSession(Long sessionId) {
         return Mono.justOrEmpty(sessionRepository.findById(sessionId))
@@ -101,11 +116,18 @@ public class SessionService {
                 .cookie(createSessionCookie(session.getId(), SESSION_MAX_AGE));
     }
 
+    public HttpResponse<?> buildEmptySuccessResponse(Session session) {
+        long maxAge = sessionProperties.getTtlHours() * SecurityConstants.SECONDS_IN_HOUR;
+        return HttpResponse.ok()
+                .cookie(createSessionCookie(session.getId(), maxAge));
+    }
+
     public Cookie createSessionCookie(Object value, long maxAge) {
         return Cookie.of(SecurityConstants.COOKIES_NAME, String.valueOf(value))
                 .path(SecurityConstants.COOKIES_PATH)
                 .httpOnly(true)
-                .maxAge(maxAge);
+                .maxAge(maxAge)
+                .sameSite(SameSite.Lax);
     }
 
 }

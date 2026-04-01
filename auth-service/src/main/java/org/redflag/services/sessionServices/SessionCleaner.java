@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SessionCleaner {
 
-//    private static final String CLEANUP_INTERVAL = "${micronaut.security.session.cleanup-interval}";
-
     private final SessionRepository sessionRepository;
 
     @Scheduled(fixedDelay = SecurityConstants.CLEANUP_INTERVAL)
