@@ -19,13 +19,13 @@ import java.util.Map;
 public class UserPasswordAuthenticationProvider implements
         ReactiveAuthenticationProvider<HttpRequest<?>, String, String> {
 
-    private final UiClientService uiClientService;
+    private final UiClientAuthService uiClientAuthService;
 
     @Override
     public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> request,
                                                           AuthenticationRequest<String, String> authRequest) {
 
-        return uiClientService.authenticate(authRequest.getIdentity(), authRequest.getSecret())
+        return uiClientAuthService.authenticate(authRequest.getIdentity(), authRequest.getSecret())
                 .map(dto -> AuthenticationResponse.success(
                         dto.login(),
                         dto.roles(),

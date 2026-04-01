@@ -29,16 +29,18 @@ public class NoSdkAnnotationRule implements SecurityRule<HttpRequest<?>>, Ordere
                     if (!hasNoSdk) {
                         return SecurityRuleResult.UNKNOWN;
                     }
-                    else {
-                        Object typeAttr = auth.getAttributes().get("type");
-                        String clientType = (typeAttr != null) ? typeAttr.toString() : "";
-
-                        if (clientType.equals(SDK_TOKEN_TYPE_VALUE)) {
-                            return SecurityRuleResult.REJECTED;
-                        }
-
+                    if (auth == null) {
                         return SecurityRuleResult.UNKNOWN;
                     }
+
+                    Object typeAttr = auth.getAttributes().get("type");
+                    String clientType = (typeAttr != null) ? typeAttr.toString() : "";
+
+                    if (clientType.equals(SDK_TOKEN_TYPE_VALUE)) {
+                        return SecurityRuleResult.REJECTED;
+                    }
+
+                    return SecurityRuleResult.UNKNOWN;
                 })
                 .orElse(SecurityRuleResult.UNKNOWN));
     }

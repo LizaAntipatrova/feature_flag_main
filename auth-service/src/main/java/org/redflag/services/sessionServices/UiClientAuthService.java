@@ -13,7 +13,7 @@ import reactor.core.scheduler.Schedulers;
 
 @Singleton
 @RequiredArgsConstructor
-public class UiClientService {
+public class UiClientAuthService {
     private final UiClientRepository uiClientRepository;
     private final PasswordEncoder passwordEncoder;
     private final UiClientToUserSecurityDtoMapper mapper;
