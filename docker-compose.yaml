@@ -14,8 +14,6 @@ services:
       - ff_service_pgdata:/var/lib/postgresql/data/pgdata
     shm_size: "256m"
     restart: unless-stopped
-    networks:
-      - redflag-network
 
   postgres-auth:
     image: postgres:latest
@@ -28,8 +26,6 @@ services:
       POSTGRES_PASSWORD: ${AUTH_SERVICE_DB_PASSWORD}
     volumes:
       - postgres-auth-data:/var/lib/postgresql
-    networks:
-      - redflag-network
 
   redis-auth:
     image: redis:7-alpine
@@ -39,8 +35,6 @@ services:
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
-    networks:
-      - redflag-network
 
   kafka:
     image: apache/kafka:3.7.1
@@ -53,8 +47,6 @@ services:
       - ./init-kafka.sh:/usr/local/bin/init-kafka.sh
     restart: unless-stopped
     entrypoint: ["/bin/bash", "/usr/local/bin/init-kafka.sh"]
-    networks:
-      - redflag-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -69,8 +61,7 @@ services:
       - KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=SASL_PLAINTEXT
       - KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM=SCRAM-SHA-512
       - KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
-    networks:
-      - redflag-network
+
 
   auth-service:
     build:
@@ -94,8 +85,6 @@ services:
       - redis-auth
       - postgres-auth
       - kafka
-    networks:
-      - redflag-network
 
   ff-service:
     build:
@@ -112,8 +101,6 @@ services:
       MICRONAUT_HTTP_SERVICES_AUTH_SERVICE_URL: http://auth-service:8080
     depends_on:
       - postgres-ff
-    networks:
-      - redflag-network
 
 volumes:
   ff_service_pgdata:
@@ -121,7 +108,3 @@ volumes:
   postgres-auth-data:
   redis-data:
   kafka_data:
-
-networks:
-  redflag-network:
-    driver: bridge
