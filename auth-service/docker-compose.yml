@@ -21,6 +21,33 @@ services:
     # Команда для включения сохранения данных на диск
     command: redis-server --appendonly yes
 
+  kafka:
+    image: apache/kafka:3.7.1
+    container_name: auth-kafka
+    hostname: kafka
+    ports:
+      - "9094:9094"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+      - ./init-kafka.sh:/usr/local/bin/init-kafka.sh
+    restart: unless-stopped
+    entrypoint: [ "/bin/bash", "/usr/local/bin/init-kafka.sh" ]
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: auth-kafka-ui
+    ports:
+      - "8082:8080"
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=RedFlag-Cluster
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=SASL_PLAINTEXT
+      - KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM=SCRAM-SHA-512
+      - KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
+
 volumes:
   postgres-auth-data:
   redis-data:
+  kafka_data:

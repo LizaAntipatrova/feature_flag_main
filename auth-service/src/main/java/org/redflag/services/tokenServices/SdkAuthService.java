@@ -20,14 +20,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SdkAuthService {
 
-//    private static final Integer EXPIRATION_SECONDS = 86400;
-
     private final SdkClientRepository sdkClientRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenGenerator tokenGenerator;
 
     public Optional<String> authenticate(UsernamePasswordCredentials credentials) {
-        UUID loginUuid = parseUuidOrThrow(credentials.getUsername());
+        UUID loginUuid = SupportTokenUtils.parseUuidOrThrow(credentials.getUsername());
 
         return sdkClientRepository.findByLogin(loginUuid)
                 .filter(client -> passwordEncoder.matches(credentials.getPassword(), client.getPassword()))
@@ -41,11 +39,4 @@ public class SdkAuthService {
                 });
     }
 
-    private static UUID parseUuidOrThrow(String login) {
-        try {
-            return UUID.fromString(login);
-        } catch (IllegalArgumentException e) {
-            throw new BadCredentialsCustomException("The login must be a valid UUID (e.g., 550e8400-e29b-41d4-a716-446655440000)");
-        }
-    }
 }

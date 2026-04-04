@@ -52,6 +52,8 @@ dependencies {
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
 
     implementation("io.micronaut.redis:micronaut-redis-lettuce")
+    implementation("org.apache.kafka:kafka-clients")
+    implementation("io.micronaut.kafka:micronaut-kafka")
 
 }
 

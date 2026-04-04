@@ -6,7 +6,7 @@ import io.micronaut.http.client.annotation.Client;
 import org.redflag.dto.CreateOrganizationRequest;
 import org.redflag.dto.CreateOrganizationResponse;
 
-@Client("${redflag.services.ff-service.url}")
+@Client(id = "ff-service")
 public interface FFServiceClient {
 
     @Post("/api/v1/organizations/with-root-node")

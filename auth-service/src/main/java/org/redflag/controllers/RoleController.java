@@ -14,6 +14,7 @@ import java.util.List;
 @Controller("/api/v1/roles")
 @RequiredArgsConstructor
 @NoSdkAllowed
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "CRUD методы для сущности Роль")
 public class RoleController {
 

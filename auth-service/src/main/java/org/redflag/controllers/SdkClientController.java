@@ -5,41 +5,34 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.redflag.annotations.NoSdkAllowed;
-import org.redflag.dto.SdkClientResponse;
+import org.redflag.dto.CreateServiceAccessResponse;
 import org.redflag.dto.SdkLoginRequest;
 import org.redflag.services.SdkClientService;
 
 @Controller("/api/v1/sdk-clients")
 @RequiredArgsConstructor
 @NoSdkAllowed
+@Validated
 @Tag(name = "CRUD методы для сущности Sdk клиент")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class SdkClientController {
 
     private final SdkClientService sdkService;
 
-    @Post
+    @Post("/create")
     @Status(HttpStatus.CREATED)
-    public SdkClientResponse create(@Body @Valid SdkLoginRequest request) {
-        return sdkService.create(request.newLogin());
+    public CreateServiceAccessResponse create(@Body @Valid SdkLoginRequest request) {
+        return sdkService.createSdkWithKafka(request.newLogin());
     }
 
-    @Patch("/{id}/login")
-    public SdkClientResponse updateLogin(@PathVariable Long id, @Body @Valid SdkLoginRequest request) {
-        return sdkService.updateLogin(id, request.newLogin());
-    }
-
-    @Patch("/{id}/password")
-    public SdkClientResponse regeneratePassword(@PathVariable Long id) {
-        return sdkService.regeneratePassword(id);
-    }
-
-    @Delete("/{id}")
-    public HttpResponse<?> delete(@PathVariable Long id) {
-        sdkService.delete(id);
+    @Delete("/delete")
+    public HttpResponse<?> delete(@Body @Valid SdkLoginRequest request) {
+        sdkService.deleteWithKafka(request.newLogin());
         return HttpResponse.noContent();
     }
 }
