@@ -51,3 +51,7 @@ volumes:
   postgres-auth-data:
   redis-data:
   kafka_data:
+
+networks:
+  redflag-network:
+    external: true
