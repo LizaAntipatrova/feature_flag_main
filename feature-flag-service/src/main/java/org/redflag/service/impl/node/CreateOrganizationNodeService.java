@@ -1,8 +1,8 @@
 package org.redflag.service.impl.node;
 
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.error.ErrorCatalog;
@@ -13,6 +13,10 @@ import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 import org.redflag.service.util.LtreePathUtil;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
+import org.redflag.service.validator.OrganizationNodeValidator;
+import org.redflag.service.validator.UniqueNameValidator;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -23,7 +27,10 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationRepository organizationRepository;
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
-    private final AuthenticationProvider authenticationProvider;
+    private final OrganizationNodeValidator organizationNodeValidator;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
+    private final UniqueNameValidator uniqueNameValidator;
 
     @Override
     protected void validateRequest(CreateOrganizationNodeRequest request) {
@@ -38,41 +45,21 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
 
     @Override
     protected void validateState(CreateOrganizationNodeRequest request) {
-        UUID authNode = authenticationProvider.getAuthenticationNodeUuid();
-        if (Objects.isNull(request.getParentId())){
-            if (!organizationNodeRepository.isRootNodeInOrganization(authNode, request.getOrganizationId())) {
-                throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
-            }
-        }else{
-            if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
-                    request.getParentId(), authNode)) {
-                throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
-            }
-            if (!organizationNodeRepository.isNodeInOrganization(request.getParentId(), request.getOrganizationId())){
-                throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
-            }
+        Boolean isNewRootNode = Objects.isNull(request.getParentId());
+        if (isNewRootNode) {
+            authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
+            organizationNodeValidator.checkMissingRootNodeInOrganization(request.getOrganizationId());
+        } else {
+            authRightsToNodeValidator.checkIsAuthNodeIsParentToRequestNode(request.getParentId());
+            linkedEntityValidator.checkIsNodeInOrganization(request.getParentId(), request.getOrganizationId());
+            organizationNodeValidator.checkNodeIsNotService(request.getParentId());
         }
-        if (organizationNodeRepository.existsByOrganization_IdAndName(request.getOrganizationId(), request.getName())) {
-            throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION.getException();
-        }
-        if (Objects.isNull(request.getParentId())
-                && organizationNodeRepository.existsRootNodeInOrganization(request.getOrganizationId())) {
-            throw ErrorCatalog.ORGANIZATION_CAN_HAVE_ONE_ROOT_NODE.getException();
-        }
-
-        if (Objects.nonNull(request.getParentId())) {
-            OrganizationNode parentNode = organizationNodeRepository.findById(request.getParentId())
-                    .orElseThrow(ErrorCatalog.NO_DATA::getException);
-            if (parentNode.getIsService()) {
-                throw ErrorCatalog.SERVICE_CANNOT_HAVE_DESCENDANTS.getException();
-            }
-            if (!parentNode.getOrganization().getId().equals(request.getOrganizationId())) {
-                throw ErrorCatalog.PARENT_NODE_MUST_BE_IN_SAME_ORGANIZATION.getException();
-            }
-        }
+        uniqueNameValidator.checkIsNodeNameMissingInOrganization(request.getOrganizationId(), request.getName());
     }
 
+
     @Override
+    @Transactional
     protected OrganizationNodeDTO execute(CreateOrganizationNodeRequest request) {
         Organization organization = organizationRepository.findById(request.getOrganizationId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);

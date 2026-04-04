@@ -1,9 +1,9 @@
 package org.redflag.service.impl.node;
 
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
-import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.error.ErrorCatalog;
@@ -11,6 +11,10 @@ import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationNodeDTOMapper;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.EntityVersionValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
+import org.redflag.service.validator.UniqueNameValidator;
 
 import java.util.Objects;
 
@@ -19,7 +23,11 @@ import java.util.Objects;
 public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizationNodeRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
-    private final AuthenticationProvider authenticationProvider;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
+    private final UniqueNameValidator uniqueNameValidator;
+    private final EntityVersionValidator entityVersionValidator;
+
 
     @Override
     protected void validateRequest(UpdateOrganizationNodeRequest request) {
@@ -37,24 +45,14 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
 
     @Override
     protected void validateState(UpdateOrganizationNodeRequest request) {
-        if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
-                request.getNodeId(),
-                authenticationProvider.getAuthenticationNodeUuid()
-        )){
-            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
-        }
-        if (!organizationNodeRepository.isNodeInOrganization(request.getNodeId(), request.getOrganizationId())){
-            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
-        }
+        authRightsToNodeValidator.checkIsAuthNodeIsParentToRequestNode(request.getNodeId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+
         OrganizationNode organizationNode = organizationNodeRepository
                 .findByOrganization_IdAndId(request.getOrganizationId(), request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        if (!organizationNode.getVersion().equals(request.getVersion())) {
-            throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
-        }
-        if (!organizationNode.getName().equals(request.getName())
-        && organizationNodeRepository.existsByOrganization_IdAndName(request.getOrganizationId(), request.getName())) {
-            throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NODE_NAME_IN_ORGANIZATION.getException();
+        if (!organizationNode.getName().equals(request.getName())) {
+            uniqueNameValidator.checkIsNodeNameMissingInOrganization(request.getOrganizationId(), request.getName());
         }
         if (request.getIsService() && organizationNodeRepository.existsDescendants(request.getNodeId())) {
             throw ErrorCatalog.SERVICE_CANNOT_HAVE_DESCENDANTS.getException();
@@ -63,21 +61,20 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
     }
 
     @Override
+    @Transactional
     protected OrganizationNodeDTO execute(UpdateOrganizationNodeRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
 
-        if (!organizationNode.getVersion().equals(request.getVersion())) {
-            throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
-        }
+        entityVersionValidator.checkVersionMatch(organizationNode.getVersion(), request.getVersion());
 
         organizationNode.setName(request.getName())
                 .setIsService(request.getIsService());
 
         OrganizationNode newOrganizationNode;
         try {
-            newOrganizationNode = organizationNodeRepository
-                    .update(organizationNode);
+            newOrganizationNode = organizationNodeRepository.update(organizationNode);
+            organizationNodeRepository.flush();
         } catch (OptimisticLockException e) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }

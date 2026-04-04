@@ -1,5 +1,6 @@
 package org.redflag.service.impl;
 
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeResponse;
@@ -25,6 +26,7 @@ public class CreateOrganizationWithRootNodesService extends BaseService<CreateOr
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
 
     @Override
+    @Transactional
     protected CreateOrganizationWithRootNodeResponse execute(CreateOrganizationRequest request) {
         OrganizationDTO organizationDTO = createOrganizationService
                 .service(request);

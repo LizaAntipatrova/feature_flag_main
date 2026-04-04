@@ -1,27 +1,33 @@
 package org.redflag.service.impl.featureflag;
 
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
-import org.redflag.auth.AuthenticationProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
-import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.FeatureFlagDTOMapper;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.EntityVersionValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
 
 import java.util.Objects;
 
 @Singleton
+@Slf4j
 @RequiredArgsConstructor
 public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagRequest, FeatureFlagDTO> {
     private final FeatureFlagRepository featureFlagRepository;
     private final FeatureFlagDTOMapper featureFlagDTOMapper;
-    private final OrganizationNodeRepository organizationNodeRepository;
-    private final AuthenticationProvider authenticationProvider;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
+    private final EntityVersionValidator entityVersionValidator;
+
 
     @Override
     protected void validateRequest(UpdateFeatureFlagRequest request) {
@@ -35,48 +41,27 @@ public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagReque
 
     @Override
     protected void validateState(UpdateFeatureFlagRequest request) {
-        if (!organizationNodeRepository.existsChildNodeInParentNodeByChildIdAndParentUuid(
-                request.getNodeId(),
-                authenticationProvider.getAuthenticationNodeUuid()
-        )){
-            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
-        }
-        if (!organizationNodeRepository.isNodeInOrganization(
-                request.getNodeId(),
-                request.getOrganizationId())){
-            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
-        }
-        if (!featureFlagRepository.isFeatureFlagInNode(
-                request.getFeatureFlagId(),
-                request.getNodeId())){
-            throw ErrorCatalog.NO_SUCH_FLAG_IN_NODE.getException();
-        }
-
-        FeatureFlag featureFlag = featureFlagRepository
-                .findById(request.getFeatureFlagId())
-                .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        if (!featureFlag.getVersion().equals(request.getVersion())) {
-            throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
-        }
+        authRightsToNodeValidator.checkIsAuthNodeIsParentToRequestNode(request.getNodeId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+        linkedEntityValidator.checkIsFeatureFlagInNode(request.getFeatureFlagId(), request.getNodeId());
     }
 
     @Override
+    @Transactional
     protected FeatureFlagDTO execute(UpdateFeatureFlagRequest request) {
         FeatureFlag featureFlag = featureFlagRepository.findById(request.getFeatureFlagId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);
 
-        if (!featureFlag.getVersion().equals(request.getVersion())) {
-            throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
-        }
-        featureFlag.setValue(request.getValue());
+        entityVersionValidator.checkVersionMatch(featureFlag.getVersion(), request.getVersion());
 
+        featureFlag.setValue(request.getValue());
         FeatureFlag newFeatureFlag;
         try {
             newFeatureFlag = featureFlagRepository.update(featureFlag);
+            featureFlagRepository.flush();
         } catch (OptimisticLockException e) {
             throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
         }
-
         return featureFlagDTOMapper.toFeatureFlagDTO(newFeatureFlag);
     }
 }

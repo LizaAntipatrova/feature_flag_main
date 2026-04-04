@@ -3,14 +3,14 @@ package org.redflag.service.impl.organization;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.PaginationDTO;
-import org.redflag.dto.organization.get.GetOrganizationsResponse;
 import org.redflag.dto.organization.OrganizationDTO;
+import org.redflag.dto.organization.get.GetOrganizationsResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationDTOMapper;
-import org.redflag.validator.PaginationParameterValidator;
+import org.redflag.service.validator.PaginationParameterValidator;
 
 import java.util.List;
 
@@ -19,15 +19,12 @@ import java.util.List;
 public class GetOrganizationsService extends BaseService<PaginationDTO, GetOrganizationsResponse> {
     private final OrganizationRepository organizationRepository;
     private final OrganizationDTOMapper organizationDTOMapper;
+    private final PaginationParameterValidator paginationParameterValidator;
 
     @Override
     protected void validateRequest(PaginationDTO request) {
-        if (!PaginationParameterValidator.validateLimit(request.getLimit())) {
-            throw ErrorCatalog.BAD_LIMIT.getException();
-        }
-        if (!PaginationParameterValidator.validateOffset(request.getOffset())) {
-            throw ErrorCatalog.BAD_OFFSET.getException();
-        }
+        paginationParameterValidator.validateLimit(request.getLimit());
+        paginationParameterValidator.validateOffset(request.getOffset());
     }
 
     @Override

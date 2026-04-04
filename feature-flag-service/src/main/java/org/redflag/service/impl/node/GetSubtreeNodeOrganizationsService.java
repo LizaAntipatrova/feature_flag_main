@@ -2,7 +2,6 @@ package org.redflag.service.impl.node;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.node.OrganizationNodeIdDTO;
 import org.redflag.dto.node.get.GetSubtreeNodeOrganizationsResponse;
 import org.redflag.error.ErrorCatalog;
@@ -10,6 +9,8 @@ import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.util.LtreePathUtil;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,20 +22,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GetSubtreeNodeOrganizationsService extends BaseService<OrganizationNodeIdDTO, GetSubtreeNodeOrganizationsResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
-    private final AuthenticationProvider authenticationProvider;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
 
     @Override
     protected void validateState(OrganizationNodeIdDTO request) {
-        if (!organizationNodeRepository.isNodeInOrganization(
-                authenticationProvider.getAuthenticationNodeUuid(),
-                request.getOrganizationId())){
-            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
-        }
-        if (!organizationNodeRepository.isNodeInOrganization(
-                request.getNodeId(),
-                request.getOrganizationId())){
-            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
-        }
+        authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
     }
 
     @Override

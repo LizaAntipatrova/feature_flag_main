@@ -24,12 +24,11 @@ public enum ErrorCatalog {
     CYCLE_MOVE("02-0005", "Нельзя переместить узел в дочерний ему или в него самого", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     MOVE_ROOT_NODE("02-0006", "Нельзя переместить корневой узел организации", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     NOT_UNIQUE_FEATURE_FLAG_NAME_IN_ORGANIZATION("02-0007", "Фича флаг с таким именем в этой организации уже существует", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    PARENT_NODE_MUST_BE_IN_SAME_ORGANIZATION("02-0008", "Нельзя создать узел, родителем которого является узел другой организации", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    ORGANIZATION_CAN_HAVE_ONE_ROOT_NODE("02-0009", "Организация может иметь только один корневой узел", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    NODE_MUST_BE_SERVICE("02-0010", "Узел, должен быть сервисом", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    NO_RIGHTS_TO_ENTITY("02-0011", "Недостаточно прав для работы с данной сущностью", ErrorType.BUSINESS_ERROR, HttpStatus.FORBIDDEN),
-    NO_SUCH_NODE_IN_ORGANIZATION("02-0012", "В организации нет такого звена", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    NO_SUCH_FLAG_IN_NODE("02-0013", "В звене организации нет такого флага", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
+    ORGANIZATION_CAN_HAVE_ONE_ROOT_NODE("02-0008", "Организация может иметь только один корневой узел", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+    NODE_MUST_BE_SERVICE("02-0009", "Узел, должен быть сервисом", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+    NO_RIGHTS_TO_ENTITY("02-0010", "Недостаточно прав для работы с данной сущностью", ErrorType.BUSINESS_ERROR, HttpStatus.FORBIDDEN),
+    NO_SUCH_NODE_IN_ORGANIZATION("02-0011", "В организации нет такого звена", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+    NO_SUCH_FLAG_IN_NODE("02-0012", "В звене организации нет такого флага", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
 
 
 

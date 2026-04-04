@@ -2,15 +2,15 @@ package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.get.GetFeatureFlagByNameRequest;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.FeatureFlag;
 import org.redflag.repository.FeatureFlagRepository;
-import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.FeatureFlagDTOMapper;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
 
 import java.util.Objects;
 
@@ -19,8 +19,8 @@ import java.util.Objects;
 public class GetFeatureFlagByNameService extends BaseService<GetFeatureFlagByNameRequest, FeatureFlagDTO> {
     private final FeatureFlagRepository featureFlagRepository;
     private final FeatureFlagDTOMapper featureFlagDTOMapper;
-    private final OrganizationNodeRepository organizationNodeRepository;
-    private final AuthenticationProvider authenticationProvider;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
 
     @Override
     protected void validateRequest(GetFeatureFlagByNameRequest request) {
@@ -32,21 +32,9 @@ public class GetFeatureFlagByNameService extends BaseService<GetFeatureFlagByNam
 
     @Override
     protected void validateState(GetFeatureFlagByNameRequest request) {
-        if (!organizationNodeRepository.isNodeInOrganization(
-                authenticationProvider.getAuthenticationNodeUuid(),
-                request.getOrganizationId())){
-            throw ErrorCatalog.NO_RIGHTS_TO_ENTITY.getException();
-        }
-        if (!organizationNodeRepository.isNodeInOrganization(
-                request.getNodeId(),
-                request.getOrganizationId())){
-            throw ErrorCatalog.NO_SUCH_NODE_IN_ORGANIZATION.getException();
-        }
-        if (!featureFlagRepository.isFeatureFlagInNodeByFlagName(
-                request.getFlagName(),
-                request.getNodeId())){
-            throw ErrorCatalog.NO_SUCH_FLAG_IN_NODE.getException();
-        }
+        authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+        linkedEntityValidator.checkIsFeatureFlagInNodeByName(request.getFlagName(), request.getNodeId());
     }
 
     @Override
