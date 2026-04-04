@@ -25,6 +25,7 @@ public class ConversionErrorExceptionHandler implements ExceptionHandler<Convers
                 .message(error.getMessage())
                 .build();
 
-        return HttpResponse.badRequest(body);
+        return HttpResponse.status(error.getStatus())
+                .body(body);
     }
 }

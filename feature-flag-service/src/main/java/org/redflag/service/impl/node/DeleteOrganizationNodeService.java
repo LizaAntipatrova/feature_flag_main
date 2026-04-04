@@ -5,11 +5,21 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.dto.node.OrganizationNodeIdDTO;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
 
 @Singleton
 @RequiredArgsConstructor
 public class DeleteOrganizationNodeService extends BaseService<OrganizationNodeIdDTO, Void> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
+
+    @Override
+    protected void validateState(OrganizationNodeIdDTO request) {
+        authRightsToNodeValidator.checkIsAuthNodeIsParentToRequestNode(request.getNodeId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+    }
 
     @Override
     protected Void execute(OrganizationNodeIdDTO request) {

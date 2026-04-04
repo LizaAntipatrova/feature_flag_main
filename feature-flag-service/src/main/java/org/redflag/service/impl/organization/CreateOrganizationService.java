@@ -9,6 +9,7 @@ import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationDTOMapper;
+import org.redflag.service.validator.UniqueNameValidator;
 
 import java.util.Objects;
 
@@ -16,7 +17,8 @@ import java.util.Objects;
 @Singleton
 public class CreateOrganizationService extends BaseService<CreateOrganizationRequest, OrganizationDTO> {
     private final OrganizationRepository organizationRepository;
-    private final  OrganizationDTOMapper organizationDTOMapper;
+    private final OrganizationDTOMapper organizationDTOMapper;
+    private final UniqueNameValidator uniqueNameValidator;
 
     @Override
     protected void validateRequest(CreateOrganizationRequest request) {
@@ -28,9 +30,7 @@ public class CreateOrganizationService extends BaseService<CreateOrganizationReq
 
     @Override
     protected void validateState(CreateOrganizationRequest request) {
-        if (organizationRepository.existsByName(request.getName())) {
-            throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NAME.getException();
-        }
+        uniqueNameValidator.checkIsUniqueOrganizationName(request.getName());
     }
 
     @Override

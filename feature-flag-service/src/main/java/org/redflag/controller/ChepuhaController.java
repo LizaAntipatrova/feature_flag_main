@@ -2,14 +2,18 @@ package org.redflag.controller;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.Role;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.complex.CreateOrganizationWithRootNodeResponse;
 import org.redflag.dto.complex.GetFeatureFlagsByUuidServiceNodeResponse;
@@ -31,6 +35,7 @@ public class ChepuhaController {
     private final CreateOrganizationWithRootNodesService createOrganizationWithRootNodesService;
     private final GetOrganizationNodeByUuidService getOrganizationNodeByUuidService;
     private final GetFeatureFlagsByUuidServiceNodeService getFeatureFlagsByUuidServiceNodeService;
+
 
     @Post("/organizations/with-root-node")
     @Operation(
@@ -70,6 +75,7 @@ public class ChepuhaController {
             )
 
     })
+    @Secured(SecurityRule.IS_ANONYMOUS)
     public HttpResponse<CreateOrganizationWithRootNodeResponse> createOrganizationWithRootNode(@Body CreateOrganizationRequest request) {
         return HttpResponse.created(createOrganizationWithRootNodesService.service(request));
     }
@@ -77,7 +83,8 @@ public class ChepuhaController {
     @Get("/find-node")
     @Operation(
             summary = "Получить звено организации по uuid",
-            description = "Получает звено организации по uuid"
+            description = "Получает звено организации по uuid",
+            security = @SecurityRequirement(name = "sessionAuth")
     )
     @ApiResponses({
             @ApiResponse(
@@ -107,6 +114,7 @@ public class ChepuhaController {
             )
 
     })
+    @Secured(Role.READ_DEPARTMENT_ROLE_NAME)
     public OrganizationNodeDTO getOrganizationNodeByUuid(
             @Parameter(description = "UUID звена организации", required = true, example = "9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1")
             @QueryValue UUID organizationNodeUuid) {
@@ -154,6 +162,7 @@ public class ChepuhaController {
             )
 
     })
+    @Secured(SecurityRule.IS_ANONYMOUS)
     public GetFeatureFlagsByUuidServiceNodeResponse getFeatureFlagsByUuidServiceNode(
             @Parameter(description = "UUID сервисной ноды организации", required = true, example = "9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1")
             @QueryValue UUID organizationNodeUuid) {

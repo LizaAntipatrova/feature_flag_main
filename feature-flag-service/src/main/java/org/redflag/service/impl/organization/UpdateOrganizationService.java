@@ -1,14 +1,18 @@
 package org.redflag.service.impl.organization;
 
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.organization.update.UpdateOrganizationRequest;
 import org.redflag.dto.organization.OrganizationDTO;
+import org.redflag.dto.organization.update.UpdateOrganizationRequest;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationDTOMapper;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.OrganizationNodeValidator;
+import org.redflag.service.validator.UniqueNameValidator;
 
 import java.util.Objects;
 
@@ -17,6 +21,9 @@ import java.util.Objects;
 public class UpdateOrganizationService extends BaseService<UpdateOrganizationRequest, OrganizationDTO> {
     private final OrganizationRepository organizationRepository;
     private final OrganizationDTOMapper organizationDTOMapper;
+    private final OrganizationNodeValidator organizationNodeValidator;
+    private final UniqueNameValidator uniqueNameValidator;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
 
     @Override
     protected void validateRequest(UpdateOrganizationRequest request) {
@@ -28,17 +35,16 @@ public class UpdateOrganizationService extends BaseService<UpdateOrganizationReq
 
     @Override
     protected void validateState(UpdateOrganizationRequest request) {
-        Long id = request.getId();
-        if (!organizationRepository.existsById(id)) {
-            throw ErrorCatalog.NO_DATA.getException();
+        authRightsToNodeValidator.checkAuthNodeIsRootNode(request.getId());
+        Organization organization = organizationRepository.findById(request.getId()).orElseThrow();
+        if (!request.getName().equals(organization.getName())) {
+            uniqueNameValidator.checkIsUniqueOrganizationName(request.getName());
         }
-        String name = request.getName();
-        if (organizationRepository.existsByName(name)) {
-            throw ErrorCatalog.NOT_UNIQUE_ORGANIZATION_NAME.getException();
-        }
+
     }
 
     @Override
+    @Transactional
     protected OrganizationDTO execute(UpdateOrganizationRequest request) {
         Organization organization = organizationRepository.findById(request.getId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);

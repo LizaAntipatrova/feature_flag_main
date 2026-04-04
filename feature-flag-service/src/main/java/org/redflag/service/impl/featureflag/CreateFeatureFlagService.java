@@ -1,5 +1,6 @@
 package org.redflag.service.impl.featureflag;
 
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.featureflag.FeatureFlagDTO;
@@ -11,6 +12,9 @@ import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.FeatureFlagDTOMapper;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
+import org.redflag.service.validator.UniqueNameValidator;
 
 import java.util.Objects;
 
@@ -20,6 +24,9 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
     private final FeatureFlagRepository featureFlagRepository;
     private final OrganizationNodeRepository organizationNodeRepository;
     private final FeatureFlagDTOMapper featureFlagDTOMapper;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
+    private final UniqueNameValidator uniqueNameValidator;
 
     @Override
     protected void validateRequest(CreateFeatureFlagRequest request) {
@@ -35,13 +42,13 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
 
     @Override
     protected void validateState(CreateFeatureFlagRequest request) {
-        if (featureFlagRepository.existsByOrganizationIdAndName(request.getOrganizationId(), request.getName())) {
-            throw ErrorCatalog.NOT_UNIQUE_FEATURE_FLAG_NAME_IN_ORGANIZATION.getException();
-        }
-
+        authRightsToNodeValidator.checkIsAuthNodeIsParentToRequestNode(request.getNodeId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+        uniqueNameValidator.checkIsFeatureFlagNameMissingInOrganization(request.getOrganizationId(), request.getName());
     }
 
     @Override
+    @Transactional
     protected FeatureFlagDTO execute(CreateFeatureFlagRequest request) {
         OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
                 .orElseThrow(ErrorCatalog.NO_DATA::getException);

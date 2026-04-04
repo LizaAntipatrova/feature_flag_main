@@ -2,14 +2,18 @@ package org.redflag.controller;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.Role;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.PaginationDTO;
 import org.redflag.dto.organization.OrganizationIdDTO;
@@ -22,6 +26,8 @@ import org.redflag.service.impl.organization.*;
 @Controller("api/v1/organizations")
 @RequiredArgsConstructor
 @Tag(name = "Организация")
+@SecurityRequirement(name = "sessionAuth")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class OrganizationController {
     private final CreateOrganizationService createOrganizationService;
     private final GetOrganizationsService getOrganizationsService;
@@ -109,7 +115,6 @@ public class OrganizationController {
             )
 
     })
-
     public GetOrganizationsResponse getOrganizations(
             @Parameter(description = "Верхний лимит количества записей для получения блока записей (от 1 до 100)", required = true, example = "42")
             @QueryValue("limit") Integer limit,
@@ -205,6 +210,7 @@ public class OrganizationController {
             )
 
     })
+    @Secured(Role.UPDATE_DEPARTMENT_ROLE_NAME)
     public OrganizationDTO updateOrganization(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
@@ -246,6 +252,7 @@ public class OrganizationController {
             )
 
     })
+    @Secured(Role.DELETE_DEPARTMENT_ROLE_NAME)
     public HttpResponse<Void> deleteOrganization(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId

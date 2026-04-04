@@ -25,6 +25,7 @@ public class JsonSyntaxExceptionHandler implements ExceptionHandler<JsonSyntaxEx
                 .message(error.getMessage())
                 .build();
 
-        return HttpResponse.badRequest(body);
+        return HttpResponse.status(error.getStatus())
+                .body(body);
     }
 }

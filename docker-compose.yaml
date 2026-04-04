@@ -1,5 +1,5 @@
 services:
-  postgres:
+  postgres-ff:
     image: postgres:18-alpine
     container_name: ff-service-postgres
     environment:
@@ -15,7 +15,71 @@ services:
     shm_size: "256m"
     restart: unless-stopped
 
+  postgres-auth:
+    image: postgres:latest
+    container_name: authdatabase
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${AUTH_SERVICE_DB}
+      POSTGRES_USER: ${AUTH_SERVICE_DB_USER}
+      POSTGRES_PASSWORD: ${AUTH_SERVICE_DB_PASSWORD}
+    volumes:
+      - postgres-auth-data:/var/lib/postgresql
+
+  redis-auth:
+    image: redis:7-alpine
+    container_name: authredis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    # Команда для включения сохранения данных на диск
+    command: redis-server --appendonly yes
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "8081:8080"
+    environment:
+      MICRONAUT_ENVIRONMENTS: dev
+      DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-auth:5432/${AUTH_SERVICE_DB}
+      DATASOURCES_DEFAULT_USERNAME: ${AUTH_SERVICE_DB_USER}
+      DATASOURCES_DEFAULT_PASSWORD: ${AUTH_SERVICE_DB_PASSWORD}
+      REDIS_URI: redis://redis-auth:6379
+      REDFLAG_SERVICES_FF_SERVICE_URL: http://ff-service:8080
+    depends_on:
+      - redis-auth
+      - postgres-auth
+
+  ff-service:
+    build:
+      context: ./feature-flag-service
+      dockerfile: Dockerfile
+    container_name: ff-service
+    ports:
+      - "8080:8080"
+    environment:
+      MICRONAUT_ENVIRONMENTS: dev
+      DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-ff:5432/${FF_SERVICE_DB}
+      DATASOURCES_DEFAULT_USERNAME: ${FF_SERVICE_DB_USER}
+      DATASOURCES_DEFAULT_PASSWORD: ${FF_SERVICE_DB_PASSWORD}
+      MICRONAUT_HTTP_SERVICES_AUTH_SERVICE_URL: http://auth-service:8080
+    depends_on:
+      - postgres-ff
+
+
 
 volumes:
   ff_service_pgdata:
     name: ff_service_pgdata
+  postgres-auth-data:
+  redis-data:
+
+
+
+
+

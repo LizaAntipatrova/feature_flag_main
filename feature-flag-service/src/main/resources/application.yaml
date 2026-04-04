@@ -8,6 +8,7 @@ micronaut:
         mapping: /swagger/**
         paths: classpath:META-INF/swagger
       swagger-ui:
+        with-credentials: true
         enabled: true
         mapping: /swagger-ui/**
         paths: classpath:META-INF/swagger/views/swagger-ui

@@ -19,7 +19,7 @@ create table organization_node(
     id bigserial primary key,
     name varchar(1024) not null,
     uuid uuid not null,
-    organization_id bigint not null references organization(id),
+    organization_id bigint not null references organization(id) on delete cascade,
     path ltree,
     is_service boolean not null,
     version bigint not null,
@@ -45,7 +45,7 @@ create table feature_flag(
     id bigserial primary key,
     name varchar(1024) not null,
     value boolean not null,
-    organization_node_id bigint not null references organization_node(id),
+    organization_node_id bigint not null references organization_node(id) on delete cascade ,
     version bigint not null ,
     created_at timestamp not null,
     updated_at timestamp

@@ -9,6 +9,8 @@ import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.util.LtreePathUtil;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GetSubtreeNodeOrganizationsService extends BaseService<OrganizationNodeIdDTO, GetSubtreeNodeOrganizationsResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
+
+    @Override
+    protected void validateState(OrganizationNodeIdDTO request) {
+        authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+    }
 
     @Override
     protected GetSubtreeNodeOrganizationsResponse execute(OrganizationNodeIdDTO request) {

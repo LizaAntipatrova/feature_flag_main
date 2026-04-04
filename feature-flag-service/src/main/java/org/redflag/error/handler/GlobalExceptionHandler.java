@@ -4,11 +4,13 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.error.FeatureFlagAppException;
 
 @Singleton
+@Slf4j
 public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpResponse<ErrorResponse>> {
 
 
@@ -16,8 +18,18 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
     public HttpResponse<ErrorResponse> handle(HttpRequest request, Throwable exception) {
         ErrorCatalog error = getError(exception);
 
-        exception.printStackTrace();
-
+        if (error.equals(ErrorCatalog.UNEXPECTED_ERROR)){
+            log.error("{}: exception: {}, message: {}",
+                    error.getErrorType().getValue(),
+                    exception.getClass().getName(),
+                    exception.getMessage());
+        }else {
+            log.info("{}: code: {}, message:{}, status: {}",
+                    error.getErrorType().getValue(),
+                    error.getCode(),
+                    error.getMessage(),
+                    error.getStatus());
+        }
         ErrorResponse responseBody = ErrorResponse.builder()
                 .code(error.getCode())
                 .errorType(error.getErrorType().getValue())

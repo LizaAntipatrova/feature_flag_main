@@ -12,7 +12,9 @@ import org.redflag.model.FeatureFlag;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.BaseService;
-import org.redflag.validator.PaginationParameterValidator;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
+import org.redflag.service.validator.PaginationParameterValidator;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,18 +23,23 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class GetLinkedFeatureFlagsService extends BaseService<GetLinkedFeatureFlagsRequest, GetLinkedFeatureFlagsResponse> {
     private final FeatureFlagRepository featureFlagRepository;
+    private final PaginationParameterValidator paginationParameterValidator;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
 
     @Override
     protected void validateRequest(GetLinkedFeatureFlagsRequest request) {
-        if (!PaginationParameterValidator.validateLimit(request.getLimit())) {
-            throw ErrorCatalog.BAD_LIMIT.getException();
-        }
-        if (!PaginationParameterValidator.validateOffset(request.getOffset())) {
-            throw ErrorCatalog.BAD_OFFSET.getException();
-        }
+        paginationParameterValidator.validateLimit(request.getLimit());
+        paginationParameterValidator.validateOffset(request.getOffset());
         if (Objects.isNull(request.getRelation())) {
             throw ErrorCatalog.EMPTY_FIELD.withMessageArgs("relation");
         }
+    }
+
+    @Override
+    protected void validateState(GetLinkedFeatureFlagsRequest request) {
+        authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
     }
 
     @Override

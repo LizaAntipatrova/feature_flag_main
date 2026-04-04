@@ -20,6 +20,7 @@ dependencies {
 
     implementation("io.micronaut.validation:micronaut-validation")
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
+    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.2.12.Final'
 
     implementation("io.micronaut.data:micronaut-data-jpa")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
@@ -58,7 +59,7 @@ dependencies {
 
 
 application {
-    mainClass = "org.redflag.Application"
+    mainClass = "org.redflag.AuthService"
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("21")

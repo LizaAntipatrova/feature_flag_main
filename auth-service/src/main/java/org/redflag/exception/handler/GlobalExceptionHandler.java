@@ -23,7 +23,7 @@ public class GlobalExceptionHandler implements ExceptionHandler<Exception, HttpR
     @Override
     public HttpResponse<?> handle(HttpRequest request, Exception exception) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
+        exception.printStackTrace();
         if (exception instanceof HttpStatusException httpStatusException) {
             status =  httpStatusException.getStatus();
         }

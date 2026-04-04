@@ -9,12 +9,19 @@ import org.redflag.model.Organization;
 import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationDTOMapper;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
 
 @RequiredArgsConstructor
 @Singleton
 public class GetOrganizationByIdService extends BaseService<OrganizationIdDTO, OrganizationDTO> {
     private final OrganizationRepository organizationRepository;
     private final OrganizationDTOMapper organizationDTOMapper;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+
+    @Override
+    protected void validateState(OrganizationIdDTO request) {
+        authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
+    }
 
     @Override
     protected OrganizationDTO execute(OrganizationIdDTO request) {

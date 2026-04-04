@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface OrganizationNodeRepository extends JpaRepository<OrganizationNode, Long> {
     @Query(value = """
             select exists (
-                        select 1 from organization_node descendants join organization_node current_node on current_node.id = :nodeId 
+                        select 1 from organization_node descendants join organization_node current_node on current_node.id = :nodeId
                         where current_node.path @> descendants.path AND current_node.path <> descendants.path)
             """, nativeQuery = true)
     Boolean existsDescendants(Long nodeId);
@@ -26,10 +26,54 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
             select 1
             from organization_node o
             where o.organization_id = :organizationId
-                       and text2ltree(cast(o.organization_id as text)) = o.path
+                       and text2ltree(cast(o.id as text)) = o.path
             )
             """, nativeQuery = true)
     Boolean existsRootNodeInOrganization(Long organizationId);
+
+    @Query(value = """
+            select exists (
+            select 1
+            from organization_node o
+            where o.organization_id = :organizationId
+                       and o.uuid = :rootUuid
+                       and text2ltree(cast(o.id as text)) = o.path
+            )
+            """, nativeQuery = true)
+    Boolean isRootNodeInOrganization(UUID rootUuid, Long organizationId);
+
+    @Query(value = """
+            select exists (
+            select 1
+            from organization_node o
+            where o.organization_id = :organizationId
+                       and o.uuid = :nodeUuid
+            )
+            """, nativeQuery = true)
+    Boolean isNodeInOrganization(UUID nodeUuid, Long organizationId);
+
+    @Query(value = """
+            select exists (
+            select 1
+            from organization_node o
+            where o.organization_id = :organizationId
+                       and o.id = :nodeId
+            )
+            """, nativeQuery = true)
+    Boolean isNodeInOrganization(Long nodeId, Long organizationId);
+
+
+    @Query(value = """
+            select exists (
+            select 1
+            from organization_node c join organization_node p
+            on p.uuid = :parentNodeUuid
+            where c.id = :childNodeId
+                       and c.path <@ p.path
+            )
+            """, nativeQuery = true)
+    Boolean existsChildNodeInParentNodeByChildIdAndParentUuid(Long childNodeId, UUID parentNodeUuid);
+
 
     Optional<OrganizationNode> findByOrganization_IdAndId(Long organizationId, Long id);
 
@@ -46,8 +90,8 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
             from organization_node descendants
             where descendants.organization_id = :organizationId
                         and (cast(:parentId as bigint) is null
-                        or (descendants.path <@ ( 
-                                    select path from  organization_node 
+                        or (descendants.path <@ (
+                                    select path from  organization_node
                                     where id = :parentId and organization_id = :organizationId)))
             order by descendants.path
             limit :limit offset :offset;
@@ -59,7 +103,7 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
             from organization_node descendants
             where descendants.organization_id = :organizationId
                         and (descendants.path <@ (
-                                    select path from  organization_node 
+                                    select path from  organization_node
                                     where id = :rootId and organization_id = :organizationId))
             order by descendants.path
             """, nativeQuery = true)

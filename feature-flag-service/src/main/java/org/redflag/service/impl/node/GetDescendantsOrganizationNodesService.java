@@ -9,6 +9,8 @@ import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.mapper.OrganizationNodeDTOMapper;
+import org.redflag.service.validator.AuthRightsToNodeValidator;
+import org.redflag.service.validator.LinkedEntityValidator;
 
 import java.util.List;
 
@@ -17,6 +19,15 @@ import java.util.List;
 public class GetDescendantsOrganizationNodesService extends BaseService<GetDescendantsOrganizationNodesRequest, GetDescendantsOrganizationNodesResponse> {
     private final OrganizationNodeRepository organizationNodeRepository;
     private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
+    private final AuthRightsToNodeValidator authRightsToNodeValidator;
+    private final LinkedEntityValidator linkedEntityValidator;
+
+
+    @Override
+    protected void validateState(GetDescendantsOrganizationNodesRequest request) {
+        authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
+        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+    }
 
     @Override
     protected GetDescendantsOrganizationNodesResponse execute(GetDescendantsOrganizationNodesRequest request) {
