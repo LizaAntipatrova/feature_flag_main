@@ -55,17 +55,6 @@ services:
     entrypoint: ["/bin/bash", "/usr/local/bin/init-kafka.sh"]
     networks:
       - redflag-network
-    environment:
-      # Отключаем SASL для простоты (или настраиваем правильно)
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:9094
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -77,6 +66,9 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=RedFlag-Cluster
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=SASL_PLAINTEXT
+      - KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM=SCRAM-SHA-512
+      - KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
     networks:
       - redflag-network
 
@@ -93,13 +85,11 @@ services:
       DATASOURCES_DEFAULT_USERNAME: ${AUTH_SERVICE_DB_USER}
       DATASOURCES_DEFAULT_PASSWORD: ${AUTH_SERVICE_DB_PASSWORD}
       REDIS_URI: redis://redis-auth:6379
-      REDFLAG_SERVICES_FF_SERVICE_URL: http://ff-service:8080
-      # Добавляем Kafka конфигурацию
+      MICRONAUT_HTTP_SERVICES_FF_SERVICE_URL: http://ff-service:8080
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      # Если нужна SASL аутентификация:
-      # KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
-      # KAFKA_SASL_MECHANISM: SCRAM-SHA-512
-      # KAFKA_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
+      KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      KAFKA_SASL_MECHANISM: SCRAM-SHA-512
+      KAFKA_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
     depends_on:
       - redis-auth
       - postgres-auth
