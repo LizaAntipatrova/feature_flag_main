@@ -27,5 +27,7 @@ public class UpdateOrganizationNodeRequest {
     private Long organizationId;
     @JsonIgnore
     private Long nodeId;
+    @JsonIgnore
+    private String sessionCookie;
 
 }

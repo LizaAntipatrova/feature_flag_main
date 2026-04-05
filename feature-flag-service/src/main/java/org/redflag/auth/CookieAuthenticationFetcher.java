@@ -10,6 +10,7 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.redflag.client.AuthClient;
+import org.redflag.error.ErrorCatalog;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -41,8 +42,8 @@ public class CookieAuthenticationFetcher implements AuthenticationFetcher<HttpRe
                     if (e.getStatus().equals(HttpStatus.UNAUTHORIZED)){
                         return Mono.empty();
                     }
-                    return Mono.error(e);
-                        }
+                    return Mono.error(ErrorCatalog.AUTH_SERVICE_ERROR.getException());
+                }
                 );
     }
 }

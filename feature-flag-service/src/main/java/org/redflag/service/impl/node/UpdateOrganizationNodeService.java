@@ -4,13 +4,20 @@ import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.redflag.client.AuthClient;
+import org.redflag.dto.auth.CreateServiceCredentialsResponse;
+import org.redflag.dto.auth.LoginForServiceCredentialsDto;
 import org.redflag.dto.node.OrganizationNodeDTO;
+import org.redflag.dto.node.OrganizationNodeWithCredentialsDTO;
 import org.redflag.dto.node.update.UpdateOrganizationNodeRequest;
 import org.redflag.error.ErrorCatalog;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.client.AuthClientService;
 import org.redflag.service.mapper.OrganizationNodeDTOMapper;
+import org.redflag.service.transaction.TransactionUpdateOrganizationNodeService;
+import org.redflag.service.transaction.UpdateOrganizationNodeTransactionalResult;
 import org.redflag.service.validator.AuthRightsToNodeValidator;
 import org.redflag.service.validator.EntityVersionValidator;
 import org.redflag.service.validator.LinkedEntityValidator;
@@ -27,6 +34,8 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
     private final LinkedEntityValidator linkedEntityValidator;
     private final UniqueNameValidator uniqueNameValidator;
     private final EntityVersionValidator entityVersionValidator;
+    private final TransactionUpdateOrganizationNodeService transactionUpdateOrganizationNodeService;
+    private final AuthClientService authClientService;
 
 
     @Override
@@ -62,23 +71,34 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
 
     @Override
     @Transactional
-    protected OrganizationNodeDTO execute(UpdateOrganizationNodeRequest request) {
-        OrganizationNode organizationNode = organizationNodeRepository.findById(request.getNodeId())
-                .orElseThrow(ErrorCatalog.NO_DATA::getException);
-
-        entityVersionValidator.checkVersionMatch(organizationNode.getVersion(), request.getVersion());
-
-        organizationNode.setName(request.getName())
-                .setIsService(request.getIsService());
-
-        OrganizationNode newOrganizationNode;
+    protected OrganizationNodeWithCredentialsDTO execute(UpdateOrganizationNodeRequest request) {
+        UpdateOrganizationNodeTransactionalResult transactionalResult =
+                transactionUpdateOrganizationNodeService.updateNode(request);
+        OrganizationNodeWithCredentialsDTO resultDto = transactionalResult.getDto();
         try {
-            newOrganizationNode = organizationNodeRepository.update(organizationNode);
-            organizationNodeRepository.flush();
-        } catch (OptimisticLockException e) {
-            throw ErrorCatalog.OPTIMISTIC_LOCK.getException();
+            Boolean newIsService = resultDto.getIsService();
+            if (!transactionalResult.getOldIsService().equals(newIsService)){
+                LoginForServiceCredentialsDto loginDto = LoginForServiceCredentialsDto.builder()
+                        .newLogin(resultDto.getUuid())
+                        .build();
+                if(newIsService){
+                    CreateServiceCredentialsResponse credentialsResponse =
+                            authClientService.createServiceCredentials(request.getSessionCookie(),loginDto);
+                    resultDto.setUsername(credentialsResponse.getUsername())
+                            .setPassword(credentialsResponse.getPassword())
+                            .setTopicName(credentialsResponse.getTopic())
+                            .setGroupName(credentialsResponse.getGroupName());
+                }else {
+                    authClientService.deleteServiceCredentials(
+                            request.getSessionCookie(),
+                            loginDto);
+                }
+            }
+            return resultDto;
+        }catch (Exception e){
+            transactionUpdateOrganizationNodeService.compensateUpdateNode(transactionalResult);
+            throw ErrorCatalog.AUTH_SERVICE_ERROR.getException();
         }
 
-        return organizationNodeDTOMapper.toOrganizationNodeDTO(newOrganizationNode);
     }
 }
