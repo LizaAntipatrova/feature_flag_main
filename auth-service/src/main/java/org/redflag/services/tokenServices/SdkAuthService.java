@@ -7,7 +7,6 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redflag.constants.SecurityConstants;
-import org.redflag.exception.BadCredentialsCustomException;
 import org.redflag.repositories.SdkClientRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,7 +31,7 @@ public class SdkAuthService {
                 .flatMap(client -> {
                     Authentication authentication = Authentication.build(
                             client.getLogin().toString(),
-                            Map.of(SecurityConstants.SDK_TOKEN_TYPE, SecurityConstants.SDK_TOKEN_TYPE_VALUE)
+                            Map.of(SecurityConstants.TOKEN_TYPE_SECTION, SecurityConstants.SDK_TOKEN_TYPE_VALUE)
                     );
 
                     return tokenGenerator.generateToken(authentication, SecurityConstants.EXPIRATION_TOKEN_SECONDS);

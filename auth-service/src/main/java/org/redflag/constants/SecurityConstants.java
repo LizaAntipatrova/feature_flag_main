@@ -13,11 +13,16 @@ public final class SecurityConstants {
     public final static String UI_DEPARTMENT_NAME = "uuidDepartament";
 
     public static final Integer EXPIRATION_TOKEN_SECONDS = 86400;
-    public static final String SDK_TOKEN_TYPE = "type";
+    public static final String TOKEN_TYPE_SECTION = "type";
     public static final String SDK_TOKEN_TYPE_VALUE = "sdk_client";
+
+    public static final String AUTH_SERVICE_TOKEN_TYPE_VALUE = "auth_service";
+    public static final String MAIN_SERVICE_TOKEN_TYPE_VALUE = "main_service";
+    public static final String INTERNAL_TOKEN_REQUEST_HEADER = "X-Internal-Token";
+
 
     public static final String SDK_ACCESS_TOKEN_NAME = "access_token";
     public static final String SDK_AUTH_TOKEN_TYPE = "token_type";
-    public static final String SDK_AUTH_TOKEN_VALUE = "Bearer";
+    public static final String SDK_AUTH_TOKEN_VALUE = "Bearer ";
 
 }
