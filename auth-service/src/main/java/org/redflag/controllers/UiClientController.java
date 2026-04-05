@@ -5,15 +5,13 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.redflag.annotations.NoSdkAllowed;
 import org.redflag.constants.UiClientRolesValue;
-import org.redflag.dto.UiClientDto;
-import org.redflag.dto.UpdateDepartmentUiClientRequest;
-import org.redflag.dto.UpdateRolesUiClientRequest;
-import org.redflag.dto.UpdateUiClientRequest;
+import org.redflag.dto.*;
 import org.redflag.services.UiClientService;
 
 import java.util.List;
@@ -23,6 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @NoSdkAllowed
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@Validated
 @Tag(name = "CRUD методы для сущности ui пользователь")
 public class UiClientController {
 
@@ -37,6 +36,12 @@ public class UiClientController {
     @Get("/me")
     public UiClientDto getMe(Authentication authentication) {
         return clientService.getByLogin(authentication.getName());
+    }
+
+    @Delete("/delete-clients")
+    public HttpResponse<?> deleteListClients(@Body @Valid DeleteListUiClientsRequest request) {
+        clientService.deleteListUiClients(request.ids());
+        return HttpResponse.noContent();
     }
 
     @Delete("/{id}")
