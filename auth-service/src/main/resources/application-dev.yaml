@@ -22,6 +22,7 @@ logger:
 
 micronaut:
   server:
+    port: 8081
     cors:
       configurations:
         web:

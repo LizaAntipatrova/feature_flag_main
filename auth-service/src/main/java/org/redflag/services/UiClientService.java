@@ -56,6 +56,14 @@ public class UiClientService {
         clientRepository.deleteById(id);
     }
 
+    public void deleteListUiClients(List<Long> ids) {
+        long count = clientRepository.countByIdIn(ids);
+        if (count == 0) {
+            throw new ResourceNotFoundCustomException("No clients found");
+        }
+        clientRepository.deleteAllByIdIn(ids);
+    }
+
     @Transactional
     public void updateUiClient(String login, UpdateUiClientRequest request) {
         UiClient client = clientRepository.findByLogin(login)
