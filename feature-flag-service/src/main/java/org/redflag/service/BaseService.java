@@ -1,6 +1,8 @@
 package org.redflag.service;
 
 
+import java.io.IOException;
+
 public abstract class BaseService<Request, Response> {
     protected void validateRequest(Request request) {
 

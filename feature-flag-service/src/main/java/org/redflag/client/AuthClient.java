@@ -26,7 +26,7 @@ public interface AuthClient {
     @Delete("/api/v1/clients/delete-clients")
     void deleteClientsByNodeUuids(@Body NodeUuidsDTO request);
 
-    @Delete("/api/v1/sdk-clients/delete-by-nodes")
+    @Delete("/api/v1/sdk-clients/delete-sdks")
     void deleteServiceCredentialsByNodeUuids(@Body NodeUuidsDTO request);
 
 }

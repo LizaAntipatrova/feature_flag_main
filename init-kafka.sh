@@ -53,7 +53,7 @@ if [ ! -f /var/lib/kafka/data/meta.properties ]; then
     --cluster-id MkU3OEVBNTcwNTJENDM2Qk \
     --add-scram 'SCRAM-SHA-512=[name=admin,password=admin-secret]' \
     --add-scram 'SCRAM-SHA-512=[name=broker,password=broker-secret]' \
-    --add-scram 'SCRAM-SHA-512=[name=main,password=main-secret]' \
+    --add-scram 'SCRAM-SHA-512=[name=main_service,password=main-secret]' \
     -c /tmp/server.properties
 fi
 

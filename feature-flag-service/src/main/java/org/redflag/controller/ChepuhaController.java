@@ -133,7 +133,7 @@ public class ChepuhaController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Успешный ответ",
-                    content = @Content(schema = @Schema(implementation = OrganizationNodeDTO.class))
+                    content = @Content(schema = @Schema(implementation = GetFeatureFlagsByUuidServiceNodeResponse.class))
             ),
             @ApiResponse(
                     responseCode = "400",

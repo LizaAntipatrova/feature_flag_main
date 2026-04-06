@@ -1,17 +1,16 @@
-package org.redflag.dto.auth;
+package org.redflag.kafka;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
-import java.util.UUID;
+import org.apache.kafka.common.protocol.types.Field;
 
 @Builder
 @Getter
 @Introspected
 @Serdeable
-public class NodeUuidsDTO {
-    private List<UUID> sdkUuids;
+public class KafkaFeatureFlagEventDTO {
+    private String flagName;
+    private Boolean value;
 }

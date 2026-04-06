@@ -32,3 +32,23 @@ jpa:
     properties:
       hibernate:
         show_sql: true
+
+kafka:
+  bootstrap:
+    servers: localhost:9094
+  security:
+    protocol: SASL_PLAINTEXT
+  sasl:
+    mechanism: SCRAM-SHA-512
+    jaas:
+      config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME:main_service}" password="${KAFKA_PASSWORD:main-secret}";'
+  producers:
+    default:
+      key:
+        serializer: org.apache.kafka.common.serialization.StringSerializer
+      value:
+        serializer: org.apache.kafka.common.serialization.StringSerializer
+endpoints:
+  health:
+    kafka:
+      enabled: false

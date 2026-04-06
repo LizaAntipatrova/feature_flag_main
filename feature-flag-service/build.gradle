@@ -37,6 +37,7 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security")
     implementation("io.micronaut.reactor:micronaut-reactor")
 
+    implementation("io.micronaut.kafka:micronaut-kafka")
 }
 
 

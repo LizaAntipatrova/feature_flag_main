@@ -149,6 +149,18 @@ public interface OrganizationNodeRepository extends JpaRepository<OrganizationNo
             order by nlevel(descedants.path), descedants.path
             """, nativeQuery = true)
     List<OrganizationNode> findAllDescendantsByIdAndDepth(Long organizationId, Long nodeId, @Nullable Integer depth);
+    @Query(value = """
+              with root as (
+                select path, id
+                from organization_node
+                where id = :nodeId
+              )
+            select descedants.uuid
+            from organization_node descedants, root
+            where descedants.path <@ root.path
+                and descedants.is_service=true
+            """, nativeQuery = true)
+    List<UUID> getNodeUuidsServiceDescendants(Long nodeId);
 
     Optional<OrganizationNode> findByUuid(UUID uuid);
 
