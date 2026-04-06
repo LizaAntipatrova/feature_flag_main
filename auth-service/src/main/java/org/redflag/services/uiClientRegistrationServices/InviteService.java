@@ -22,8 +22,8 @@ public class InviteService {
     private final StatefulRedisConnection<String, String> redisConnection;
     private final ObjectMapper objectMapper;
 
-    @Property(name = "redflag.services.auth-service.url")
-    protected String authServiceUrl;
+//    @Property(name = "redflag.services.auth-service.url")
+//    protected String authServiceUrl;
 
     public GenerateInviteResponse generateInvite(GenerateInviteRequest request) {
         String token = UUID.randomUUID().toString();
@@ -35,7 +35,7 @@ public class InviteService {
             commands.set(token, jsonValue);
             commands.expire(token, InvitingConstants.EXPIRE_INVITATION);
 
-            return new GenerateInviteResponse(authServiceUrl + InvitingConstants.INVITING_URL + token);
+            return new GenerateInviteResponse(token);
         } catch (IOException e) {
             throw new ServerCustomException("Error creating JSON for Redis");
         }

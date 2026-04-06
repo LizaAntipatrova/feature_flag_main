@@ -4,6 +4,7 @@ import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.jpa.repository.JpaRepository;
 import org.redflag.entities.SdkClient;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,6 +14,8 @@ public interface SdkClientRepository extends JpaRepository<SdkClient, Long> {
     Optional<SdkClient> findByLogin(UUID login);
 
     void deleteById(Long id);
+
+    long countByLoginIn(List<UUID> logins);
 }
 
 

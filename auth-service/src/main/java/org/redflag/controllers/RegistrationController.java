@@ -13,6 +13,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.redflag.dto.EmployeeRegisterRequest;
 import org.redflag.dto.RegisterOrganizationRequest;
@@ -40,7 +41,7 @@ public class RegistrationController {
     @Post("/register-employee")
     @ExecuteOn(TaskExecutors.BLOCKING)
     public HttpResponse<?> registerEmployee(
-            @QueryValue String token,
+            @QueryValue @NotBlank String token,
             @Body @Valid EmployeeRegisterRequest request
     ) {
         registrationEmployeeService.registerEmployee(request, token);

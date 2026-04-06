@@ -19,4 +19,6 @@ public final class UiClientRolesValue {
     public static final String READ_DEPARTMENT = "READ_DEPARTMENT_ROLE";
     public static final String UPDATE_DEPARTMENT = "UPDATE_DEPARTMENT_ROLE";
     public static final String DELETE_DEPARTMENT = "DELETE_DEPARTMENT_ROLE";
+
+    public static final String MAIN_SERVICE = "ROLE_main_service";
 }

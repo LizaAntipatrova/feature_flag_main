@@ -1,5 +1,6 @@
 package org.redflag.dto;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.NotNull;
 
@@ -7,9 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Serdeable
-public record DeleteListUiClientsRequest(
+@Introspected
+public record SdkDeleteListRequest(
 
         @NotNull
-        List<UUID> departmentUuids
+        List<UUID> sdkUuids
 ) {
 }

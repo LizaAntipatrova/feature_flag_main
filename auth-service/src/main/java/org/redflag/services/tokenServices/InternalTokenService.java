@@ -15,10 +15,10 @@ public class InternalTokenService {
 
     private final JwtTokenGenerator tokenGenerator;
 
-    public String generateInternalToken(String tokenTypeValue, String principal) {
+    public String generateInternalToken( /* String tokenTypeValue,*/ String principal) {
         Authentication authentication = Authentication.build(
-                principal,
-                Map.of(SecurityConstants.TOKEN_TYPE_SECTION, tokenTypeValue)
+                principal
+//                Map.of(SecurityConstants.TOKEN_TYPE_SECTION, tokenTypeValue)
         );
 
         return tokenGenerator.generateToken(authentication, SecurityConstants.EXPIRATION_TOKEN_SECONDS)

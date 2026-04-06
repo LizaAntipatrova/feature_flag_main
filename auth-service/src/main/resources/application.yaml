@@ -38,7 +38,9 @@ micronaut:
         bearer:
           enabled: true
         claims-to-authorities:
-          type: "ROLE_"
+          sub: "ROLE_"
+#          type: "ROLE_"
+
 
     endpoints:
       login:
@@ -95,7 +97,5 @@ liquibase:
       enabled: true
       change-log: 'classpath:db/changelog/db.changelog-master.yml'
 
-internal:
-  tokenRequestSecret: ${INTERNAL_TOKEN_REQUEST_SECRET}
 
 

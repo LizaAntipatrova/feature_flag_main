@@ -27,8 +27,8 @@ public interface UiClientRepository extends JpaRepository<UiClient, Long> {
     List<UiClient> findByUuidDepartament(UUID uuidDepartament);
 
     @Transactional
-    void deleteAllByIdIn(List<Long> ids);
+    void deleteAllByUuidDepartamentIn(List<UUID> departaments);
 
-    int countByIdIn(List<Long> ids);
+    int countByUuidDepartamentIn(List<UUID> departaments);
 
 }

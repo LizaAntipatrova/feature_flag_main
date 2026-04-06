@@ -3,6 +3,7 @@ package org.redflag.services;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
@@ -15,12 +16,12 @@ import org.redflag.repositories.SdkClientRepository;
 import org.redflag.services.kafkaServices.KafkaGeneralService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.security.SecureRandom;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Singleton
 @RequiredArgsConstructor
+@Slf4j
 public class SdkClientService {
 
     private final SdkClientRepository repository;
@@ -54,6 +55,20 @@ public class SdkClientService {
                 .orElseThrow(() -> new ResourceNotFoundCustomException("SdkClient not found"));
         kafkaService.cleanupKafka(login.toString(), passwordEncoder.encode(sdkClient.getPassword()));
         delete(sdkClient.getId());
+    }
+
+    public void deleteWithKafkaListSdk(List<UUID> logins) {
+        long count = repository.countByLoginIn(logins);
+        if (count == 0) {
+            throw new ResourceNotFoundCustomException("No sdks found");
+        }
+        for (UUID login : logins) {
+            try {
+                deleteWithKafka(login);
+            } catch (ResourceNotFoundCustomException e) {
+                log.warn("Not found for login={}: {}", login, e.getMessage(), e);
+            }
+        }
     }
 
     public void delete(Long id) {

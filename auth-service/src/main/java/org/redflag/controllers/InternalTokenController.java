@@ -16,23 +16,13 @@ public class InternalTokenController {
 
     private final InternalTokenService internalTokenService;
 
-    @Value("${internal.tokenRequestSecret}")
-    String tokenRequestSecret;
-
-    private boolean isValid(@Header(SecurityConstants.INTERNAL_TOKEN_REQUEST_HEADER) String provided) {
-        return provided != null && provided.equals(tokenRequestSecret);
-    }
-
     @Post("/token/main-service")
     @Secured(SecurityRule.IS_ANONYMOUS)
-    public HttpResponse<?> mainServiceToken(
-            @Header(SecurityConstants.INTERNAL_TOKEN_REQUEST_HEADER) String secret
-    ) {
-        if (!isValid(secret)) return HttpResponse.unauthorized();
+    public HttpResponse<?> mainServiceToken() {
 
         String jwt = internalTokenService.generateInternalToken(
-                SecurityConstants.MAIN_SERVICE_TOKEN_TYPE_VALUE,
                 SecurityConstants.MAIN_SERVICE_TOKEN_TYPE_VALUE
+//                SecurityConstants.MAIN_SERVICE_TOKEN_TYPE_VALUE
         );
 
         return HttpResponse.ok(Map.of(

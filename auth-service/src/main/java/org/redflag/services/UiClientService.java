@@ -56,12 +56,12 @@ public class UiClientService {
         clientRepository.deleteById(id);
     }
 
-    public void deleteListUiClients(List<Long> ids) {
-        long count = clientRepository.countByIdIn(ids);
+    public void deleteListUiClientsByDepartment(List<UUID> departmentUuids) {
+        long count = clientRepository.countByUuidDepartamentIn(departmentUuids);
         if (count == 0) {
             throw new ResourceNotFoundCustomException("No clients found");
         }
-        clientRepository.deleteAllByIdIn(ids);
+        clientRepository.deleteAllByUuidDepartamentIn(departmentUuids);
     }
 
     @Transactional

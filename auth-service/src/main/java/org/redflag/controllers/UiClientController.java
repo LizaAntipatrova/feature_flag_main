@@ -39,8 +39,9 @@ public class UiClientController {
     }
 
     @Delete("/delete-clients")
+    @Secured(UiClientRolesValue.MAIN_SERVICE)
     public HttpResponse<?> deleteListClients(@Body @Valid DeleteListUiClientsRequest request) {
-        clientService.deleteListUiClients(request.ids());
+        clientService.deleteListUiClientsByDepartment(request.departmentUuids());
         return HttpResponse.noContent();
     }
 
@@ -55,7 +56,6 @@ public class UiClientController {
         clientService.updateUiClient(auth.getName(), request);
         return HttpResponse.ok();
     }
-
 
     @Post("/{id}/roles/add")
     @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
