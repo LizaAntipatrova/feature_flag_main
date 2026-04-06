@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.redflag.annotations.NoSdkAllowed;
 import org.redflag.constants.UiClientRolesValue;
 import org.redflag.dto.*;
-import org.redflag.services.UiClientService;
+import org.redflag.services.CommonUiClientService;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,12 +25,13 @@ import java.util.UUID;
 @Tag(name = "CRUD методы для сущности ui пользователь")
 public class UiClientController {
 
-    private final UiClientService clientService;
+    private final CommonUiClientService clientService;
 
     @Get("/by-department/{uuidDepartament}")
-    @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
-    public List<UiClientDto> getClientsByDept(@QueryValue UUID uuidDepartament) {
-        return clientService.getAllByDepartment(uuidDepartament);
+    @Secured(UiClientRolesValue.READ_EMPLOYEE)
+    public List<UiClientDto> getClientsByDept(Authentication authentication,
+                                              @QueryValue UUID uuidDepartament) {
+        return clientService.getAllByDepartment(authentication, uuidDepartament);
     }
 
     @Get("/me")
@@ -38,43 +39,51 @@ public class UiClientController {
         return clientService.getByLogin(authentication.getName());
     }
 
+    @Patch("/me")
+    public HttpResponse<?> updateMyCredentials(Authentication auth,
+                                               @Body @Valid UpdateUiClientRequest request) {
+        clientService.updateUiClient(auth.getName(), request);
+        return HttpResponse.ok();
+    }
+
     @Delete("/delete-clients")
-    @Secured(UiClientRolesValue.MAIN_SERVICE)
+    @Secured({SecurityRule.IS_AUTHENTICATED, UiClientRolesValue.MAIN_SERVICE})
     public HttpResponse<?> deleteListClients(@Body @Valid DeleteListUiClientsRequest request) {
         clientService.deleteListUiClientsByDepartment(request.departmentUuids());
         return HttpResponse.noContent();
     }
 
     @Delete("/{id}")
-    public HttpResponse<?> delete(@PathVariable Long id) {
-        clientService.delete(id);
+    public HttpResponse<?> delete(Authentication authentication,
+                                  @PathVariable Long id) {
+        clientService.delete(authentication, id);
         return HttpResponse.noContent();
-    }
-
-    @Patch("/me")
-    public HttpResponse<?> updateMyCredentials(Authentication auth, @Body @Valid UpdateUiClientRequest request) {
-        clientService.updateUiClient(auth.getName(), request);
-        return HttpResponse.ok();
     }
 
     @Post("/{id}/roles/add")
     @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
-    public HttpResponse<?> addRoles(@PathVariable Long id, @Body @Valid UpdateRolesUiClientRequest request) {
-        clientService.addRoles(id, request.roleNames());
+    public HttpResponse<?> addRoles(Authentication authentication,
+                                    @PathVariable Long id,
+                                    @Body @Valid UpdateRolesUiClientRequest request) {
+        clientService.addRoles(authentication, id, request.roleNames());
         return HttpResponse.ok();
     }
 
     @Delete("/{id}/roles/remove")
     @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
-    public HttpResponse<?> removeRoles(@PathVariable Long id, @Body @Valid UpdateRolesUiClientRequest request) {
-        clientService.removeRoles(id, request.roleNames());
+    public HttpResponse<?> removeRoles(Authentication authentication,
+                                       @PathVariable Long id,
+                                       @Body @Valid UpdateRolesUiClientRequest request) {
+        clientService.removeRoles(authentication, id, request.roleNames());
         return HttpResponse.ok();
     }
 
     @Patch("/{id}/department")
     @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
-    public HttpResponse<?> updateClientDepartment(@PathVariable Long id, @Body @Valid UpdateDepartmentUiClientRequest request) {
-        clientService.updateDepartment(id, request.uuidDepartament());
+    public HttpResponse<?> updateClientDepartment(Authentication authentication,
+                                                  @PathVariable Long id,
+                                                  @Body @Valid UpdateDepartmentUiClientRequest request) {
+        clientService.updateDepartment(authentication, id, request.uuidDepartament());
         return HttpResponse.ok();
     }
 }

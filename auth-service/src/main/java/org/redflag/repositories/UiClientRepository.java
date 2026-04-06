@@ -18,6 +18,10 @@ public interface UiClientRepository extends JpaRepository<UiClient, Long> {
     @EntityGraph(attributePaths = {"roles"})
     Optional<UiClient> findByLogin(String login);
 
+    Optional<UUID> findUuidDepartamentByLogin(String login);
+
+    Optional<UUID> findUuidDepartamentById(Long id);
+
     Boolean existsByLogin(String login);
 
     @EntityGraph(attributePaths = {"roles"})

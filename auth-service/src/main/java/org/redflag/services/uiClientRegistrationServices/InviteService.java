@@ -2,6 +2,7 @@ package org.redflag.services.uiClientRegistrationServices;
 
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.serde.ObjectMapper;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +10,10 @@ import org.redflag.constants.InvitingConstants;
 import org.redflag.dto.GenerateInviteRequest;
 import org.redflag.dto.GenerateInviteResponse;
 import org.redflag.entities.redisData.InviteData;
+import org.redflag.exception.AccessDeniedCustomException;
 import org.redflag.exception.ResourceNotFoundCustomException;
 import org.redflag.exception.ServerCustomException;
+import org.redflag.services.UiClientServices.CheckSubordinationService;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -21,11 +24,13 @@ public class InviteService {
 
     private final StatefulRedisConnection<String, String> redisConnection;
     private final ObjectMapper objectMapper;
+    private final CheckSubordinationService checkSubordinationService;
 
-//    @Property(name = "redflag.services.auth-service.url")
-//    protected String authServiceUrl;
+    public GenerateInviteResponse generateInvite(Authentication authentication, GenerateInviteRequest request) {
+        if (!checkSubordinationService.isSubordinatedFromAuth(authentication, request.uuidDepartament())) {
+            throw new AccessDeniedCustomException("Access denied. The department you want to put is not a subordinate");
+        }
 
-    public GenerateInviteResponse generateInvite(GenerateInviteRequest request) {
         String token = UUID.randomUUID().toString();
         InviteData data = new InviteData(request.roles(), request.uuidDepartament());
 

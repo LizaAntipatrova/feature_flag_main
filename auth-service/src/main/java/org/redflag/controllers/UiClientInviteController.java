@@ -6,6 +6,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import jakarta.validation.Valid;
@@ -26,8 +27,9 @@ public class UiClientInviteController {
     @Post("/generate-invite")
     @ExecuteOn(TaskExecutors.BLOCKING)
     @Secured(UiClientRolesValue.CREATE_EMPLOYEE)
-    public GenerateInviteResponse createInvite(@Body @Valid GenerateInviteRequest request) {
-        return inviteService.generateInvite(request);
+    public GenerateInviteResponse createInvite(Authentication authentication,
+                                               @Body @Valid GenerateInviteRequest request) {
+        return inviteService.generateInvite(authentication, request);
     }
 
 }

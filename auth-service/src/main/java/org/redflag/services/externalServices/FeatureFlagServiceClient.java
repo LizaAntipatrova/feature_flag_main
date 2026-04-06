@@ -7,10 +7,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redflag.dto.CreateOrganizationRequest;
 import org.redflag.dto.CreateOrganizationResponse;
+import org.redflag.dto.OrganizationNodeDTO;
 import org.redflag.exception.AccessDeniedCustomException;
 import org.redflag.exception.BadCredentialsCustomException;
 import org.redflag.exception.ConflictCustomException;
+import org.redflag.exception.ResourceNotFoundCustomException;
 import org.redflag.exception.handler.CustomErrorResponse;
+
+import java.util.UUID;
 
 @Singleton
 @RequiredArgsConstructor
@@ -43,5 +47,30 @@ public class FeatureFlagServiceClient {
             throw new RuntimeException("Сервис временно недоступен");
         }
     };
+
+    public OrganizationNodeDTO getOrganizationNodeByUuid(UUID organizationNodeUuid) {
+        try {
+            return ffServiceClient.getOrganizationNodeByUuid(organizationNodeUuid);
+
+        } catch (HttpClientResponseException e) {
+            var errorBody = e.getResponse().getBody(CustomErrorResponse.class);
+            String message = errorBody.map(CustomErrorResponse::getMessage)
+                    .orElse("Ошибка main service");
+
+            log.error("Main-Service вернул ошибку [{}]: {}", e.getStatus(), message);
+
+            throw switch (e.getStatus().getCode()) {
+                case 401 -> new AccessDeniedCustomException(message);
+                case 403 -> new AccessDeniedCustomException(message);
+                case 404 -> new ResourceNotFoundCustomException(message);
+                case 400 -> new BadCredentialsCustomException(message);
+                default -> new RuntimeException("Непредвиденная ошибка: " + message);
+            };
+
+        } catch (Exception e) {
+            log.error("Критическая ошибка при обращении к Main-Service: {}", e.getMessage(), e);
+            throw new RuntimeException("Сервис временно недоступен");
+        }
+    }
 
 }
