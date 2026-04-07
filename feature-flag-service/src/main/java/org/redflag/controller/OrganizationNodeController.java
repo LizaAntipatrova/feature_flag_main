@@ -6,6 +6,7 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -95,6 +96,7 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Body CreateOrganizationNodeRequest request,
+            @Parameter(hidden = true)
             @CookieValue("SESSION") String sessionCookie) {
         request.setOrganizationId(organizationId);
         request.setSessionCookie(sessionCookie);
@@ -256,6 +258,7 @@ public class OrganizationNodeController {
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
             @Body UpdateOrganizationNodeRequest updateOrganizationNodeRequest,
+            @Parameter(hidden = true)
             @CookieValue("SESSION") String sessionCookie
     ) {
         updateOrganizationNodeRequest.setOrganizationId(organizationId);

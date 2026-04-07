@@ -91,10 +91,11 @@ public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagReque
 
         serviceNodeUuids
                 .forEach(uuid -> {
+                    String topicName = kafkaTopicNameUtil.getTopicNameByNodeUuid(uuid);
                     kafkaProducer.sendEvent(
-                            kafkaTopicNameUtil.getTopicNameByNodeUuid(uuid),
+                            topicName,
                             jsonEvent
-                    );
+                    ).thenRun(() -> log.info("Сообщение отправлено в топик {}", topicName));
                 });
         return featureFlagDTOMapper.toFeatureFlagDTO(newFeatureFlag);
     }

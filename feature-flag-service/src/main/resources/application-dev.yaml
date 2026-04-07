@@ -13,7 +13,31 @@ micronaut:
         connect-timeout: 1s
   security:
     enabled: true
-    authentication: cookie
+    authentication: bearer
+    redirect:
+      enabled: false
+
+    token:
+      jwt:
+        enabled: true
+        cookie:
+          enabled: false
+        signatures:
+          secret:
+            generator:
+              secret: '${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForProduction}'
+        bearer:
+          enabled: true
+
+    endpoints:
+      login:
+        enabled: false
+      logout:
+        enabled: false
+
+    session:
+      enabled: false
+
     intercept-url-map:
       - pattern: /swagger-ui/**
         access: isAnonymous()
