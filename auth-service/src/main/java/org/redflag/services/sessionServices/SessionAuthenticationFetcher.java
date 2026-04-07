@@ -19,8 +19,19 @@ public class SessionAuthenticationFetcher implements AuthenticationFetcher<HttpR
 
     private final SessionService sessionService;
 
+    private static final String TOKEN_API_PREFIX = "/api/v1/sdk-clients";
+    private static final String TOKEN_DELETE_CLIENTS_API_PREFIX = "/api/v1/clients/delete-clients";
+
+
     @Override
     public Publisher<Authentication> fetchAuthentication(HttpRequest<?> request) {
+        String path = request.getPath();
+
+        if (path.startsWith(TOKEN_API_PREFIX) ||
+                path.startsWith(TOKEN_DELETE_CLIENTS_API_PREFIX)) {
+            return Mono.empty();
+        }
+
         return Mono.justOrEmpty(extractId(request))
                 .flatMap(sessionService::findActiveSession)
                 .map(this::mapToAuth);

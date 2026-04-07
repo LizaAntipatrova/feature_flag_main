@@ -13,6 +13,7 @@ import org.redflag.entities.SdkClient;
 import org.redflag.exception.ConflictCustomException;
 import org.redflag.exception.ResourceNotFoundCustomException;
 import org.redflag.repositories.SdkClientRepository;
+import org.redflag.services.kafkaServices.GenerateKafkaNamesService;
 import org.redflag.services.kafkaServices.KafkaGeneralService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

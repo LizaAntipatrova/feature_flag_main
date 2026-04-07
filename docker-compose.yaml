@@ -69,7 +69,7 @@ services:
       dockerfile: Dockerfile
     container_name: auth-service
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
       MICRONAUT_ENVIRONMENTS: dev
       DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-auth:5432/${AUTH_SERVICE_DB}

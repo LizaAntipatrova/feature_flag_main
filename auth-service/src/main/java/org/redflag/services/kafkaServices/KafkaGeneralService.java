@@ -18,8 +18,8 @@ public class KafkaGeneralService {
 
     public CreateServiceAccessResponse setupKafka(String serviceId, String password) {
         String topicName = namesService.buildTopicName(serviceId);
-        String username = namesService.buildUsername(serviceId);
         String groupName = namesService.buildGroupName(serviceId);
+        String username = serviceId;
 
         boolean topicCreated = false;
         boolean userCreated = false;
@@ -73,8 +73,9 @@ public class KafkaGeneralService {
 
     public void cleanupKafka(String serviceId, String password) {
         String topicName = namesService.buildTopicName(serviceId);
-        String username = namesService.buildUsername(serviceId);
+//        String username = namesService.buildUsername(serviceId);
         String groupName = namesService.buildGroupName(serviceId);
+        String username = serviceId;
 
         boolean aclsDeleted = false;
         boolean userDeleted = false;
@@ -121,7 +122,6 @@ public class KafkaGeneralService {
 
     public void setupMainServiceAcls() {
         aclKafkaService.createMainProducerPrefixAcls("svc.");
-        aclKafkaService.createMainIdempotentWriteAcl();
 
         log.info("Main service ACLs configured successfully");
     }

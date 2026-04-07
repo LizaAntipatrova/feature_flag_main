@@ -79,17 +79,11 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-    public void invalidateSession(String sessionIdStr, String currentUserLogin) {
+    public void invalidateSession(String sessionIdStr) {
         long sessionId = SupportSessionUtils.parseSessionId(sessionIdStr);
 
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("Session not found"));
-
-        if (!session.getUser()
-                    .getLogin()
-                    .equals(currentUserLogin)) {
-            throw new AccessDeniedCustomException("You cannot invalidate someone else's session");
-        }
 
         sessionRepository.delete(session);
     }

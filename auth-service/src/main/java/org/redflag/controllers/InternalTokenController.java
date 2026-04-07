@@ -21,8 +21,8 @@ public class InternalTokenController {
     public HttpResponse<?> mainServiceToken() {
 
         String jwt = internalTokenService.generateInternalToken(
+                SecurityConstants.MAIN_SERVICE_TOKEN_TYPE_VALUE,
                 SecurityConstants.MAIN_SERVICE_TOKEN_TYPE_VALUE
-//                SecurityConstants.MAIN_SERVICE_TOKEN_TYPE_VALUE
         );
 
         return HttpResponse.ok(Map.of(

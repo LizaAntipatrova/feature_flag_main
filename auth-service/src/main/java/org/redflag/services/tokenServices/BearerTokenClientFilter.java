@@ -24,8 +24,8 @@ public class BearerTokenClientFilter implements HttpClientFilter {
             ClientFilterChain chain) {
 
         String jwt = internalTokenService.generateInternalToken(
+                SecurityConstants.AUTH_SERVICE_TOKEN_TYPE_VALUE,
                 SecurityConstants.AUTH_SERVICE_TOKEN_TYPE_VALUE
-//                SecurityConstants.AUTH_SERVICE_TOKEN_TYPE_VALUE
         );
 
         request.header(HttpHeaders.AUTHORIZATION, SecurityConstants.SDK_AUTH_TOKEN_VALUE + jwt);

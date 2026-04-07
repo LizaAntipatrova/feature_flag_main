@@ -2,6 +2,8 @@ package org.redflag.controllers;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -29,6 +31,7 @@ public class UiClientController {
 
     @Get("/by-department/{uuidDepartament}")
     @Secured(UiClientRolesValue.READ_EMPLOYEE)
+    @ExecuteOn(TaskExecutors.BLOCKING)
     public List<UiClientDto> getClientsByDept(Authentication authentication,
                                               @QueryValue UUID uuidDepartament) {
         return clientService.getAllByDepartment(authentication, uuidDepartament);
@@ -54,6 +57,8 @@ public class UiClientController {
     }
 
     @Delete("/{id}")
+    @Secured(UiClientRolesValue.DELETE_EMPLOYEE)
+    @ExecuteOn(TaskExecutors.BLOCKING)
     public HttpResponse<?> delete(Authentication authentication,
                                   @PathVariable Long id) {
         clientService.delete(authentication, id);
@@ -62,6 +67,7 @@ public class UiClientController {
 
     @Post("/{id}/roles/add")
     @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
+    @ExecuteOn(TaskExecutors.BLOCKING)
     public HttpResponse<?> addRoles(Authentication authentication,
                                     @PathVariable Long id,
                                     @Body @Valid UpdateRolesUiClientRequest request) {
@@ -71,6 +77,7 @@ public class UiClientController {
 
     @Delete("/{id}/roles/remove")
     @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
+    @ExecuteOn(TaskExecutors.BLOCKING)
     public HttpResponse<?> removeRoles(Authentication authentication,
                                        @PathVariable Long id,
                                        @Body @Valid UpdateRolesUiClientRequest request) {
@@ -80,6 +87,7 @@ public class UiClientController {
 
     @Patch("/{id}/department")
     @Secured(UiClientRolesValue.UPDATE_EMPLOYEE)
+    @ExecuteOn(TaskExecutors.BLOCKING)
     public HttpResponse<?> updateClientDepartment(Authentication authentication,
                                                   @PathVariable Long id,
                                                   @Body @Valid UpdateDepartmentUiClientRequest request) {

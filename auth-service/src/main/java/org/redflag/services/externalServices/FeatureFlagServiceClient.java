@@ -36,11 +36,12 @@ public class FeatureFlagServiceClient {
 
             log.error("FF-Service вернул ошибку [{}]: {}", e.getStatus(), message);
 
-            throw switch (e.getStatus().getCode()) {
-                case 409 -> new ConflictCustomException(message);
-                case 400 -> new BadCredentialsCustomException(message);
-                case 401 -> new AccessDeniedCustomException(message);
-                default  -> new RuntimeException("Непредвиденная ошибка: " + message);
+            throw switch (e.getStatus()) {
+                case CONFLICT -> new ConflictCustomException(message);          // 409
+                case BAD_REQUEST -> new BadCredentialsCustomException(message); // 400
+                case UNAUTHORIZED -> new AccessDeniedCustomException(message);  // 401
+                default -> new RuntimeException("Непредвиденная ошибка: " + message);
+
             };
         } catch (Exception e) {
             log.error("Критическая ошибка при обращении к FF-Service: {}", e.getMessage());
@@ -59,11 +60,11 @@ public class FeatureFlagServiceClient {
 
             log.error("Main-Service вернул ошибку [{}]: {}", e.getStatus(), message);
 
-            throw switch (e.getStatus().getCode()) {
-                case 401 -> new AccessDeniedCustomException(message);
-                case 403 -> new AccessDeniedCustomException(message);
-                case 404 -> new ResourceNotFoundCustomException(message);
-                case 400 -> new BadCredentialsCustomException(message);
+            throw switch (e.getStatus()) {
+                case UNAUTHORIZED -> new AccessDeniedCustomException(message);          // 401
+                case FORBIDDEN -> new AccessDeniedCustomException(message);              // 403
+                case NOT_FOUND -> new ResourceNotFoundCustomException(message);          // 404
+                case BAD_REQUEST -> new BadCredentialsCustomException(message);          // 400
                 default -> new RuntimeException("Непредвиденная ошибка: " + message);
             };
 

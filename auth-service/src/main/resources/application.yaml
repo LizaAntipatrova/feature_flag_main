@@ -37,10 +37,6 @@ micronaut:
               secret: '${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForProduction}'
         bearer:
           enabled: true
-        claims-to-authorities:
-          sub: "ROLE_"
-#          type: "ROLE_"
-
 
     endpoints:
       login:
@@ -96,6 +92,3 @@ liquibase:
     default:
       enabled: true
       change-log: 'classpath:db/changelog/db.changelog-master.yml'
-
-
-

@@ -26,19 +26,12 @@ public class SdkAuthController {
     @Post("/login")
     @Secured(SecurityRule.IS_ANONYMOUS)
     public Mono<HttpResponse<?>> login(@Body UsernamePasswordCredentials credentials) {
-        return Mono.fromCallable(() -> {
-                    var tokenOptional = sdkAuthService.authenticate(credentials);
-
-                    if (tokenOptional.isPresent()) {
-                        return HttpResponse.ok(Map.of(
-                                SecurityConstants.SDK_ACCESS_TOKEN_NAME, tokenOptional.get(),
-                                SecurityConstants.SDK_AUTH_TOKEN_TYPE, SecurityConstants.SDK_AUTH_TOKEN_VALUE
-                        ));
-                    } else {
-                        return HttpResponse.unauthorized();
-                    }
-                })
+        return Mono.fromCallable(() -> sdkAuthService.authenticate(credentials))
                 .subscribeOn(Schedulers.boundedElastic())
-                .map(response -> response);
+                .map(token -> HttpResponse.ok(Map.of(
+                        SecurityConstants.SDK_ACCESS_TOKEN_NAME, token,
+                        SecurityConstants.SDK_AUTH_TOKEN_TYPE, SecurityConstants.SDK_AUTH_TOKEN_VALUE
+                )));
     }
+
 }

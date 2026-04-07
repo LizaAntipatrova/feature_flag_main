@@ -18,7 +18,6 @@ public final class SecurityConstants {
 
     public static final String AUTH_SERVICE_TOKEN_TYPE_VALUE = "auth_service";
     public static final String MAIN_SERVICE_TOKEN_TYPE_VALUE = "main_service";
-    public static final String INTERNAL_TOKEN_REQUEST_HEADER = "X-Internal-Token";
 
 
     public static final String SDK_ACCESS_TOKEN_NAME = "access_token";
