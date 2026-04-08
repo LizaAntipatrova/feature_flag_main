@@ -79,8 +79,8 @@ public class FeatureFlagController {
             )
 
     })
-    @Secured(Role.CREATE_FEATURE_FLAG_ROLE_NAME)
-    public HttpResponse<FeatureFlagDTO> createOrganizationNode(
+    @Secured({Role.CREATE_FEATURE_FLAG_ROLE_NAME, Role.ROLE_SDK_CLIENT_NAME})
+    public HttpResponse<FeatureFlagDTO> createFeatureFlag(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")

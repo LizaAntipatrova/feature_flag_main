@@ -24,7 +24,7 @@ public class AclKafkaService {
     private final AdminClient adminClient;
 
     public void createSdkConsumerAcls(String username, String topicName, String groupName) {
-        String principal = username;
+        String principal = "User:"+username;
 
         List<AclBinding> bindings = List.of(
                 topicAcl(principal, topicName, PatternType.LITERAL, AclOperation.READ),
@@ -37,7 +37,7 @@ public class AclKafkaService {
     }
 
     public void deleteSdkConsumerAcls(String username, String topicName, String groupName) {
-        String principal = username;
+        String principal = "User:"+username;
 
                 List<AclBindingFilter> filters = List.of(
                 aclFilter(ResourceType.TOPIC, topicName, PatternType.LITERAL, principal),
@@ -48,7 +48,7 @@ public class AclKafkaService {
     }
 
     public void createMainProducerPrefixAcls(String topicPrefix) {
-        String principal = KafkaConstants.PRODUCER_NAME;
+        String principal = "User:"+KafkaConstants.PRODUCER_NAME;
 
         List<AclBinding> bindings = new ArrayList<>();
         bindings.add(topicAcl(principal, topicPrefix, PatternType.PREFIXED, AclOperation.WRITE));
