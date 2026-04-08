@@ -32,7 +32,13 @@ public class CheckSubordinationService {
         OrganizationNodeDTO subordinateUserNode = ffServiceClient.getOrganizationNodeByUuid(
                 subordinateUserDepartmentUuid
         );
+
+        if (subordinateUserNode == null) {
+            throw new  ResourceNotFoundCustomException("Department not found");
+        }
+
         return subordinateUserNode.path().startsWith(initializingUserNode.path()) &&
-                initializingUserNode.organizationId().equals(subordinateUserNode.organizationId());
+                initializingUserNode.organizationId().equals(subordinateUserNode.organizationId()) &&
+                subordinateUserNode.path().length() > initializingUserNode.path().length();
     }
 }

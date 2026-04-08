@@ -22,7 +22,7 @@ micronaut:
       enabled: true
 
   security:
-    authentication: session
+    authentication: bearer
     redirect:
       enabled: false
 

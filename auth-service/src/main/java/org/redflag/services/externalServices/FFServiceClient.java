@@ -1,6 +1,7 @@
 package org.redflag.services.externalServices;
 
 import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.client.annotation.Client;
@@ -16,7 +17,7 @@ public interface FFServiceClient {
     @Post("/api/v1/organizations/with-root-node")
     CreateOrganizationResponse createOrganization(@Body CreateOrganizationRequest request);
 
-    @Post("/api/v1/find-node")
+    @Get("/api/v1/find-node")
     OrganizationNodeDTO getOrganizationNodeByUuid(
             @QueryValue("organizationNodeUuid") UUID organizationNodeUuid
     );
