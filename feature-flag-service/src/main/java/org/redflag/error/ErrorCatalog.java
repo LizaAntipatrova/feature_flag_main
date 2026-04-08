@@ -28,7 +28,9 @@ public enum ErrorCatalog {
     NODE_MUST_BE_SERVICE("02-0009", "Узел, должен быть сервисом", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
     NO_RIGHTS_TO_ENTITY("02-0010", "Недостаточно прав для работы с данной сущностью", ErrorType.BUSINESS_ERROR, HttpStatus.FORBIDDEN),
     NO_SUCH_NODE_IN_ORGANIZATION("02-0011", "В организации нет такого звена", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
-    NO_SUCH_FLAG_IN_NODE("02-0012", "В звене организации нет такого флага", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT);
+    NO_SUCH_FLAG_IN_NODE("02-0012", "В звене организации нет такого флага", ErrorType.BUSINESS_ERROR, HttpStatus.CONFLICT),
+
+    AUTH_SERVICE_ERROR("03-0001", "При подключении к сервису авторизации возникли проблемы", ErrorType.INTEGRATION_ERROR, HttpStatus.SERVICE_UNAVAILABLE);
 
 
 

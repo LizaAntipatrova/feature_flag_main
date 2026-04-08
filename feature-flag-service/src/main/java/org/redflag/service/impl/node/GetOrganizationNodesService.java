@@ -14,6 +14,7 @@ import org.redflag.service.validator.LinkedEntityValidator;
 import org.redflag.service.validator.PaginationParameterValidator;
 
 import java.util.List;
+import java.util.Objects;
 
 @Singleton
 @RequiredArgsConstructor
@@ -33,7 +34,9 @@ public class GetOrganizationNodesService extends BaseService<GetOrganizationNode
     @Override
     protected void validateState(GetOrganizationNodesRequest request) {
         authRightsToNodeValidator.checkIsAuthNodeInOrganization(request.getOrganizationId());
-        linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+        if (Objects.nonNull(request.getNodeId())){
+            linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
+        }
     }
 
     @Override

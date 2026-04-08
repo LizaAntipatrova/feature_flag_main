@@ -2,8 +2,11 @@ package org.redflag.controller;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +21,7 @@ import org.redflag.auth.Role;
 import org.redflag.dto.ErrorResponse;
 import org.redflag.dto.node.OrganizationNodeDTO;
 import org.redflag.dto.node.OrganizationNodeIdDTO;
+import org.redflag.dto.node.OrganizationNodeWithCredentialsDTO;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.dto.node.get.*;
 import org.redflag.dto.node.update.MoveOrganizationNodeRequest;
@@ -86,12 +90,16 @@ public class OrganizationNodeController {
             )
 
     })
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Secured(Role.CREATE_DEPARTMENT_ROLE_NAME)
-    public HttpResponse<OrganizationNodeDTO> createOrganizationNode(
+    public HttpResponse<OrganizationNodeWithCredentialsDTO> createOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
-            @Body CreateOrganizationNodeRequest request) {
+            @Body CreateOrganizationNodeRequest request,
+            @Parameter(hidden = true)
+            @CookieValue("SESSION") String sessionCookie) {
         request.setOrganizationId(organizationId);
+        request.setSessionCookie(sessionCookie);
 
         return HttpResponse.created(createOrganizationNodeService.service(request));
     }
@@ -242,16 +250,20 @@ public class OrganizationNodeController {
             )
 
     })
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Secured(Role.UPDATE_DEPARTMENT_ROLE_NAME)
     public OrganizationNodeDTO updateOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
-            @Body UpdateOrganizationNodeRequest updateOrganizationNodeRequest
+            @Body UpdateOrganizationNodeRequest updateOrganizationNodeRequest,
+            @Parameter(hidden = true)
+            @CookieValue("SESSION") String sessionCookie
     ) {
         updateOrganizationNodeRequest.setOrganizationId(organizationId);
         updateOrganizationNodeRequest.setNodeId(nodeId);
+        updateOrganizationNodeRequest.setSessionCookie(sessionCookie);
         return updateOrganizationNodeService.service(updateOrganizationNodeRequest);
     }
 

@@ -23,6 +23,7 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
                     error.getErrorType().getValue(),
                     exception.getClass().getName(),
                     exception.getMessage());
+            exception.printStackTrace();
         }else {
             log.info("{}: code: {}, message:{}, status: {}",
                     error.getErrorType().getValue(),
