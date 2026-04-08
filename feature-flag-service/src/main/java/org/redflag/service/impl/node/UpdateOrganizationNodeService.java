@@ -1,10 +1,7 @@
 package org.redflag.service.impl.node;
 
-import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
-import org.redflag.client.AuthClient;
 import org.redflag.dto.auth.CreateServiceCredentialsResponse;
 import org.redflag.dto.auth.LoginForServiceCredentialsDto;
 import org.redflag.dto.node.OrganizationNodeDTO;
@@ -15,11 +12,9 @@ import org.redflag.model.OrganizationNode;
 import org.redflag.repository.OrganizationNodeRepository;
 import org.redflag.service.BaseService;
 import org.redflag.service.client.AuthClientService;
-import org.redflag.service.mapper.OrganizationNodeDTOMapper;
 import org.redflag.service.transaction.TransactionUpdateOrganizationNodeService;
 import org.redflag.service.transaction.UpdateOrganizationNodeTransactionalResult;
 import org.redflag.service.validator.AuthRightsToNodeValidator;
-import org.redflag.service.validator.EntityVersionValidator;
 import org.redflag.service.validator.LinkedEntityValidator;
 import org.redflag.service.validator.UniqueNameValidator;
 
@@ -29,11 +24,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizationNodeRequest, OrganizationNodeDTO> {
     private final OrganizationNodeRepository organizationNodeRepository;
-    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
     private final AuthRightsToNodeValidator authRightsToNodeValidator;
     private final LinkedEntityValidator linkedEntityValidator;
     private final UniqueNameValidator uniqueNameValidator;
-    private final EntityVersionValidator entityVersionValidator;
     private final TransactionUpdateOrganizationNodeService transactionUpdateOrganizationNodeService;
     private final AuthClientService authClientService;
 
@@ -70,32 +63,31 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
     }
 
     @Override
-    @Transactional
     protected OrganizationNodeWithCredentialsDTO execute(UpdateOrganizationNodeRequest request) {
         UpdateOrganizationNodeTransactionalResult transactionalResult =
                 transactionUpdateOrganizationNodeService.updateNode(request);
         OrganizationNodeWithCredentialsDTO resultDto = transactionalResult.getDto();
         try {
             Boolean newIsService = resultDto.getIsService();
-            if (!transactionalResult.getOldIsService().equals(newIsService)){
+            if (!transactionalResult.getOldIsService().equals(newIsService)) {
                 LoginForServiceCredentialsDto loginDto = LoginForServiceCredentialsDto.builder()
                         .newLogin(resultDto.getUuid())
                         .build();
-                if(newIsService){
+                if (newIsService) {
                     CreateServiceCredentialsResponse credentialsResponse =
-                            authClientService.createServiceCredentials(request.getSessionCookie(),loginDto);
+                            authClientService.createServiceCredentials(request.getSessionCookie(), loginDto);
                     resultDto.setUsername(credentialsResponse.getUsername())
                             .setPassword(credentialsResponse.getPassword())
                             .setTopicName(credentialsResponse.getTopic())
                             .setGroupName(credentialsResponse.getGroupName());
-                }else {
+                } else {
                     authClientService.deleteServiceCredentials(
                             request.getSessionCookie(),
                             loginDto);
                 }
             }
             return resultDto;
-        }catch (Exception e){
+        } catch (Exception e) {
             transactionUpdateOrganizationNodeService.compensateUpdateNode(transactionalResult);
             throw ErrorCatalog.AUTH_SERVICE_ERROR.getException();
         }
