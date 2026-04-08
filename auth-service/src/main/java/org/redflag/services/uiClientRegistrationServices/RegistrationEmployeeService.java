@@ -24,7 +24,7 @@ public class RegistrationEmployeeService {
     private final UiClientRepository uiClientRepository;
     private final RoleRepository roleRepository;
     private final InviteService inviteService;
-     private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void registerEmployee(EmployeeRegisterRequest request, String token) {
