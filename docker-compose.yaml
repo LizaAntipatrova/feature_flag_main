@@ -107,6 +107,19 @@ services:
       - postgres-ff
       - kafka
 
+  frontend:
+    image: dischargedrobo/frontend-workshop:latest
+    environment:
+      API_FF_SERVICE_URL_V1: ${API_FF_SERVICE_URL_V1}
+      API_AUT_SERVICE_URL_V1: ${API_AUT_SERVICE_URL_V1}
+    ports:
+      - "3000:3000"
+    container_name: frontend-ff
+    depends_on:
+      - auth-service
+      - ff-service
+
+
 volumes:
   ff_service_pgdata:
     name: ff_service_pgdata
