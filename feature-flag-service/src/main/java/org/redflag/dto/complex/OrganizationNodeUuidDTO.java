@@ -1,5 +1,6 @@
 package org.redflag.dto.complex;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
@@ -11,5 +12,6 @@ import java.util.UUID;
 @Introspected
 @Serdeable
 public class OrganizationNodeUuidDTO {
+    @JsonProperty("nodeUuid")
     private final UUID nodeUuid;
 }

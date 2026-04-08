@@ -75,7 +75,7 @@ public class ChepuhaController {
             )
 
     })
-    @Secured(SecurityRule.IS_ANONYMOUS)
+    @Secured(Role.ROLE_AUTH_SERVICE_NAME)
     public HttpResponse<CreateOrganizationWithRootNodeResponse> createOrganizationWithRootNode(@Body CreateOrganizationRequest request) {
         return HttpResponse.created(createOrganizationWithRootNodesService.service(request));
     }
@@ -114,7 +114,7 @@ public class ChepuhaController {
             )
 
     })
-    @Secured({Role.READ_DEPARTMENT_ROLE_NAME, Role.ROLE_SDK_CLIENT_NAME})
+    @Secured({Role.READ_DEPARTMENT_ROLE_NAME, Role.ROLE_SDK_CLIENT_NAME, Role.ROLE_AUTH_SERVICE_NAME})
     public OrganizationNodeDTO getOrganizationNodeByUuid(
             @Parameter(description = "UUID звена организации", required = true, example = "9c2c7a6d-29e9-4c8c-a0b3-3b14f7c2b4f1")
             @QueryValue UUID organizationNodeUuid) {
