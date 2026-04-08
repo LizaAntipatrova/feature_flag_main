@@ -6,7 +6,6 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -95,11 +94,8 @@ public class OrganizationNodeController {
     public HttpResponse<OrganizationNodeWithCredentialsDTO> createOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")
             @PathVariable Long organizationId,
-            @Body CreateOrganizationNodeRequest request,
-            @Parameter(hidden = true)
-            @CookieValue("SESSION") String sessionCookie) {
+            @Body CreateOrganizationNodeRequest request) {
         request.setOrganizationId(organizationId);
-        request.setSessionCookie(sessionCookie);
 
         return HttpResponse.created(createOrganizationNodeService.service(request));
     }
@@ -257,13 +253,10 @@ public class OrganizationNodeController {
             @PathVariable Long organizationId,
             @Parameter(description = "Идентификатор звена организации", required = true, example = "1")
             @PathVariable Long nodeId,
-            @Body UpdateOrganizationNodeRequest updateOrganizationNodeRequest,
-            @Parameter(hidden = true)
-            @CookieValue("SESSION") String sessionCookie
+            @Body UpdateOrganizationNodeRequest updateOrganizationNodeRequest
     ) {
         updateOrganizationNodeRequest.setOrganizationId(organizationId);
         updateOrganizationNodeRequest.setNodeId(nodeId);
-        updateOrganizationNodeRequest.setSessionCookie(sessionCookie);
         return updateOrganizationNodeService.service(updateOrganizationNodeRequest);
     }
 
@@ -304,6 +297,7 @@ public class OrganizationNodeController {
             )
 
     })
+    @ExecuteOn(TaskExecutors.BLOCKING)
     @Secured(Role.DELETE_DEPARTMENT_ROLE_NAME)
     public HttpResponse<Void> deleteOrganizationNode(
             @Parameter(description = "Идентификатор организации", required = true, example = "1")

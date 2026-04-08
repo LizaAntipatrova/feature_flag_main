@@ -6,14 +6,13 @@ import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-import java.util.UUID;
-
 @Builder
 @Getter
 @Introspected
 @Serdeable
-public class NodeUuidsDTO {
-    @JsonProperty("departmentUuids")
-    private List<UUID> nodeUuids;
+public class JwtDTO {
+    @JsonProperty("token_type")
+    private String tokenType;
+    @JsonProperty("access_token")
+    private String accessToken;
 }

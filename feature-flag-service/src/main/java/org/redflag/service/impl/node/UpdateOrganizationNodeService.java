@@ -75,15 +75,13 @@ public class UpdateOrganizationNodeService extends BaseService<UpdateOrganizatio
                         .build();
                 if (newIsService) {
                     CreateServiceCredentialsResponse credentialsResponse =
-                            authClientService.createServiceCredentials(request.getSessionCookie(), loginDto);
+                            authClientService.createServiceCredentials(loginDto);
                     resultDto.setUsername(credentialsResponse.getUsername())
                             .setPassword(credentialsResponse.getPassword())
                             .setTopicName(credentialsResponse.getTopic())
                             .setGroupName(credentialsResponse.getGroupName());
                 } else {
-                    authClientService.deleteServiceCredentials(
-                            request.getSessionCookie(),
-                            loginDto);
+                    authClientService.deleteServiceCredentials(loginDto);
                 }
             }
             return resultDto;

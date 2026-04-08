@@ -24,6 +24,4 @@ public class CreateOrganizationNodeRequest {
     private final Long parentId;
     @JsonIgnore
     private Long organizationId;
-    @JsonIgnore
-    private String sessionCookie;
 }
