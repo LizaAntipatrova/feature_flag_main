@@ -12,7 +12,6 @@ public record UpdateUiClientRequest(
         String oldPassword,
 
         @Nullable
-        @Size(min = 3, max = 50)
         String newLogin,
 
         @Nullable

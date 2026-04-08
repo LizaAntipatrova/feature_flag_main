@@ -22,10 +22,9 @@ import static org.redflag.constants.KafkaConstants.WILDCARD_HOST;
 public class AclKafkaService {
 
     private final AdminClient adminClient;
-    private final GenerateKafkaNamesService namesService;
 
     public void createSdkConsumerAcls(String username, String topicName, String groupName) {
-        String principal = namesService.buildKafkaUser(username);
+        String principal = username;
 
         List<AclBinding> bindings = List.of(
                 topicAcl(principal, topicName, PatternType.LITERAL, AclOperation.READ),
@@ -38,9 +37,9 @@ public class AclKafkaService {
     }
 
     public void deleteSdkConsumerAcls(String username, String topicName, String groupName) {
-        String principal = namesService.buildKafkaUser(username);
+        String principal = username;
 
-        List<AclBindingFilter> filters = List.of(
+                List<AclBindingFilter> filters = List.of(
                 aclFilter(ResourceType.TOPIC, topicName, PatternType.LITERAL, principal),
                 aclFilter(ResourceType.GROUP, groupName, PatternType.LITERAL, principal)
         );
@@ -49,7 +48,7 @@ public class AclKafkaService {
     }
 
     public void createMainProducerPrefixAcls(String topicPrefix) {
-        String principal = namesService.buildKafkaUser(KafkaConstants.PRODUCER_NAME);
+        String principal = KafkaConstants.PRODUCER_NAME;
 
         List<AclBinding> bindings = new ArrayList<>();
         bindings.add(topicAcl(principal, topicPrefix, PatternType.PREFIXED, AclOperation.WRITE));
@@ -58,12 +57,6 @@ public class AclKafkaService {
 
         applyAclCreation(bindings, KafkaConstants.PRODUCER_NAME);
     }
-
-    public void createMainIdempotentWriteAcl() {
-        String principal = namesService.buildKafkaUser(KafkaConstants.PRODUCER_NAME);
-        applyAclCreation(List.of(clusterAcl(principal, AclOperation.IDEMPOTENT_WRITE)), KafkaConstants.PRODUCER_NAME);
-    }
-
 
     private void applyAclCreation(List<AclBinding> bindings, String user) {
         try {

@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.redflag.annotations.NoSdkAllowed;
+import org.redflag.constants.UiClientRolesValue;
 import org.redflag.dto.CreateServiceAccessResponse;
+import org.redflag.dto.SdkDeleteListRequest;
 import org.redflag.dto.SdkLoginRequest;
 import org.redflag.services.SdkClientService;
 
@@ -26,13 +28,22 @@ public class SdkClientController {
 
     @Post("/create")
     @Status(HttpStatus.CREATED)
+    @Secured(UiClientRolesValue.MAIN_SERVICE)
     public CreateServiceAccessResponse create(@Body @Valid SdkLoginRequest request) {
         return sdkService.createSdkWithKafka(request.newLogin());
     }
 
     @Delete("/delete")
+    @Secured(UiClientRolesValue.MAIN_SERVICE)
     public HttpResponse<?> delete(@Body @Valid SdkLoginRequest request) {
         sdkService.deleteWithKafka(request.newLogin());
+        return HttpResponse.noContent();
+    }
+
+    @Delete("/delete-sdks")
+    @Secured(UiClientRolesValue.MAIN_SERVICE)
+    public HttpResponse<?> deleteSdks(@Body @Valid SdkDeleteListRequest request) {
+        sdkService.deleteWithKafkaListSdk(request.sdkUuids());
         return HttpResponse.noContent();
     }
 }

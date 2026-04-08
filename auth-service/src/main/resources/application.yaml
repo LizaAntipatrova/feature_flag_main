@@ -22,7 +22,7 @@ micronaut:
       enabled: true
 
   security:
-    authentication: session
+    authentication: bearer
     redirect:
       enabled: false
 
@@ -92,4 +92,3 @@ liquibase:
     default:
       enabled: true
       change-log: 'classpath:db/changelog/db.changelog-master.yml'
-

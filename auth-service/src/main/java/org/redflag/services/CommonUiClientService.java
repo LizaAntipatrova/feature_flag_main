@@ -1,5 +1,6 @@
 package org.redflag.services;
 
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.redflag.exception.ConflictCustomException;
 import org.redflag.exception.ResourceNotFoundCustomException;
 import org.redflag.repositories.RoleRepository;
 import org.redflag.repositories.UiClientRepository;
+import org.redflag.services.UiClientServices.CheckSubordinationService;
 import org.redflag.services.mappers.UiClientToUiClientDtoMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,16 +25,20 @@ import java.util.stream.Collectors;
 
 @Singleton
 @RequiredArgsConstructor
-public class UiClientService {
+public class CommonUiClientService {
 
     private final UiClientRepository clientRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UiClientToUiClientDtoMapper mapper;
+    private final CheckSubordinationService checkSubordinationService;
 
-    public List<UiClientDto> getAllByDepartment(UUID uuidDepartament) {
+    public List<UiClientDto> getAllByDepartment(Authentication authentication, UUID uuidDepartament) {
         if (uuidDepartament == null) {
             throw new BadCredentialsCustomException("Department UUID cannot be null");
+        }
+        if (!checkSubordinationService.isSubordinatedFromAuth(authentication, uuidDepartament)) {
+            throw new AccessDeniedCustomException("Access denied. The department you want to view is not a subordinate");
         }
 
         List<UiClient> clients = clientRepository.findByUuidDepartament(uuidDepartament);
@@ -52,20 +58,27 @@ public class UiClientService {
                 .orElseThrow(() -> new ResourceNotFoundCustomException("User not found"));
     }
 
-    public void delete(Long id) {
+    public void delete(Authentication authentication, Long id) {
+        UUID uuidDepartament = clientRepository.findUuidDepartamentById(id)
+                .orElseThrow(() -> new ResourceNotFoundCustomException("User does not exist"));
+
+        if (!checkSubordinationService.isSubordinatedFromAuth(authentication, uuidDepartament)) {
+            throw new AccessDeniedCustomException("Access denied. The user is not a subordinate");
+        }
         clientRepository.deleteById(id);
     }
 
-    public void deleteListUiClients(List<Long> ids) {
-        long count = clientRepository.countByIdIn(ids);
+    public void deleteListUiClientsByDepartment(List<UUID> departmentUuids) {
+        long count = clientRepository.countByUuidDepartamentIn(departmentUuids);
         if (count == 0) {
             throw new ResourceNotFoundCustomException("No clients found");
         }
-        clientRepository.deleteAllByIdIn(ids);
+        clientRepository.deleteAllByUuidDepartamentIn(departmentUuids);
     }
 
     @Transactional
     public void updateUiClient(String login, UpdateUiClientRequest request) {
+
         UiClient client = clientRepository.findByLogin(login)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("User not found"));
 
@@ -90,9 +103,13 @@ public class UiClientService {
     }
 
     @Transactional
-    public void addRoles(Long userId, Set<String> roleNames) {
+    public void addRoles(Authentication authentication, Long userId, Set<String> roleNames) {
         UiClient client = clientRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("User not found"));
+
+        if (!checkSubordinationService.isSubordinatedFromAuth(authentication, client.getUuidDepartament())) {
+            throw new AccessDeniedCustomException("Access denied. The user is not a subordinate");
+        }
 
         Set<Role> rolesToAdd = roleNames.stream()
                 .map(name -> roleRepository.findByName(name)
@@ -104,9 +121,13 @@ public class UiClientService {
     }
 
     @Transactional
-    public void removeRoles(Long userId, Set<String> roleNames) {
+    public void removeRoles(Authentication authentication, Long userId, Set<String> roleNames) {
         UiClient client = clientRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("User not found"));
+
+        if (!checkSubordinationService.isSubordinatedFromAuth(authentication, client.getUuidDepartament())) {
+            throw new AccessDeniedCustomException("Access denied. The user is not a subordinate");
+        }
 
         client.getRoles().removeIf(role -> roleNames.contains(role.getName()));
 
@@ -114,9 +135,13 @@ public class UiClientService {
     }
 
     @Transactional
-    public void updateDepartment(Long userId, UUID departmentUuid) {
+    public void updateDepartment(Authentication authentication, Long userId, UUID departmentUuid) {
         UiClient client = clientRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("User not found"));
+
+        if (!checkSubordinationService.isSubordinatedFromAuth(authentication, client.getUuidDepartament())) {
+            throw new AccessDeniedCustomException("Access denied. The department you want to update is not a subordinate");
+        }
 
         client.setUuidDepartament(departmentUuid);
         clientRepository.update(client);

@@ -55,11 +55,10 @@ public class LoginController {
     }
 
     @Post("/logout")
-    public HttpResponse<?> logout(HttpRequest<?> request, Authentication authentication) {
-        String userLogin = authentication.getName();
+    public HttpResponse<?> logout(HttpRequest<?> request) {
 
         request.getCookies().get(SecurityConstants.COOKIES_NAME, String.class)
-                .ifPresent(sessionId -> sessionService.invalidateSession(sessionId, userLogin));
+                .ifPresent(sessionService::invalidateSession);
 
         return HttpResponse.ok()
                 .cookie(sessionService.createSessionCookie(StringUtils.EMPTY, 0));
