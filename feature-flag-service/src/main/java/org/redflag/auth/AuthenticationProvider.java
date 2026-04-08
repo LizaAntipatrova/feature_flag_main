@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthenticationProvider {
     public static final String NODE_UUID_ATTRIBUTE_NAME = "nodeUuid";
+    public static final String SESSION_COOKIE_NAME = "SESSION";
     private final SecurityService service;
 
     public UUID getAuthenticationNodeUuid(){

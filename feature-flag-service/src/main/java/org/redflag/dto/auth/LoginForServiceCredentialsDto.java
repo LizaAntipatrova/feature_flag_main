@@ -1,4 +1,4 @@
-package org.redflag.dto.complex;
+package org.redflag.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
@@ -7,11 +7,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.UUID;
+
 @Builder
 @Getter
 @Introspected
 @Serdeable
-public class OrganizationNodeUuidDTO {
-    @JsonProperty("nodeUuid")
-    private final UUID nodeUuid;
+public class LoginForServiceCredentialsDto {
+    @JsonProperty("newLogin")
+    private UUID newLogin;
 }

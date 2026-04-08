@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -32,6 +33,7 @@ public class SdkAuthService {
                 .flatMap(client -> {
                     Authentication authentication = Authentication.build(
                             client.getLogin().toString(),
+                            Set.of(SecurityConstants.SDK_TOKEN_TYPE_VALUE),
                             Map.of(SecurityConstants.SDK_TOKEN_TYPE, SecurityConstants.SDK_TOKEN_TYPE_VALUE)
                     );
 

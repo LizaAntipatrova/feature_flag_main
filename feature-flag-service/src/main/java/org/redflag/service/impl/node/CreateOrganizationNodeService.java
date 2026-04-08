@@ -1,36 +1,31 @@
 package org.redflag.service.impl.node;
 
-import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.node.OrganizationNodeDTO;
+import org.redflag.dto.auth.CreateServiceCredentialsResponse;
+import org.redflag.dto.auth.LoginForServiceCredentialsDto;
+import org.redflag.dto.node.OrganizationNodeWithCredentialsDTO;
 import org.redflag.dto.node.create.CreateOrganizationNodeRequest;
 import org.redflag.error.ErrorCatalog;
-import org.redflag.model.Organization;
-import org.redflag.model.OrganizationNode;
-import org.redflag.repository.OrganizationNodeRepository;
-import org.redflag.repository.OrganizationRepository;
 import org.redflag.service.BaseService;
-import org.redflag.service.mapper.OrganizationNodeDTOMapper;
-import org.redflag.service.util.LtreePathUtil;
+import org.redflag.service.client.AuthClientService;
+import org.redflag.service.transaction.TransactionCreateOrganizationNodeService;
 import org.redflag.service.validator.AuthRightsToNodeValidator;
 import org.redflag.service.validator.LinkedEntityValidator;
 import org.redflag.service.validator.OrganizationNodeValidator;
 import org.redflag.service.validator.UniqueNameValidator;
 
 import java.util.Objects;
-import java.util.UUID;
 
 @Singleton
 @RequiredArgsConstructor
-public class CreateOrganizationNodeService extends BaseService<CreateOrganizationNodeRequest, OrganizationNodeDTO> {
-    private final OrganizationNodeRepository organizationNodeRepository;
-    private final OrganizationRepository organizationRepository;
-    private final OrganizationNodeDTOMapper organizationNodeDTOMapper;
+public class CreateOrganizationNodeService extends BaseService<CreateOrganizationNodeRequest, OrganizationNodeWithCredentialsDTO> {
     private final OrganizationNodeValidator organizationNodeValidator;
     private final AuthRightsToNodeValidator authRightsToNodeValidator;
     private final LinkedEntityValidator linkedEntityValidator;
     private final UniqueNameValidator uniqueNameValidator;
+    private final AuthClientService authClientService;
+    private final TransactionCreateOrganizationNodeService transactionCreateOrganizationNodeService;
 
     @Override
     protected void validateRequest(CreateOrganizationNodeRequest request) {
@@ -59,27 +54,29 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
 
 
     @Override
-    @Transactional
-    protected OrganizationNodeDTO execute(CreateOrganizationNodeRequest request) {
-        Organization organization = organizationRepository.findById(request.getOrganizationId())
-                .orElseThrow(ErrorCatalog.NO_DATA::getException);
-        OrganizationNode organizationNode = new OrganizationNode()
-                .setName(request.getName())
-                .setUuid(UUID.randomUUID())
-                .setOrganization(organization)
-                .setIsService(request.getIsService());
-        organizationNodeRepository.save(organizationNode);
-        if (Objects.isNull(request.getParentId())) {
-            organizationNode.setPath(organizationNode.getId().toString());
-        } else {
-            OrganizationNode parentNode = organizationNodeRepository.findById(request.getParentId())
-                    .orElseThrow(ErrorCatalog.NO_DATA::getException);
+    protected OrganizationNodeWithCredentialsDTO execute(CreateOrganizationNodeRequest request) {
+        OrganizationNodeWithCredentialsDTO response = transactionCreateOrganizationNodeService.creatNode(request);
 
-            organizationNode.setPath(LtreePathUtil.getChildPath(parentNode.getPath(), organizationNode.getId()));
+        try {
+            if (response.getIsService()){
+                LoginForServiceCredentialsDto dto = LoginForServiceCredentialsDto.builder()
+                        .newLogin(response.getUuid()).build();
+
+                CreateServiceCredentialsResponse credentialsResponse =
+                        authClientService.createServiceCredentials(request.getSessionCookie(), dto);
+
+                return response.setUsername(credentialsResponse.getUsername())
+                        .setPassword(credentialsResponse.getPassword())
+                        .setTopicName(credentialsResponse.getTopic())
+                        .setGroupName(credentialsResponse.getGroupName());
+            }
+
+            return response;
+        }catch (Exception e){
+            transactionCreateOrganizationNodeService.compensateCreateNode(response.getId());
+            throw ErrorCatalog.AUTH_SERVICE_ERROR.getException();
         }
-        organizationNodeRepository.update(organizationNode);
 
-        return organizationNodeDTOMapper.toOrganizationNodeDTO(organizationNode);
     }
 
 

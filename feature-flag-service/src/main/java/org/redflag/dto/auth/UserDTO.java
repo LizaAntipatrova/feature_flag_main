@@ -1,10 +1,10 @@
 package org.redflag.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 import org.redflag.auth.Role;
 
 import java.util.Set;
@@ -15,8 +15,12 @@ import java.util.UUID;
 @Introspected
 @Serdeable
 public class UserDTO {
+    @JsonProperty("id")
     private final Long id;
+    @JsonProperty("login")
     private final String login;
-    private final UUID uuidDepartament;
+    @JsonProperty("uuidDepartament")
+    private final UUID uuidDepartment;
+    @JsonProperty("roles")
     private final Set<Role> roles;
 }
