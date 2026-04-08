@@ -63,7 +63,7 @@ public class CreateOrganizationNodeService extends BaseService<CreateOrganizatio
                         .newLogin(response.getUuid()).build();
 
                 CreateServiceCredentialsResponse credentialsResponse =
-                        authClientService.createServiceCredentials(request.getSessionCookie(), dto);
+                        authClientService.createServiceCredentials(dto);
 
                 return response.setUsername(credentialsResponse.getUsername())
                         .setPassword(credentialsResponse.getPassword())

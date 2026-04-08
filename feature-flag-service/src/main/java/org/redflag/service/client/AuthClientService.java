@@ -2,36 +2,40 @@ package org.redflag.service.client;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.auth.AuthenticationProvider;
 import org.redflag.client.AuthClient;
-import org.redflag.dto.auth.CreateServiceCredentialsResponse;
-import org.redflag.dto.auth.NodeUuidsDTO;
-import org.redflag.dto.auth.LoginForServiceCredentialsDto;
+import org.redflag.dto.auth.*;
 
 @Singleton
 @RequiredArgsConstructor
 public class AuthClientService {
     private final AuthClient authClient;
 
-    public CreateServiceCredentialsResponse createServiceCredentials(String sessionCookie, LoginForServiceCredentialsDto request){
+    public CreateServiceCredentialsResponse createServiceCredentials(LoginForServiceCredentialsDto request) {
+        JwtDTO jwtDTO = authClient.getMainServiceJwt();
         return authClient.createServiceCredentials(
-                AuthenticationProvider.SESSION_COOKIE_NAME + "=" + sessionCookie,
+                jwtDTO.getTokenType() + jwtDTO.getAccessToken(),
                 request);
     }
 
-    public void deleteServiceCredentials(String sessionCookie, LoginForServiceCredentialsDto request){
+    public void deleteServiceCredentials(LoginForServiceCredentialsDto request) {
+        JwtDTO jwtDTO = authClient.getMainServiceJwt();
         authClient.deleteServiceCredentials(
-                AuthenticationProvider.SESSION_COOKIE_NAME + "=" + sessionCookie,
+                jwtDTO.getTokenType() + jwtDTO.getAccessToken(),
                 request);
     }
 
-    public void deleteClientsByNodeUuids(NodeUuidsDTO request){
+    public void deleteClientsByNodeUuids(NodeUuidsDTO request) {
+        JwtDTO jwtDTO = authClient.getMainServiceJwt();
         authClient.deleteClientsByNodeUuids(
+                jwtDTO.getTokenType() + jwtDTO.getAccessToken(),
                 request);
     }
 
-    public void deleteServiceCredentialsByNodeUuids(NodeUuidsDTO request){
+    public void deleteServiceCredentialsByNodeUuids(SdkUuidsDTO request) {
+        JwtDTO jwtDTO = authClient.getMainServiceJwt();
         authClient.deleteServiceCredentialsByNodeUuids(
+                jwtDTO.getTokenType() + jwtDTO.getAccessToken(),
                 request);
     }
+
 }

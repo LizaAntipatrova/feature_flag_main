@@ -7,7 +7,6 @@ import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 @Builder
 @Data
@@ -27,7 +26,5 @@ public class UpdateOrganizationNodeRequest {
     private Long organizationId;
     @JsonIgnore
     private Long nodeId;
-    @JsonIgnore
-    private String sessionCookie;
 
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Introspected
 @Serdeable
-public class NodeUuidsDTO {
-    @JsonProperty("departmentUuids")
+public class SdkUuidsDTO {
+    @JsonProperty("sdkUuids")
     private List<UUID> nodeUuids;
 }

@@ -4,10 +4,7 @@ import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.annotation.Client;
 import org.reactivestreams.Publisher;
-import org.redflag.dto.auth.NodeUuidsDTO;
-import org.redflag.dto.auth.LoginForServiceCredentialsDto;
-import org.redflag.dto.auth.CreateServiceCredentialsResponse;
-import org.redflag.dto.auth.UserDTO;
+import org.redflag.dto.auth.*;
 
 @Client(id = "auth-service")
 public interface AuthClient {
@@ -16,17 +13,21 @@ public interface AuthClient {
 
 
     @Post("/api/v1/sdk-clients/create")
-    CreateServiceCredentialsResponse createServiceCredentials(@Header(HttpHeaders.COOKIE) String cookieHeader,
+    CreateServiceCredentialsResponse createServiceCredentials(@Header(HttpHeaders.AUTHORIZATION) String jwt,
                                                               @Body LoginForServiceCredentialsDto request);
 
     @Delete("/api/v1/sdk-clients/delete")
-    void deleteServiceCredentials(@Header(HttpHeaders.COOKIE) String cookieHeader,
+    void deleteServiceCredentials(@Header(HttpHeaders.AUTHORIZATION) String jwt,
                                   @Body LoginForServiceCredentialsDto request);
 
     @Delete("/api/v1/clients/delete-clients")
-    void deleteClientsByNodeUuids(@Body NodeUuidsDTO request);
+    void deleteClientsByNodeUuids(@Header(HttpHeaders.AUTHORIZATION) String jwt,
+                                  @Body NodeUuidsDTO request);
 
     @Delete("/api/v1/sdk-clients/delete-sdks")
-    void deleteServiceCredentialsByNodeUuids(@Body NodeUuidsDTO request);
+    void deleteServiceCredentialsByNodeUuids(@Header(HttpHeaders.AUTHORIZATION) String jwt,
+                                             @Body SdkUuidsDTO request);
 
+    @Post("/api/v1/internal/token/main-service")
+    JwtDTO getMainServiceJwt();
 }
