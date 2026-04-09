@@ -9,7 +9,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
       TZ: UTC+3
     ports:
-      - "5432:5432"
+      - "5432"
     volumes:
       - ff_service_pgdata:/var/lib/postgresql/data/pgdata
     shm_size: "256m"
@@ -19,7 +19,7 @@ services:
     image: postgres:latest
     container_name: authdatabase
     ports:
-      - "5433:5432"
+      - "5432"
     environment:
       POSTGRES_DB: ${AUTH_SERVICE_DB}
       POSTGRES_USER: ${AUTH_SERVICE_DB_USER}
@@ -31,7 +31,7 @@ services:
     image: redis:7-alpine
     container_name: authredis
     ports:
-      - "6379:6379"
+      - "6379"
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
@@ -61,7 +61,7 @@ services:
     image: provectuslabs/kafka-ui:latest
     container_name: auth-kafka-ui
     ports:
-      - "8082:8080"
+      - "8082:8080" #пока оставим для дебага
     depends_on:
       - kafka
     environment:
@@ -76,7 +76,7 @@ services:
     image: lissaantipatrova/redflags-auth-service:1.0.0
     container_name: auth-service
     ports:
-      - "8081:8081"
+      - "8081"
     environment:
       MICRONAUT_ENVIRONMENTS: dev
       DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-auth:5432/${AUTH_SERVICE_DB}
@@ -97,7 +97,7 @@ services:
     image: lissaantipatrova/redflags-feature-flag-service:1.0.0
     container_name: ff-service
     ports:
-      - "8080:8080"
+      - "8080"
     environment:
       MICRONAUT_ENVIRONMENTS: dev
       DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-ff:5432/${FF_SERVICE_DB}
@@ -115,8 +115,8 @@ services:
   frontend:
     image: dischargedrobo/frontend-workshop:v1.0.0
     environment:
-      API_FF_SERVICE_URL_V1: ${FF_SERVICE_URL}${PATH_FF_SERVICE_API_V1}
-      API_AUT_SERVICE_URL_V1: ${AUTH_SERVICE_URL}${PATH_AUTH_SERVICE_API_V1}
+      API_FF_SERVICE_URL_V1: ${API_GATEWAY_URL}${PATH_FF_SERVICE_API_V1}
+      API_AUT_SERVICE_URL_V1: ${API_GATEWAY_URL}${PATH_AUTH_SERVICE_API_V1}
     ports:
       - "3000:3000"
     container_name: frontend-ff
@@ -124,6 +124,16 @@ services:
       - auth-service
       - ff-service
 
+  api-gateway:
+    image: nginx:latest
+    container_name: nginx-api-gateway
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./api-gateway-nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ff-service
+      - auth-service
 
 volumes:
   ff_service_pgdata:
