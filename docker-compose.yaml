@@ -117,6 +117,7 @@ services:
     environment:
       API_FF_SERVICE_URL_V1: ${API_GATEWAY_URL}${PATH_FF_SERVICE_API_V1}
       API_AUT_SERVICE_URL_V1: ${API_GATEWAY_URL}${PATH_AUTH_SERVICE_API_V1}
+      API_GATEWAY_URL: ${API_GATEWAY_URL}
     ports:
       - "3000:3000"
     container_name: frontend-ff
