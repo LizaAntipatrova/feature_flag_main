@@ -13,15 +13,14 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
+import static org.redflag.constants.TokenUrlConstants.TOKEN_API_PREFIX;
+import static org.redflag.constants.TokenUrlConstants.TOKEN_DELETE_CLIENTS_API_PREFIX;
+
 @Singleton
 @RequiredArgsConstructor
 public class SessionAuthenticationFetcher implements AuthenticationFetcher<HttpRequest<?>> {
 
     private final SessionService sessionService;
-
-    private static final String TOKEN_API_PREFIX = "/api/v1/sdk-clients";
-    private static final String TOKEN_DELETE_CLIENTS_API_PREFIX = "/api/v1/clients/delete-clients";
-
 
     @Override
     public Publisher<Authentication> fetchAuthentication(HttpRequest<?> request) {
@@ -43,8 +42,8 @@ public class SessionAuthenticationFetcher implements AuthenticationFetcher<HttpR
 
     private Authentication mapToAuth(Session session) {
         List<String> roles = session.getUser()
-                                    .getRoles()
-                                    .stream()
+                .getRoles()
+                .stream()
                 .map(org.redflag.entities.Role::getName)
                 .toList();
 

@@ -1,0 +1,35 @@
+// 1. Ищем все контейнеры через сокет
+discovery.docker "all_containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// 2. Фильтруем контейнеры по вашей метке
+discovery.relabel "keep_only_services" {
+  targets = discovery.docker.all_containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_logging"]
+    regex         = "true"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+// 3. Собираем логи (добавлен обязательный атрибут host)
+loki.source.docker "selected_logs" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.keep_only_services.output
+  forward_to = [loki.write.loki_instance.receiver]
+}
+
+// 4. Отправляем в Loki
+loki.write "loki_instance" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
