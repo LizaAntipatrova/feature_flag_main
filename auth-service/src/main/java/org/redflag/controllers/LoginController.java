@@ -49,7 +49,6 @@ public class LoginController {
     @Post("/refresh")
     @ExecuteOn(TaskExecutors.BLOCKING)
     public Mono<HttpResponse<?>> refresh(HttpRequest<?> request) {
-        log.info("Auth: {}", request.getUserPrincipal().isPresent());
         return Mono.justOrEmpty(request.getCookies().get(SecurityConstants.COOKIES_NAME, String.class))
                 .switchIfEmpty(Mono.error(new BadCredentialsCustomException("Session cookie missing")))
                 .flatMap(sessionId -> Mono.fromCallable(() -> sessionService.refreshSession(sessionId))

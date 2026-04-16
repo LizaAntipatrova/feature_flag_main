@@ -3,7 +3,7 @@ discovery.docker "all_containers" {
   host = "unix:///var/run/docker.sock"
 }
 
-// 2. Фильтруем контейнеры по вашей метке
+// 2. Фильтруем контейнеры по метке
 discovery.relabel "keep_only_services" {
   targets = discovery.docker.all_containers.targets
 
