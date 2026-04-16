@@ -16,6 +16,7 @@ import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redflag.constants.SecurityConstants;
 import org.redflag.exception.BadCredentialsCustomException;
@@ -29,6 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Tag(name = "Авторизация ui пользователей через сессии")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@Slf4j
 public class LoginController {
 
     private final SessionService sessionService;
@@ -47,6 +49,7 @@ public class LoginController {
     @Post("/refresh")
     @ExecuteOn(TaskExecutors.BLOCKING)
     public Mono<HttpResponse<?>> refresh(HttpRequest<?> request) {
+        log.info("Auth: {}", request.getUserPrincipal().isPresent());
         return Mono.justOrEmpty(request.getCookies().get(SecurityConstants.COOKIES_NAME, String.class))
                 .switchIfEmpty(Mono.error(new BadCredentialsCustomException("Session cookie missing")))
                 .flatMap(sessionId -> Mono.fromCallable(() -> sessionService.refreshSession(sessionId))

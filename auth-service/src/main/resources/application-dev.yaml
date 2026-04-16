@@ -19,6 +19,7 @@ logger:
   levels:
     io.micronaut.security: DEBUG
     io.micronaut.session: DEBUG
+  config: logback-console.xml
 
 micronaut:
   server:

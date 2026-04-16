@@ -1,6 +1,8 @@
 micronaut:
   application:
     name: auth-service
+  aot:
+    replaceLogbackXml: false
 
   router:
     static-resources:
