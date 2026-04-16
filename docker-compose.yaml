@@ -73,7 +73,7 @@ services:
 
 
   auth-service:
-    image: lissaantipatrova/redflags-auth-service:1.0.0
+    image: lissaantipatrova/redflags-auth-service:1.0.1
     container_name: auth-service
     ports:
       - "8081"
@@ -94,7 +94,7 @@ services:
       - kafka
 
   ff-service:
-    image: lissaantipatrova/redflags-feature-flag-service:1.0.0
+    image: lissaantipatrova/redflags-feature-flag-service:1.0.1
     container_name: ff-service
     ports:
       - "8080"
