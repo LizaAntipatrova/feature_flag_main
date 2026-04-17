@@ -19,6 +19,9 @@ public class CreateFeatureFlagRequest {
     @JsonProperty("value")
     @Schema(description = "Значение фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
     private final Boolean value;
+    @JsonProperty("description")
+    @Schema(description = "Описание фича флага", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "Фича флаг включает релизы в пятницу. Не трогать, убъет!")
+    private final String description;
     @JsonIgnore
     private Long organizationId;
     @JsonIgnore
