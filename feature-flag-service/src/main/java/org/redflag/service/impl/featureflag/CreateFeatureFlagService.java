@@ -59,6 +59,7 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
 
         FeatureFlag featureFlag = new FeatureFlag()
                 .setName(request.getName())
+                .setDescription(request.getDescription())
                 .setValue(request.getValue())
                 .setOrganizationNode(organizationNode);
 

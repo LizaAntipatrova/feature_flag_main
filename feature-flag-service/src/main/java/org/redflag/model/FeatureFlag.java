@@ -31,6 +31,9 @@ public class FeatureFlag {
     @JoinColumn(name = "organization_node_id")
     private OrganizationNode organizationNode;
 
+    @Column(name = "description")
+    private String description;
+
     @DateCreated
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

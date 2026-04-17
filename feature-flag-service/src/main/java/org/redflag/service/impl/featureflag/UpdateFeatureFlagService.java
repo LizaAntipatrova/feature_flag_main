@@ -6,7 +6,6 @@ import jakarta.inject.Singleton;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
 import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.update.UpdateFeatureFlagRequest;
 import org.redflag.error.ErrorCatalog;
@@ -67,7 +66,8 @@ public class UpdateFeatureFlagService extends BaseService<UpdateFeatureFlagReque
 
         entityVersionValidator.checkVersionMatch(featureFlag.getVersion(), request.getVersion());
 
-        featureFlag.setValue(request.getValue());
+        featureFlag.setValue(request.getValue())
+                .setDescription(request.getDescription());
         FeatureFlag newFeatureFlag;
         try {
             newFeatureFlag = featureFlagRepository.update(featureFlag);

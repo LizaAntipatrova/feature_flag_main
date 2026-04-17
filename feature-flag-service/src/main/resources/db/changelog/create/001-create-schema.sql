@@ -45,7 +45,8 @@ create table feature_flag(
     id bigserial primary key,
     name varchar(1024) not null,
     value boolean not null,
-    organization_node_id bigint not null references organization_node(id) on delete cascade ,
+    organization_node_id bigint not null references organization_node(id) on delete cascade,
+    description text,
     version bigint not null ,
     created_at timestamp not null,
     updated_at timestamp

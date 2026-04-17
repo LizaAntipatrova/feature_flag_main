@@ -31,7 +31,13 @@ public class FeatureFlagDTO {
     @Schema(description = "Значение фича флага", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
     private final Boolean value;
 
+    @JsonProperty("description")
+    @Schema(description = "Описание фича флага", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "Фича флаг включает релизы в пятницу. Не трогать, убъет!")
+    private final String description;
+
+
     @JsonProperty("version")
     @Schema(description = "Версия данных для оптимистичной блокировки", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private final Long version;
+
 }
