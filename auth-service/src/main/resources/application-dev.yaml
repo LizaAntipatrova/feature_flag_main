@@ -21,6 +21,10 @@ logger:
     io.micronaut.session: DEBUG
   config: logback-console.xml
 
+endpoints:
+  all:
+    port: 8083
+
 micronaut:
   server:
     port: 8081
@@ -30,6 +34,12 @@ micronaut:
           allowed-origins:
             - "http://localhost:8081"
             - "http://localhost:3000"
+#    management:
+#      endpoints:
+#        port: 8083
+#        all:
+#          enabled: true
+#          sensitive: false
 
   http:
     services:

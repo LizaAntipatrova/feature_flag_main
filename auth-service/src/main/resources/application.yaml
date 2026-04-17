@@ -3,6 +3,12 @@ micronaut:
     name: auth-service
   aot:
     replaceLogbackXml: false
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        step: PT1M
 
   router:
     static-resources:
@@ -45,6 +51,9 @@ micronaut:
         enabled: false
       logout:
         enabled: false
+      prometheus:
+        enabled: true
+        sensitive: false
 
     session:
       enabled: false
@@ -74,6 +83,11 @@ micronaut:
       - pattern: /v3/api-docs/**
         access: isAnonymous()
 
+      - pattern: /prometheus
+        access: isAnonymous()
+      - pattern: /health
+        access: isAnonymous()
+
       - pattern: /api/**
         access: isAuthenticated()
       - pattern: /**
@@ -94,3 +108,8 @@ liquibase:
     default:
       enabled: true
       change-log: 'classpath:db/changelog/db.changelog-master.yml'
+
+#endpoints:
+#  prometheus:
+#    enabled: true
+#    sensitive: false
