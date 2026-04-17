@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
+
 @SuperBuilder
 @RequiredArgsConstructor
 @Getter
@@ -35,6 +37,9 @@ public class FeatureFlagDTO {
     @Schema(description = "Описание фича флага", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "Фича флаг включает релизы в пятницу. Не трогать, убъет!")
     private final String description;
 
+    @JsonProperty("lastUpdate")
+    @Schema(description = "Последнее обновление фича флага", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "2026-04-17T20:27:46.342245Z")
+    private final Instant lastUpdate;
 
     @JsonProperty("version")
     @Schema(description = "Версия данных для оптимистичной блокировки", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")

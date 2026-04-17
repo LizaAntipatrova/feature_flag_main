@@ -94,7 +94,10 @@ services:
       - kafka
 
   ff-service:
-    image: lissaantipatrova/redflags-feature-flag-service:1.0.5
+#    image: lissaantipatrova/redflags-feature-flag-service:1.0.5
+    build:
+      context: ./feature-flag-service
+      dockerfile: Dockerfile
     container_name: ff-service
     ports:
       - "8080:8080"
