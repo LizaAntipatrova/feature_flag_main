@@ -53,8 +53,8 @@ micronaut:
       - pattern: /prometheus
         access: isAnonymous()
 
-#  aot:
-#    replaceLogbackXml: false
+  aot:
+    replaceLogbackXml: false
   metrics:
     enabled: true
     export:
@@ -94,3 +94,6 @@ endpoints:
       enabled: false
   all:
     port: 8084
+
+logger:
+  config: logback-json.xml

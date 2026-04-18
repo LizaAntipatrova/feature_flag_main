@@ -1,4 +1,4 @@
-package org.redflag.services.logging;
+package org.redflag.service.logging;
 
 import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpRequest;
@@ -18,8 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.redflag.constants.LoggingConstants.*;
-import static org.redflag.constants.SecurityConstants.UI_CLIENT_ID_NAME;
+import static org.redflag.service.logging.LoggingConstants.*;
 
 @Slf4j
 @Filter("/**")
