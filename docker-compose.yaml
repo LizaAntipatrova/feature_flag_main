@@ -9,7 +9,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
       TZ: UTC+3
     ports:
-      - "5432:5432"
+      - "5432"
     volumes:
       - ff_service_pgdata:/var/lib/postgresql/data/pgdata
     shm_size: "256m"
@@ -19,7 +19,7 @@ services:
     image: postgres:latest
     container_name: authdatabase
     ports:
-      - "5433:5432"
+      - "5432"
     environment:
       POSTGRES_DB: ${AUTH_SERVICE_DB}
       POSTGRES_USER: ${AUTH_SERVICE_DB_USER}
@@ -31,14 +31,14 @@ services:
     image: redis:7-alpine
     container_name: authredis
     ports:
-      - "6379:6379"
+      - "6379"
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
 
   kafka:
     image: apache/kafka:3.7.1
-    container_name: auth-kafka
+    container_name: kafka
     hostname: kafka
     ports:
       - "9094:9094"
@@ -47,41 +47,47 @@ services:
       - ./init-kafka.sh:/usr/local/bin/init-kafka.sh
     restart: unless-stopped
     entrypoint: ["/bin/bash", "/usr/local/bin/init-kafka.sh"]
+    environment:
+      ADMIN_KAFKA_USERNAME: ${ADMIN_KAFKA_USERNAME}
+      ADMIN_KAFKA_PASSWORD: ${ADMIN_KAFKA_PASSWORD}
+      FF_SERVICE_KAFKA_USERNAME: ${FF_SERVICE_KAFKA_USERNAME}
+      FF_SERVICE_KAFKA_PASSWORD: ${FF_SERVICE_KAFKA_PASSWORD}
+      BROKER_KAFKA_USERNAME: ${BROKER_KAFKA_USERNAME}
+      BROKER_KAFKA_PASSWORD: ${BROKER_KAFKA_PASSWORD}
+      KAFKA_INTERNAL_URL: ${KAFKA_INTERNAL_URL}
+      KAFKA_EXTERNAL_URL: ${KAFKA_EXTERNAL_URL}
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: auth-kafka-ui
     ports:
-      - "8082:8080"
+      - "8082:8080" #пока оставим для дебага
     depends_on:
       - kafka
     environment:
       - KAFKA_CLUSTERS_0_NAME=RedFlag-Cluster
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=${KAFKA_INTERNAL_URL}
       - KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=SASL_PLAINTEXT
       - KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM=SCRAM-SHA-512
-      - KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
+      - KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="${ADMIN_KAFKA_USERNAME}" password="${ADMIN_KAFKA_PASSWORD}";
 
 
   auth-service:
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+    image: lissaantipatrova/redflags-auth-service:1.0.1
     container_name: auth-service
     ports:
-      - "8081:8081"
-#      - "8083:8083"
+      - "8081"
     environment:
       MICRONAUT_ENVIRONMENTS: dev
       DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-auth:5432/${AUTH_SERVICE_DB}
       DATASOURCES_DEFAULT_USERNAME: ${AUTH_SERVICE_DB_USER}
       DATASOURCES_DEFAULT_PASSWORD: ${AUTH_SERVICE_DB_PASSWORD}
       REDIS_URI: redis://redis-auth:6379
-      MICRONAUT_HTTP_SERVICES_FF_SERVICE_URL: http://ff-service:8080
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MICRONAUT_HTTP_SERVICES_FF_SERVICE_URL: ${FF_SERVICE_URL}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_INTERNAL_URL}
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
       KAFKA_SASL_MECHANISM: SCRAM-SHA-512
-      KAFKA_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
+      KAFKA_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="${ADMIN_KAFKA_USERNAME}" password="${ADMIN_KAFKA_PASSWORD}";
     depends_on:
       - redis-auth
       - postgres-auth
@@ -90,23 +96,20 @@ services:
       - "logging=true"
 
   ff-service:
-    build:
-      context: ./feature-flag-service
-      dockerfile: Dockerfile
+    image: lissaantipatrova/redflags-feature-flag-service:1.0.1
     container_name: ff-service
     ports:
-      - "8080:8080"
-#      - "8084:8084"
+      - "8080"
     environment:
       MICRONAUT_ENVIRONMENTS: dev
       DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-ff:5432/${FF_SERVICE_DB}
       DATASOURCES_DEFAULT_USERNAME: ${FF_SERVICE_DB_USER}
       DATASOURCES_DEFAULT_PASSWORD: ${FF_SERVICE_DB_PASSWORD}
-      MICRONAUT_HTTP_SERVICES_AUTH_SERVICE_URL: http://auth-service:8081
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MICRONAUT_HTTP_SERVICES_AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_INTERNAL_URL}
       KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
       KAFKA_SASL_MECHANISM: SCRAM-SHA-512
-      KAFKA_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="main_service" password="main-secret";
+      KAFKA_SASL_JAAS_CONFIG: org.apache.kafka.common.security.scram.ScramLoginModule required username="${FF_SERVICE_KAFKA_USERNAME}" password="${FF_SERVICE_KAFKA_PASSWORD}";
     depends_on:
       - postgres-ff
       - kafka
@@ -152,6 +155,30 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on: [ loki ]
 
+
+  frontend:
+    image: dischargedrobo/frontend-workshop:latest
+    environment:
+      API_FF_SERVICE_URL_V1: ${API_GATEWAY_URL}${PATH_FF_SERVICE_API_V1}
+      API_AUT_SERVICE_URL_V1: ${API_GATEWAY_URL}${PATH_AUTH_SERVICE_API_V1}
+      API_GATEWAY_URL: ${API_GATEWAY_URL}
+    ports:
+      - "3000:3000"
+    container_name: frontend-ff
+    depends_on:
+      - auth-service
+      - ff-service
+
+  api-gateway:
+    image: nginx:latest
+    container_name: nginx-api-gateway
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./api-gateway-nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ff-service
+      - auth-service
 
 volumes:
   ff_service_pgdata:

@@ -3,6 +3,7 @@ package org.redflag.service.impl.featureflag;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
+import org.redflag.auth.AuthenticationProvider;
 import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.create.CreateFeatureFlagRequest;
 import org.redflag.error.ErrorCatalog;
@@ -27,6 +28,7 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
     private final AuthRightsToNodeValidator authRightsToNodeValidator;
     private final LinkedEntityValidator linkedEntityValidator;
     private final UniqueNameValidator uniqueNameValidator;
+    private final AuthenticationProvider authenticationProvider;
 
     @Override
     protected void validateRequest(CreateFeatureFlagRequest request) {
@@ -42,7 +44,9 @@ public class CreateFeatureFlagService extends BaseService<CreateFeatureFlagReque
 
     @Override
     protected void validateState(CreateFeatureFlagRequest request) {
-        authRightsToNodeValidator.checkIsAuthNodeIsParentToRequestNode(request.getNodeId());
+        if (!authenticationProvider.isSdkAuthorization()){
+            authRightsToNodeValidator.checkIsAuthNodeIsParentToRequestNode(request.getNodeId());
+        }
         linkedEntityValidator.checkIsNodeInOrganization(request.getNodeId(), request.getOrganizationId());
         uniqueNameValidator.checkIsFeatureFlagNameMissingInOrganization(request.getOrganizationId(), request.getName());
     }

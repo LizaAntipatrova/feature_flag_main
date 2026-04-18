@@ -34,13 +34,7 @@ micronaut:
           allowed-origins:
             - "http://localhost:8081"
             - "http://localhost:3000"
-#    management:
-#      endpoints:
-#        port: 8083
-#        all:
-#          enabled: true
-#          sensitive: false
-
+            - "http://127.0.0.1:3000"
   http:
     services:
       ff-service:
