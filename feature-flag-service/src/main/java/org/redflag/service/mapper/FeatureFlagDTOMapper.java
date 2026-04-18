@@ -11,8 +11,6 @@ public class FeatureFlagDTOMapper {
                 .nodeId(featureFlag.getOrganizationNode().getId())
                 .name(featureFlag.getName())
                 .value(featureFlag.getValue())
-                .lastUpdate(featureFlag.getUpdatedAt())
-                .description(featureFlag.getDescription())
                 .version(featureFlag.getVersion())
                 .build();
     }
