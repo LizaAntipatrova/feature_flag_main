@@ -2,7 +2,6 @@ package org.redflag.service.impl.featureflag;
 
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
-import org.redflag.dto.featureflag.FeatureFlagDTO;
 import org.redflag.dto.featureflag.get.GetLinkedFeatureFlagsRequest;
 import org.redflag.dto.featureflag.get.GetLinkedFeatureFlagsResponse;
 import org.redflag.dto.featureflag.get.RelationType;
@@ -12,6 +11,7 @@ import org.redflag.model.FeatureFlag;
 import org.redflag.model.OrganizationNode;
 import org.redflag.repository.FeatureFlagRepository;
 import org.redflag.service.BaseService;
+import org.redflag.service.mapper.FeatureFlagDTOMapper;
 import org.redflag.service.validator.AuthRightsToNodeValidator;
 import org.redflag.service.validator.LinkedEntityValidator;
 import org.redflag.service.validator.PaginationParameterValidator;
@@ -26,6 +26,7 @@ public class GetLinkedFeatureFlagsService extends BaseService<GetLinkedFeatureFl
     private final PaginationParameterValidator paginationParameterValidator;
     private final AuthRightsToNodeValidator authRightsToNodeValidator;
     private final LinkedEntityValidator linkedEntityValidator;
+    private final FeatureFlagDTOMapper featureFlagDTOMapper;
 
     @Override
     protected void validateRequest(GetLinkedFeatureFlagsRequest request) {
@@ -87,13 +88,7 @@ public class GetLinkedFeatureFlagsService extends BaseService<GetLinkedFeatureFl
     private GetLinkedFeatureFlagsResponse.Item toItem(FeatureFlag featureFlag) {
         OrganizationNode organizationNode = featureFlag.getOrganizationNode();
         return new GetLinkedFeatureFlagsResponse.Item(
-                FeatureFlagDTO.builder()
-                        .id(featureFlag.getId())
-                        .nodeId(organizationNode.getId())
-                        .name(featureFlag.getName())
-                        .value(featureFlag.getValue())
-                        .version(featureFlag.getVersion())
-                        .build(),
+                featureFlagDTOMapper.toFeatureFlagDTO(featureFlag),
                 OrganizationNodeDTO.builder()
                         .id(organizationNode.getId())
                         .organizationId(organizationNode.getOrganization().getId())
