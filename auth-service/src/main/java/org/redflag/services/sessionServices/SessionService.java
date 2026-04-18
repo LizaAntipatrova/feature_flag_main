@@ -119,11 +119,11 @@ public class SessionService {
     public Cookie createSessionCookie(Object value, long maxAge) {
         return Cookie.of(SecurityConstants.COOKIES_NAME, String.valueOf(value))
                 .path(SecurityConstants.COOKIES_PATH)
+                .domain(".t-redflags.ru")
                 .httpOnly(true)
                 .maxAge(maxAge)
                 .sameSite(SameSite.None)
                 .secure(true);
-//                .sameSite(SameSite.Lax);
     }
 
 }
