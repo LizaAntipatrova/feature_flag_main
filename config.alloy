@@ -19,7 +19,7 @@ discovery.relabel "keep_only_services" {
     source_labels = ["__meta_docker_container_name"]
     regex         = "/(.*)"
     target_label  = "__address__"
-    replacement   = "$1:8080" 
+    replacement   = "$1:8084" 
   }
 
   rule {

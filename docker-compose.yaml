@@ -96,6 +96,7 @@ services:
     container_name: ff-service
     ports:
       - "8080:8080"
+#      - "8084:8084"
     environment:
       MICRONAUT_ENVIRONMENTS: dev
       DATASOURCES_DEFAULT_URL: jdbc:postgresql://postgres-ff:5432/${FF_SERVICE_DB}

@@ -34,6 +34,9 @@ micronaut:
         enabled: false
       logout:
         enabled: false
+      prometheus:
+        enabled: true
+        sensitive: false
 
     session:
       enabled: false
@@ -45,6 +48,18 @@ micronaut:
         access: isAnonymous()
       - pattern: /api/v1/**
         access: isAuthenticated()
+
+      - pattern: /prometheus
+        access: isAnonymous()
+
+#  aot:
+#    replaceLogbackXml: false
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        step: PT1M
 
 datasources:
   default:
@@ -76,3 +91,5 @@ endpoints:
   health:
     kafka:
       enabled: false
+  all:
+    port: 8084
