@@ -120,7 +120,9 @@ public class SessionService {
         return Cookie.of(SecurityConstants.COOKIES_NAME, String.valueOf(value))
                 .path(SecurityConstants.COOKIES_PATH)
                 .httpOnly(true)
-                .maxAge(maxAge);
+                .maxAge(maxAge)
+                .sameSite(SameSite.None)
+                .secure(true);
 //                .sameSite(SameSite.Lax);
     }
 
