@@ -1,0 +1,87 @@
+// 1. Ищем все контейнеры через сокет
+discovery.docker "all_containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// 2. Фильтруем контейнеры и настраиваем адреса/метки для метрик
+discovery.relabel "keep_only_services" {
+  targets = discovery.docker.all_containers.targets
+
+  // Оставляем только тех, у кого в docker-compose стоит logging: "true"
+  rule {
+    source_labels = ["__meta_docker_container_label_logging"]
+    regex         = "true"
+    action        = "keep"
+  }
+
+  // Настройка сетевого пути (хост:порт) для сбора метрик
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "__address__"
+    replacement   = "$1:8084" 
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/auth-service"
+    target_label  = "__address__"
+    replacement   = "auth-service:8083"
+  }
+
+  // Метки для переменных Дашборда ($application и $instance)
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "application"
+    replacement   = "$1"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "instance"
+    replacement   = "$1"
+  }
+
+  // 'job' — стандартная метка, по которой Prometheus группирует таргеты
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "job"
+    replacement   = "$1"
+  }
+}
+
+// 3. Собираем логи (добавлен обязательный атрибут host)
+loki.source.docker "selected_logs" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.keep_only_services.output
+  forward_to = [loki.write.loki_instance.receiver]
+}
+
+// 4. Отправляем в Loki
+loki.write "loki_instance" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// 5. Настраиваем цели для сбора метрик
+// Мы берем отфильтрованные контейнеры и указываем путь /prometheus
+prometheus.scrape "micronaut_metrics" {
+  targets    = discovery.relabel.keep_only_services.output
+
+  metrics_path = "/prometheus"
+
+  scrape_interval = "15s"
+
+  forward_to = [prometheus.remote_write.local_prometheus.receiver]
+}
+
+// 6. Отправляем собранные метрики в Prometheus
+prometheus.remote_write "local_prometheus" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
