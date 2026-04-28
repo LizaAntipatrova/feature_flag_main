@@ -1,67 +1,93 @@
-# RED FLAGS
-RedFlags — это SaaS-платформа для централизованного управления включением
-и отключением функций в приложениях во время его работы (система управления фича-флагами).
+# RedFlags
 
-Система включает в себя:
-- Админ панель, для настройки структуры организации, создания и выдачи 
-доступа сотрудникам, переключения фича-флагов (расположена в этом репозитории)
-- SDK для клиентских приложений (хранится по [ссылке](https://github.com/RedFlagss/feature_flag_client))
+> Этот репозиторий — форк бекенд-части командного проекта [RedFlags](https://github.com/RedFlagss).  
+> Ниже дано общее описание проекта и мой вклад в этот проект.
 
-Frontend хранится по [ссылке](https://github.com/RedFlagss/frontend-workshop)
+RedFlags — SaaS-платформа для централизованного управления фича-флагами.
 
-# Стек технологий
-Админ панель состоит из 2 микросервисов:
+Потребитель управляет флагами через UI, а клиентские приложения получают изменения через Kafka и применяют их через SDK.
 
-- Сервис авторизации: Java 21, Micronaut, PostgreSQL, Redis, Kafka
- - Основной сервис: Java 21, Micronaut, Kafka, PostgreSQL
+Система состоит из нескольких компонентов:
 
-Для микросервисов админ панели настроено хранение логов и сбор метрик: Grafana Alloy, Loki, Prometheus, Grafana
+- **Сервис авторизации** — отвечает за аутентификацию и авторизацию ui-пользователей и sdk-клиентов, также управляет доступом в Kafka через Kafka Admin;
+- **Сервис feature flags** — отвечает за хранение, изменение и получение фича-флагов, узлов организации и самих организаций (моя зона ответственности);
+- **SDK для клиентских приложений** — предоставляет интерфейс для получения актуальных значений флагов через Kafka и интеграцию с сервисом фича-флагов;
+- **Frontend** — UI для управления системой;
 
-SDK для клиентских приложений: Java 17, Kafka
-Frontend: TS, React, next.js, scss, casl, antd
+Связанные репозитории:
+- [SDK для клиентских приложений](https://github.com/RedFlagss/feature_flag_client)
+- [Frontend](https://github.com/RedFlagss/frontend-workshop)
+- [Original repository](https://github.com/RedFlagss/feature_flag_main)
 
-# Документация
-## Архитектура
-<img src="docs/architecture.png">
+---
 
-Микросервисы админ панели:
-- Auth service - сервис авторизации. Работает с сессиями для ui пользователей,
-с jwt токенами для клиентов-сервисов; выдает доступы к kafka
-- Feature-flag service - основной сервис. Сервис отвечает за работу с 
-фича-флагами, организациями и звеньями организации.
-Звенья образуют древовидную структуру организации, которая хранится как ltree дерево
+## Стек технологий проекта
+### Backend
+<img alt="java.png" height="120" src="docs/image/stack/java.png" width="100"/>
+<img alt="micronaut.png" height="120" src="docs/image/stack/micronaut.png" width="120"/>
+<img alt="docker.png" height="120" src="docs/image/stack/docker.png" width="140"/>
+<img alt="postgres.png" height="120" src="docs/image/stack/postgres.png" width="120"/>
+<img alt="kafka.png" height="120" src="docs/image/stack/kafka.png" width="220"/>
+<img alt="redis.png" height="120" src="docs/image/stack/redis.png" width="120"/><br>
 
-SDK для клиентских приложений: 
+### Логи и метрики
+<img alt="grafanaAlloy.png" height="120" src="docs/image/stack/grafanaAlloy.png" width="250"/>
+<img alt="grafanaLoki.png" height="120" src="docs/image/stack/grafanaLoki.png" width="180"/>
+<img alt="prometheus.png" height="120" src="docs/image/stack/prometheus.png" width="120"/>
+<img alt="grafana.png" height="120" src="docs/image/stack/grafana.png" width="120"/><br>
 
-SDK отвечает за интеграцию фича-флагов в клиентский сервис, 
-автоматическое получение актуальных значений флагов и синхронизацию 
-изменений в реальном времени через Kafka.
+### Frontend
+<img alt="ts.png" height="120" src="docs/image/stack/ts.png" width="120"/>
+<img alt="nextjs.png" height="120" src="docs/image/stack/nextjs.png" width="220"/>
+<img alt="react.png" height="120" src="docs/image/stack/react.png" width="120"/>
+<img alt="casl.png" height="120" src="docs/image/stack/casl.png" width="100"/>
+<img alt="scss.png" height="120" src="docs/image/stack/scss.png" width="120"/>
+<img alt="antd.png" height="120" src="docs/image/stack/antd.png" width="120"/>
 
-## UseCase - диаграмма
-<img src="docs/useCase.png">
+---
 
-# Развертывание
-Для запуска админ панели необходимо запустить контейнеры docker через
-docker-compose.
+## Важно: это fork
 
-Логи и метрики не собраны в image docker, поэтому для запуска с ними
-необходимо собрать микросервисы локально, изменив docker-compose из 
-ветки master. Настроенный docker-compose для сборки микросервисов 
-с логами и метриками находится в ветке logi. Перед его сборкой необходимо
-собрать микросервисы через gradle.
+Этот репозиторий является форком проекта RedFlags:
 
-SDK запускается отдельным проектом
+Original team:
+- [Лиза Антипатрова](https://github.com/LizaAntipatrova) - java-developer, devOps engineer
+- [Семен Муравьев](https://github.com/SemionMur) - java-developer
+- [Ирина Хрусталева](https://github.com/rubberPlant256) - java-developer
+- [Кирилл Авдеев](https://github.com/DischargedRobot) - frontend-developer
+- [Дима Бряков](https://github.com/razondark) - Mentor
 
-# Работяги:
-[Лиза Антипатрова](https://github.com/LizaAntipatrova) - java-developer, devOps engineer
+### Зачем этот fork у меня
 
-[Семен Муравьев](https://github.com/SemionMur) - java-developer
+Я была участником команды разработки этого проекта.  
+Этот форк я использую, чтобы зафиксировать и показать свою зону ответственности и личный вклад в backend-часть и развёртывание системы.
+---
 
-[Ирина Хрусталева](https://github.com/rubberPlant256) - java-developer
+## Мой вклад
 
-[Кирилл Авдеев](https://github.com/DischargedRobot) - frontend-developer
+Мои основные зоны ответственности в проекте:
+- микросервис feature flags,
+- проектирование архитектуры системы,
+- развёртывание системы.
 
-[Дима Бряков](https://github.com/razondark) - Mentor
+### Что сделала лично я
+- [Архитектура  системы](./docs/schemas/architecture.md)
+- [Схема БД для микросервисов авторизации и фича-флагов](./docs/schemas/db.md);
+- CRUD для сущностей `FeatureFlag`, `OrganizationNode` и `Organization`;
+- Операции над ltree деревом сущности `OrganizationNode`;
+- OpenAPI-спецификацию для микросервиса фича-флагов;
+- Настроила Kafka Producer для публикации изменений фича-флагов;
+- Реализовала ограничения доступа на уровне контроллеров и на сервисном уровне. На сервисном уровне доступы ограничиваются положением авторизованного пользователя в древовидной структуре;
+- Подготовила docker-compose для локального запуска системы;
+- Настроила API Gateway для маршрутизации запросов между сервисами.;
+- Развернула проект на локальной машине с пробросом портов на VPS через frp;
+- Настроила роутинг домена к порту сервера фронтенда и поддомена api к порту API Gateway через nginx на VPS
+- Выпустила два TLS-сертификата для основного домена и поддомена API.
 
-Т-банк зимняя проектная мастерская, март-апрель 2026
+
+### В чем я учавствовала
+- Описание функциональности системы
+- Настройка Kafka и Kafka Admin для динамического создания топиков, учетных данных и ACL;
+
+
 
